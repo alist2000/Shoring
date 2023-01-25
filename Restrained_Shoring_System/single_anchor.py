@@ -1,18 +1,19 @@
 import copy
+import random
 import sys
 from sympy import symbols
 from sympy.solvers import solve
 import numpy as np
 
 from inputs import input_values
-from pressure import anchor_pressure
-from plot import plotter
+from pressure import anchor_pressure, edit_sigma_and_height, force_calculator
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/ShoringUnrestrained_Shoring_System")
 
 from Surcharge.result import result_surcharge
 from Unrestrained_Shoring_System.soldier_pile.surchargeLoad import surcharge
+from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
 
 
 def single_anchor(inputs):
@@ -53,22 +54,13 @@ def single_anchor(inputs):
             surcharge_type, q, l1, l2,
             teta, ka)
 
-        if delta_h > 0.1:
-            delta_h = 0.1  # minimum allowable delta h
+        h_array_detail, sigma_a_array_detail = edit_sigma_and_height(sigma_a, h_list, delta_h)
 
-        # count number of decimals
-        delta_h_decimal = str(delta_h)[::-1].find('.')
-        if delta_h_decimal == -1:
-            delta_h_decimal = 0
-        sigma_h = []
-        n = []
-        depth_list = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= h else h
-                      for i in
-                      range(0, int((h + delta_h) * pow(10, delta_h_decimal)),
-                            int(delta_h * pow(10, delta_h_decimal)))]
-        plotter(depth_list, surcharge_pressure, "", "", "", "")
+        trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
 
-    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm
+        plotter_load(h_array_detail, sigma_a_array_detail, "", "", "", "")
+
+    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm
 
 
 outputs = single_anchor(input_values)
