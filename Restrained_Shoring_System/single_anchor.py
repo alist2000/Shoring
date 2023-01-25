@@ -6,7 +6,7 @@ from sympy.solvers import solve
 import numpy as np
 
 from inputs import input_values
-from pressure import anchor_pressure, edit_sigma_and_height, force_calculator
+from pressure import anchor_pressure, edit_sigma_and_height, force_calculator, force_calculator_x, find_D
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/ShoringUnrestrained_Shoring_System")
@@ -43,6 +43,10 @@ def single_anchor(inputs):
 
         pressure = anchor_pressure(h, gama, c, ka, kp)
         sigma_active, sigma_passive = pressure.soil_pressure()
+        D = symbols("D")
+        force_active, arm_active = force_calculator_x(h, [D], [sigma_active])
+        force_passive, arm_passive = force_calculator_x(h, [D], [sigma_passive])
+
         if c == 0:
             if anchor_number == 1:
                 h1 = h_list[0]
@@ -58,9 +62,39 @@ def single_anchor(inputs):
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
 
+        driving_force = []
+        for i in force_active:
+            for j in i:
+                driving_force.append(j)
+        driving_force += [trapezoidal_force] + [surcharge_force]
+
+        resisting_force = []
+        for i in force_passive:
+            for j in i:
+                resisting_force.append(j)
+
+        driving_force_arm = []
+        for i in arm_active:
+            for j in i:
+                driving_force_arm.append(h1 - j)
+        driving_force_arm += [h1 - trapezoidal_force_arm] + [h1 - surcharge_arm]
+
+        resisting_force_arm = []
+        for i in arm_passive:
+            for j in i:
+                resisting_force_arm.append(j - h1)
+
+        d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d_2 = find_D(1, driving_force, driving_force_arm, resisting_force, resisting_force_arm)
+
+        # driving_force = copy.deepcopy(force_active)
+        # resisting_force = copy.deepcopy(force_passive)
+        # driving_force_arm = copy.deepcopy(arm_active)
+        # resisting_force_arm = copy.deepcopy(arm_passive)
+
         plotter_load(h_array_detail, sigma_a_array_detail, "", "", "", "")
 
-    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm
+    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_2
 
 
 outputs = single_anchor(input_values)
