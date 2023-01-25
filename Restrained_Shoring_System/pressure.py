@@ -6,10 +6,13 @@
     2-1-single anchor/brace
     2-2-multi anchors/braces
 '''
+import copy
 
 from sympy import symbols
 from sympy.solvers import solve
+import scipy.integrate as spi
 from math import sqrt
+import numpy as np
 
 
 class anchor_pressure:
@@ -83,6 +86,98 @@ class anchor_pressure:
         return sigma_a, h_list
 
 
-test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
-sigma_active, sigma_passive = test.soil_pressure()
-sigma_a, h_list = test.pressure_cohesion_less_single(10)
+def edit_sigma_and_height(sigma, h, delta_h):
+    """
+    :param sigma:  it's just a number ( sigma_a )
+    :param h: h is a list with 3 index
+    :param delta_h: delta_h
+    :return: edited sigma and h for plot
+    """
+    if delta_h > 0.1:
+        delta_h = 0.1  # minimum allowable delta h
+
+    # count number of decimals
+    delta_h_decimal = str(delta_h)[::-1].find('.')
+    if delta_h_decimal == -1:
+        delta_h_decimal = 0
+    sigma_h = []
+    n = []
+    h_list_edited = []
+    for i in range(len(h) + 1):
+        if i == 0:
+            h_list_edited.append(0)
+        else:
+            h_list_edited.append(round(h_list_edited[i - 1] + h[i - 1], delta_h_decimal))
+
+    h_list_detail = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= sum(h) else sum(h)
+                     for i in
+                     range(0, int((sum(h) + delta_h) * pow(10, delta_h_decimal)),
+                           int(delta_h * pow(10, delta_h_decimal)))]
+    h_array_detail = np.array(h_list_detail)
+
+    sigma_a_detail = []
+    for z in h_list_detail[:h_list_detail.index(h_list_edited[1]) + 1]:
+        sigma_a = (sigma / (h_list_edited[1] - h_list_edited[0])) * z
+        sigma_a_copy = copy.deepcopy(sigma_a)
+        sigma_a_detail.append(sigma_a_copy)
+
+    for z in h_list_detail[h_list_detail.index(h_list_edited[1]) + 1: h_list_detail.index(h_list_edited[2]) + 1]:
+        sigma_a = sigma
+        sigma_a_copy = copy.deepcopy(sigma_a)
+        sigma_a_detail.append(sigma_a_copy)
+
+    for z in h_list_detail[h_list_detail.index(h_list_edited[2]) + 1:]:
+        sigma_a = (-sigma / (h_list_edited[3] - h_list_edited[2])) * (z - h_list_edited[2]) + sigma
+        sigma_a_copy = copy.deepcopy(sigma_a)
+        sigma_a_detail.append(sigma_a_copy)
+
+    sigma_a_array_detail = np.array(sigma_a_detail)
+
+    # sigma_a_list = [0, sigma, sigma, 0]
+
+    return h_array_detail, sigma_a_array_detail
+
+
+def force_calculator(h, sigma):
+    force = spi.simpson(sigma, h)
+    centroid = spi.simpson(sigma * h, h) / force
+    # note: centroid started from top
+    return force, centroid
+
+
+def control_solution(item):
+    final = []
+    for number in item:
+        number = number.evalf(chop=True)
+        try:
+            final.append(float(number))
+        except:
+            pass
+    if final:
+        final_value = max(final)
+    else:
+        final_value = "There is no answer!"
+    return final_value
+
+
+def find_D(FS, force_r, arm_r, force_d, arm_d):
+    D = symbols("D")
+
+    Mr = []
+    for i in range(len(force_r)):
+        mr = force_r[i] * arm_r[i]
+        Mr.append(mr)
+
+    Md = []
+    for i in range(len(force_d)):
+        md = force_d[i] * arm_d[i]
+        Md.append(md)
+
+    equation = sum(Mr) - FS * sum(Md)
+    d = solve(equation, D)
+    d = control_solution(d)
+    return d
+
+# test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
+# sigma_active, sigma_passive = test.soil_pressure()
+# sigma_a, h_list = test.pressure_cohesion_less_single(10)
