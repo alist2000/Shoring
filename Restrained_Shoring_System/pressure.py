@@ -145,6 +145,26 @@ def force_calculator(h, sigma):
     return force, centroid
 
 
+def force_calculator_x(retaining_h, h, sigma):
+    """
+    sigma and h must be a list.
+    for example: h = [2 , D]
+    sigma = [[0,10] , [12*D , 20*D]]
+    """
+    force_final = []
+    arm_final = []
+    for i in range(len(h)):
+        force1 = h[i] * sigma[i][0]
+        force2 = h[i] * (sigma[i][1] - sigma[i][0])
+        force_final.append([force1, force2])
+
+        # arm from top of soil
+        arm1 = retaining_h + h[i] / 2
+        arm2 = retaining_h + h[i] / 3
+        arm_final.append([arm1, arm2])
+    return force_final, arm_final
+
+
 def control_solution(item):
     final = []
     for number in item:
