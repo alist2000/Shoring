@@ -4,7 +4,7 @@ number_of_project = 1
 
 number_of_layer = 1
 
-delta_h = 0.1
+delta_h = 0.01
 
 anchor_number = 1
 h = 25  # ft or m
@@ -31,7 +31,8 @@ l2_all = []
 teta_all = []
 for i in range(len(surcharge_type)):
     if surcharge_type[i] == "Uniform":
-        q = 72 / 0.283
+        q = 0
+        # q = 72 / 0.283
         q_all.append(q)
         l1_all.append("")
         l2_all.append("")
