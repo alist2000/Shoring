@@ -45,7 +45,7 @@ def single_anchor(inputs):
         sigma_active, sigma_passive = pressure.soil_pressure()
         D = symbols("D")
         force_active, arm_active = force_calculator_x(h, [D], [sigma_active])
-        force_passive, arm_passive = force_calculator_x(h, [D], [sigma_passive])
+        force_passive, arm_passive = force_calculator_x(h, [D], [sigma_passive], "passive")
 
         if c == 0:
             if anchor_number == 1:
@@ -76,16 +76,16 @@ def single_anchor(inputs):
         driving_force_arm = []
         for i in arm_active:
             for j in i:
-                driving_force_arm.append(h1 - j)
-        driving_force_arm += [h1 - trapezoidal_force_arm] + [h1 - surcharge_arm]
+                driving_force_arm.append(j - h1)
+        driving_force_arm += [trapezoidal_force_arm - h1] + [surcharge_arm - h1]
 
         resisting_force_arm = []
         for i in arm_passive:
             for j in i:
-                resisting_force_arm.append(j - h1)
+                resisting_force_arm.append(j + h - h1)
 
         d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_2 = find_D(1, driving_force, driving_force_arm, resisting_force, resisting_force_arm)
+        d_2 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
 
         # driving_force = copy.deepcopy(force_active)
         # resisting_force = copy.deepcopy(force_passive)
