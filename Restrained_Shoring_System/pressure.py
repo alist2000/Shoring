@@ -138,6 +138,68 @@ def edit_sigma_and_height(sigma, h, delta_h):
     return h_array_detail, sigma_a_array_detail
 
 
+def edit_sigma_and_height_general(sigma, h, delta_h):
+    x = symbols("x")
+    """
+    :param sigma: list. any index is a list with two value for pressure on the top and below of layer. and len = len h
+    :param h: list. height of any layer is one index.
+    :param delta_h: delta
+    :return: edited sigma and h for plot
+    """
+    if delta_h > 0.1:
+        delta_h = 0.1  # minimum allowable delta h
+
+    # count number of decimals
+    delta_h_decimal = str(delta_h)[::-1].find('.')
+    if delta_h_decimal == -1:
+        delta_h_decimal = 0
+
+    h_list_edited = []
+    for i in range(len(h) + 1):
+        if i == 0:
+            h_list_edited.append(0)
+        else:
+            h_list_edited.append(round(h_list_edited[i - 1] + h[i - 1], delta_h_decimal))
+
+    h_list_detail = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= sum(h) else sum(h)
+                     for i in
+                     range(0, int((sum(h) + delta_h) * pow(10, delta_h_decimal)),
+                           int(delta_h * pow(10, delta_h_decimal)))]
+    h_array_detail = np.array(h_list_detail)
+    sigma_edited = []
+    h_edited = []
+    equation_list = []
+    for i in range(len(h)):
+        slope = (sigma[i][1] - sigma[i][0]) / h[i]
+        c = sigma[i][0]
+        equation = slope * x + c
+        equation_list.append(equation)
+
+    sigma_h_detail = []
+    for i in range(len(h)):
+        if i == 0:
+            for z in h_list_detail[:h_list_detail.index(h_list_edited[1]) + 1]:
+                sigma_h = equation_list[i].subs(x, z)
+                sigma_h_copy = copy.deepcopy(sigma_h)
+                sigma_h_detail.append(float(sigma_h_copy))
+        elif i != len(h):
+            for z in h_list_detail[
+                     h_list_detail.index(h_list_edited[i]) + 1: h_list_detail.index(h_list_edited[i + 1]) + 1]:
+                sigma_h = equation_list[i].subs(x, z - h_list_edited[i])
+                sigma_h_copy = copy.deepcopy(sigma_h)
+                sigma_h_detail.append(float(sigma_h_copy))
+        else:
+            for z in h_list_detail[h_list_detail.index(h_list_edited[i]) + 1:]:
+                sigma_h = equation_list[i].subs(x, z - h_list_edited[i])
+                sigma_h_copy = copy.deepcopy(sigma_h)
+                sigma_h_detail.append(float(sigma_h_copy))
+
+    h_array_detail = np.array(h_list_detail)
+    sigma_h_array_detail = np.array(sigma_h_detail)
+
+    return h_array_detail, sigma_h_array_detail
+
+
 def force_calculator(h, sigma):
     force = spi.simpson(sigma, h)
     centroid = spi.simpson(sigma * h, h) / force
