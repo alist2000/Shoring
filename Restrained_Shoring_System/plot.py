@@ -125,15 +125,188 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
         arrowwidth=1.5,
         arrowcolor='#595959', )
     )
-    list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5]
-    plot.update_layout(annotations=list_of_all_arrows)
+    # list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5]
+    # plot.update_layout(annotations=list_of_all_arrows)
 
     plot.update_layout(title_text='Load Diagram', title_y=0.96)
 
     plot.add_scatter(x=active_pressure, y=embedment_depht + depth_final[-1], showlegend=False)
     plot.add_scatter(x=-passive_pressure, y=embedment_depht + depth_final[-1], showlegend=False)
-    plot.update_traces(hovertemplate="<br>".join(["Pressure: %{x}", "Z: %{y}"]), name="")  # this part could be better! size and color.
+    plot.update_traces(hovertemplate="<br>".join(["Pressure: %{x}", "Z: %{y}"]),
+                       name="")  # this part could be better! size and color.
 
+    zero_list = []
+    for i in range(len(active_pressure)):
+        zero_list.append(0)
+    plot.add_traces(go.Scatter(x=zero_list, y=embedment_depht + depth_final[-1],
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=active_pressure, y=embedment_depht + depth_final[-1],
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
+                               fillcolor="rgba(242, 87, 87, 0.7)"
+                               ))
+
+    zero_list = []
+    for i in range(len(passive_pressure)):
+        zero_list.append(0)
+    plot.add_traces(go.Scatter(x=zero_list, y=embedment_depht + depth_final[-1],
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=-passive_pressure, y=embedment_depht + depth_final[-1],
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
+                               fillcolor="rgba(242, 87, 87, 0.7)"
+                               ))
+
+    j = int(len(embedment_depht) / 5)
+    arrow6 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[0] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[0],
+        ay=embedment_depht[0] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+
+    arrow7 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[j],
+        ay=embedment_depht[j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow8 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[2 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[2 * j],
+        ay=embedment_depht[2 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow9 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[3 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[3 * j],
+        ay=embedment_depht[3 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow10 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[4 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[4 * j],
+        ay=embedment_depht[4 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow11 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[5 * j - 1] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=active_pressure[5 * j - 1],
+        ay=embedment_depht[5 * j - 1] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+
+    arrow12 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-passive_pressure[j],
+        ay=embedment_depht[j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow13 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[2 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-passive_pressure[2 * j],
+        ay=embedment_depht[2 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow14 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[3 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-passive_pressure[3 * j],
+        ay=embedment_depht[3 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow15 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[4 * j] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-passive_pressure[4 * j],
+        ay=embedment_depht[4 * j] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    arrow16 = go.layout.Annotation(dict(
+        x=0.01,
+        y=embedment_depht[5 * j - 1] + depth_final[-1],
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-passive_pressure[5 * j - 1],
+        ay=embedment_depht[5 * j - 1] + depth_final[-1],
+        arrowhead=3,
+        arrowwidth=1.5,
+        arrowcolor='#595959', )
+    )
+    list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5, arrow6, arrow7, arrow8, arrow9, arrow10,
+                          arrow11, arrow12, arrow13, arrow14,
+                          arrow15, arrow16]
+    plot.update_layout(annotations=list_of_all_arrows)
 
     # plot.add_scatter(x=[i for i in range(10)], y=[j for j in range(10, 20)])
 
