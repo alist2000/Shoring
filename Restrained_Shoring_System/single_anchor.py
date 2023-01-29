@@ -1,25 +1,32 @@
 import copy
 import random
 import sys
+
+import sympy.core.mul
 from sympy import symbols
 from sympy.solvers import solve
 import numpy as np
 
 from inputs import input_values
-from pressure import anchor_pressure, edit_sigma_and_height, force_calculator, force_calculator_x, find_D
+from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
+    force_calculator_x, find_D
+from plot import plotter_load
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/ShoringUnrestrained_Shoring_System")
 
 from Surcharge.result import result_surcharge
 from Unrestrained_Shoring_System.soldier_pile.surchargeLoad import surcharge
-from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
+
+
+# from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
 
 
 def single_anchor(inputs):
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list,
-     k_formula_list, soil_properties_list, surcharge_type_list, surcharge_inputs_list, FS_list] = inputs.values()
+     k_formula_list, soil_properties_list, surcharge_type_list, surcharge_inputs_list, tieback_spacing_list,
+     FS_list] = inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
         anchor_number = anchor_number_list[project]
@@ -33,6 +40,7 @@ def single_anchor(inputs):
         surcharge_type = surcharge_type_list[project]
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 
+        tieback_spacing = tieback_spacing_list[project]
         FS = FS_list[project]
 
         if k_formula == "User Defined":
@@ -58,7 +66,9 @@ def single_anchor(inputs):
             surcharge_type, q, l1, l2,
             teta, ka)
 
-        h_array_detail, sigma_a_array_detail = edit_sigma_and_height(sigma_a, h_list, delta_h)
+        # h_array_detail_1, sigma_a_array_detail_1 = edit_sigma_and_height(sigma_a, h_list, delta_h)
+        h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
+            [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h)
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
 
@@ -85,16 +95,31 @@ def single_anchor(inputs):
                 resisting_force_arm.append(j + h - h1)
 
         d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_2 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+
+        # replace d0 in D for all values
+        for item in [sigma_active, sigma_passive, resisting_force, resisting_force_arm, driving_force,
+                     driving_force_arm]:
+            for i in range(len(item)):
+                if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
+                    item[i] = item[i].subs(D, d_0)
+
+        D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
+        D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
+
+        T = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
 
         # driving_force = copy.deepcopy(force_active)
         # resisting_force = copy.deepcopy(force_passive)
         # driving_force_arm = copy.deepcopy(arm_active)
         # resisting_force_arm = copy.deepcopy(arm_passive)
 
-        plotter_load(h_array_detail, sigma_a_array_detail, "", "", "", "")
+        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array, "",
+                     "", "", "")
+        # plotter_load(D_array, active_pressure_array, "", "", "", "")
+        # plotter_load(D_array, passive_pressure_array, "", "", "", "")
 
-    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_2
+    return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
 outputs = single_anchor(input_values)
