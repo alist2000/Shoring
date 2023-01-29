@@ -86,6 +86,7 @@ elif k_formula == "Coulomb":
     omega = [0]  # for sheet pile omega always equal to zero.
     soil_properties = [phi, beta, delta, omega]
 
+tieback_spacing = 10  # ft or m
 FS = 1.3
 
 input_values = {"number_of_project": number_of_project,
@@ -101,5 +102,6 @@ input_values = {"number_of_project": number_of_project,
                 "soil_properties": [soil_properties],
                 "surcharge_type": [surcharge_type],
                 "surcharge_inputs": [surcharge_inputs],
+                "tieback_spacing": [tieback_spacing],
                 "FS": [FS]
                 }
