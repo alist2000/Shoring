@@ -10,7 +10,8 @@ import numpy as np
 from inputs import input_values
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
     force_calculator_x, find_D
-from plot import plotter_load
+from plot import plotter_load, plotter_load_result
+from analysis import analysis
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/ShoringUnrestrained_Shoring_System")
@@ -107,18 +108,23 @@ def single_anchor(inputs):
         D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
         D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
 
+        # calculate anchor force.
         T = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
 
-        # driving_force = copy.deepcopy(force_active)
-        # resisting_force = copy.deepcopy(force_passive)
-        # driving_force_arm = copy.deepcopy(arm_active)
-        # resisting_force_arm = copy.deepcopy(arm_passive)
-
+        # load diagram
         plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array, "",
                      "", "", "")
-        # plotter_load(D_array, active_pressure_array, "", "", "", "")
-        # plotter_load(D_array, passive_pressure_array, "", "", "", "")
 
+        # load result
+        final_pressure_under = active_pressure_array - passive_pressure_array
+        final_pressure = np.array(list(sigma_a_array_detail) + list(final_pressure_under))
+        depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
+        # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
+
+        # shear and moment values and diagrams
+        analysis_instance = analysis(T / tieback_spacing, h1, list(depth), list(final_pressure), delta_h, unit_system)
+        shear_plot, shear_values = analysis_instance.shear()
+        moment_plot, moment_values = analysis_instance.moment(shear_values)
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
