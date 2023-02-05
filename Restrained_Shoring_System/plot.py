@@ -12,7 +12,8 @@ import plotly.graph_objects as go
 from plotly.graph_objs import Layout
 
 
-def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, passive_pressure, x_title, y_title, x_unit,
+def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, passive_pressure, Th, h1, x_title, y_title,
+                 x_unit,
                  y_unit):
     plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
         xaxis_title=f"{x_title} ({x_unit})",
@@ -125,6 +126,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
         arrowwidth=1.5,
         arrowcolor='#595959', )
     )
+
     # list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5]
     # plot.update_layout(annotations=list_of_all_arrows)
 
@@ -254,8 +256,33 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
         arrowcolor='#595959', )
     )
 
+    arrow_T = go.layout.Annotation(dict(
+        x=0.1,
+        y=h1,
+        xref="x", yref="y",
+        text="",
+        showarrow=True,
+        axref="x", ayref='y',
+        ax=-active_pressure[2 * j],
+        ay=h1,
+        arrowhead=5,
+        arrowwidth=4,
+        arrowcolor='#595959', )
+    )
+
+    plot.add_annotation(dict(font=dict(color="#595959", size=16),
+                             # x=x_loc,
+                             x=-active_pressure[2 * j] * 18 / 20,
+                             y=12 * h1 / 13,
+                             showarrow=False,
+                             text=f'<b>{round(Th, 1)} {x_unit}</b>',
+                             textangle=0
+                             # xref="x",
+                             # yref="paper"
+                             ))
+
     list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5, arrow6, arrow7, arrow8, arrow9, arrow10,
-                          arrow11, arrow12]
+                          arrow11, arrow12, arrow_T]
     plot.update_layout(annotations=list_of_all_arrows)
 
     # plot.add_scatter(x=[i for i in range(10)], y=[j for j in range(10, 20)])
@@ -263,8 +290,9 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
     # plot.write_html("output.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    # plot.show()
+    plot.show()
     return plot
+
 
 def plotter_load_result(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
@@ -429,6 +457,7 @@ def plotter_shear(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     #                 include_plotlyjs='cdn')
     plot.show()
     return plot
+
 
 def plotter_moment(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
