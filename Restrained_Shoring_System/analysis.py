@@ -31,7 +31,7 @@ class analysis:
             load_unit = "lb"  # if unit of gama was pcf
             length_unit = "ft"
         else:
-            load_unit = "10^6 N"  # if unit of gama was MPa
+            load_unit = "N"  # if unit of gama was N/M^3
             length_unit = "m"
 
         shear_values = []
@@ -64,7 +64,7 @@ class analysis:
             load_unit = "lb-ft"
             length_unit = "ft"
         else:
-            load_unit = "10^6 N-m"
+            load_unit = "N-m"
             length_unit = "m"
         moment_values = []
         for i in range(len(depth)):
