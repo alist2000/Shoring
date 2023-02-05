@@ -1,6 +1,7 @@
 import copy
 import random
 import sys
+from math import cos
 
 import sympy.core.mul
 from sympy import symbols
@@ -14,10 +15,10 @@ from plot import plotter_load, plotter_load_result
 from analysis import analysis
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
-sys.path.append(r"D:/git/ShoringUnrestrained_Shoring_System")
+sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
 
 from Surcharge.result import result_surcharge
-from Unrestrained_Shoring_System.soldier_pile.surchargeLoad import surcharge
+from soldier_pile.surchargeLoad import surcharge
 
 
 # from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
@@ -27,7 +28,7 @@ def single_anchor(inputs):
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list,
      k_formula_list, soil_properties_list, surcharge_type_list, surcharge_inputs_list, tieback_spacing_list,
-     FS_list] = inputs.values()
+     FS_list, anchor_angle_list] = inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
         anchor_number = anchor_number_list[project]
@@ -43,6 +44,7 @@ def single_anchor(inputs):
 
         tieback_spacing = tieback_spacing_list[project]
         FS = FS_list[project]
+        anchor_angle = anchor_angle_list[project]
 
         if k_formula == "User Defined":
             ka, kp = soil_properties[0], soil_properties[1]
@@ -109,11 +111,13 @@ def single_anchor(inputs):
         D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
 
         # calculate anchor force.
-        T = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
+        Th = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
+        T = Th / cos(anchor_angle)
 
         # load diagram
-        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array, "",
-                     "", "", "")
+        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array, Th,
+                     h1,
+                     "q", "Z", "load_unit", "length_unit")
 
         # load result
         final_pressure_under = active_pressure_array - passive_pressure_array
@@ -122,7 +126,7 @@ def single_anchor(inputs):
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
 
         # shear and moment values and diagrams
-        analysis_instance = analysis(T / tieback_spacing, h1, list(depth), list(final_pressure), delta_h, unit_system)
+        analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h, unit_system)
         shear_plot, shear_values = analysis_instance.shear()
         moment_plot, moment_values = analysis_instance.moment(shear_values)
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
