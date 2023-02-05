@@ -1,3 +1,5 @@
+import numpy as np
+
 unit_system = "us"
 
 number_of_project = 1
@@ -88,6 +90,8 @@ elif k_formula == "Coulomb":
 
 tieback_spacing = 10  # ft or m
 FS = 1.3
+anchor_angel = 15  # degree
+anchor_angel = anchor_angel * np.pi / 180
 
 input_values = {"number_of_project": number_of_project,
                 "number_of_layer": [number_of_layer],
@@ -103,5 +107,6 @@ input_values = {"number_of_project": number_of_project,
                 "surcharge_type": [surcharge_type],
                 "surcharge_inputs": [surcharge_inputs],
                 "tieback_spacing": [tieback_spacing],
-                "FS": [FS]
+                "FS": [FS],
+                "anchor_angel": [anchor_angel]
                 }
