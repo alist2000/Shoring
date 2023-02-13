@@ -11,6 +11,7 @@ import numpy as np
 from inputs import input_values
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
     force_calculator_x, find_D
+from multi_anchor import multi_anchor
 from plot import plotter_load, plotter_load_result
 from analysis import analysis
 
@@ -39,7 +40,7 @@ def single_anchor(inputs):
         h = h_list[project]
         delta_h = delta_h_list[project]
         gama = gama_list[project]
-        h_list = h_list_list[project]
+        h_list_first = h_list_list[project]
         cohesive_properties = cohesive_properties_list[project]
         k_formula = k_formula_list[project]
         soil_properties = soil_properties_list[project]
@@ -76,8 +77,13 @@ def single_anchor(inputs):
 
         if c == 0:
             if anchor_number == 1:
-                h1 = h_list[0]
+                h1 = h_list_first[0]
                 sigma_a, h_list = pressure.pressure_cohesion_less_single(h1)
+            else:
+                h1 = h_list_first[0]
+                hn = h_list_first[-1]
+                sigma_a, h_list = pressure.pressure_cohesion_less_multi(anchor_number, h1, hn)
+
         else:
             # this part should be developed.
             pass
@@ -90,10 +96,13 @@ def single_anchor(inputs):
 
         # h_array_detail_1, sigma_a_array_detail_1 = edit_sigma_and_height(sigma_a, h_list, delta_h)
         h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
-            [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h)
+            [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
-
+        if anchor_number != 1:
+            output = multi_anchor(tieback_spacing, FS, h_list_first, h_array_detail, sigma_a_array_detail,
+                                  surcharge_pressure, force_active,
+                                  arm_active, force_passive, arm_passive)
         driving_force = []
         for i in force_active:
             for j in i:
