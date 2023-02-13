@@ -17,8 +17,12 @@ from analysis import analysis
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
 
+sys.path.append(r"F:/Cvision/Lateral-pressure-")
+sys.path.append(r"F:/Cvision/Unrestrained_Shoring_System")
+
 from Surcharge.result import result_surcharge
 from soldier_pile.surchargeLoad import surcharge
+from Passive_Active.active_passive import rankine, coulomb
 
 
 # from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
@@ -48,8 +52,20 @@ def single_anchor(inputs):
 
         if k_formula == "User Defined":
             ka, kp = soil_properties[0], soil_properties[1]
-        else:
-            pass
+        elif k_formula == "Rankine":
+            phi, beta = soil_properties
+            # phi and beta are lists. every index is for a separate soil layer.
+            # here we just have one soil layer. (for now) this part can be developed.
+            ka = rankine(phi[0], beta[0], "active")
+            kp = rankine(phi[0], beta[0], "passive")
+
+        else:  # coulomb
+            phi, beta, delta, omega = soil_properties
+            # phi and beta and etc are lists. every index is for a separate soil layer.
+            # here we just have one soil layer. (for now) this part can be developed.
+            ka = coulomb(phi[0], beta[0], delta[0], omega[0], "active")
+            kp = coulomb(phi[0], beta[0], delta[0], omega[0], "passive")
+
         c, gama_s = cohesive_properties[0], cohesive_properties[1]
 
         pressure = anchor_pressure(h, gama, c, ka, kp)
@@ -62,6 +78,9 @@ def single_anchor(inputs):
             if anchor_number == 1:
                 h1 = h_list[0]
                 sigma_a, h_list = pressure.pressure_cohesion_less_single(h1)
+        else:
+            # this part should be developed.
+            pass
 
         main_surcharge = surcharge(unit_system, h, delta_h)
         surcharge_force, surcharge_arm, surcharge_pressure, error_surcharge_list = result_surcharge(
