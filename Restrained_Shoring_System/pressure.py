@@ -138,7 +138,7 @@ def edit_sigma_and_height(sigma, h, delta_h):
     return h_array_detail, sigma_a_array_detail
 
 
-def edit_sigma_and_height_general(sigma, h, delta_h):
+def edit_sigma_and_height_general(sigma, h, delta_h, h_main=0):
     x = symbols("x")
     """
     :param sigma: list. any index is a list with two value for pressure on the top and below of layer. and len = len h
@@ -160,6 +160,8 @@ def edit_sigma_and_height_general(sigma, h, delta_h):
             h_list_edited.append(0)
         else:
             h_list_edited.append(round(h_list_edited[i - 1] + h[i - 1], delta_h_decimal))
+    if h_main != 0:
+        h_list_edited[-1] = h_main
 
     h_list_detail = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= sum(h) else sum(h)
                      for i in
