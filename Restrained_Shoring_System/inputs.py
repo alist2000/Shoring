@@ -8,17 +8,22 @@ number_of_layer = 1
 
 delta_h = 0.01
 
-anchor_number = 1
-h = 25  # ft or m
+anchor_number = 4
+# anchor_number = 1
+h = 60  # ft or m
+# h = 25  # ft or m
 gama = 115  # pcf or Mpa
 c = 0
 if anchor_number == 1:
     h1 = 10
     h_list = [h1]
 else:
-    h1 = ...
-    hn = ...
-    h_list = [h1, hn]
+    h1 = 7
+    h2 = 16
+    h3 = 12
+    h4 = 15
+    hn = h - (h1 + h2 + h3 + h4)
+    h_list = [h1, h2, h3, h4, hn]  # len = anchor number + 1
 if c != 0:
     gama_s = ...
 else:
