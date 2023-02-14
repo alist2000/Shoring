@@ -12,6 +12,7 @@ from inputs import input_values
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
     force_calculator_x, find_D
 from multi_anchor import multi_anchor
+from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
 from analysis import analysis
 
@@ -29,7 +30,7 @@ from Passive_Active.active_passive import rankine, coulomb
 # from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
 
 
-def single_anchor(inputs):
+def main_restrained(inputs):
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list,
      k_formula_list, soil_properties_list, surcharge_type_list, surcharge_inputs_list, tieback_spacing_list,
@@ -114,64 +115,46 @@ def single_anchor(inputs):
 
 
         else:
-            # *** this part can be a separate function like multi anchor. do it later! ***
-            driving_force = []
-            for i in force_active:
-                for j in i:
-                    driving_force.append(j)
-            driving_force += [trapezoidal_force] + [surcharge_force]
-
-            resisting_force = []
-            for i in force_passive:
-                for j in i:
-                    resisting_force.append(j)
-
-            driving_force_arm = []
-            for i in arm_active:
-                for j in i:
-                    driving_force_arm.append(j - h1)
-            driving_force_arm += [trapezoidal_force_arm - h1] + [surcharge_arm - h1]
-
-            resisting_force_arm = []
-            for i in arm_passive:
-                for j in i:
-                    resisting_force_arm.append(j + h - h1)
-
-            d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-            d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-
-            # replace d0 in D for all values
-            for item in [sigma_active, sigma_passive, resisting_force, resisting_force_arm, driving_force,
-                         driving_force_arm]:
-                for i in range(len(item)):
-                    if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
-                        item[i] = item[i].subs(D, d_0)
-            D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
-            D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
-
-            # calculate anchor force.
-            Th = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
+            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = single_anchor(
+                tieback_spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, surcharge_force, surcharge_arm,
+                force_active, arm_active, force_passive,
+                arm_passive, sigma_active, sigma_passive,
+                delta_h)
             T = Th / cos(anchor_angle)
+
+        sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
+        if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
+            for i in range(len(sigma_a_array_detail_copy)):
+                sigma_a_array_detail_copy[i] += surcharge_pressure[i]
+        else:
+            surcharge_pressure = copy.deepcopy(sigma_a_array_detail)
+            for i in range(len(surcharge_pressure)):
+                surcharge_pressure[i] = 0
         # load diagram for one anchor.
         plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array,
+                     surcharge_pressure,
                      Th,
                      h_list_first,
                      "q", "Z", "load_unit", "length_unit")
 
         # load result
         final_pressure_under = active_pressure_array - passive_pressure_array
-        if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
-            for i in range(len(sigma_a_array_detail)):
-                sigma_a_array_detail[i] += surcharge_pressure[i]
-        final_pressure = np.array(list(sigma_a_array_detail) + list(final_pressure_under))
+
+        final_pressure = np.array(list(sigma_a_array_detail_copy) + list(final_pressure_under))
         depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
 
         # shear and moment values and diagrams
-        analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h, unit_system)
-        shear_plot, shear_values = analysis_instance.shear()
+        if anchor_number == 1:
+            analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
+                                         unit_system)
+            shear_plot, shear_values = analysis_instance.shear()
+        else:
+            analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
+                                         unit_system)
+            shear_plot, shear_values = analysis_instance.shear_multi()
         moment_plot, moment_values = analysis_instance.moment(shear_values)
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
-outputs = single_anchor(input_values)
+outputs = main_restrained(input_values)
