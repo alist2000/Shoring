@@ -13,7 +13,7 @@ from plot import plotter_shear, plotter_moment
 class analysis:
     def __init__(self, T, h1, depth, sigma, delta_h, unit_system):
         self.T = T
-        self.h1 = h1
+        self.h1 = h1  # for single just h1 and for other  h_list_first
         self.depth = depth
         self.sigma = sigma
         self.delta_h = delta_h
@@ -48,6 +48,50 @@ class analysis:
         for i in range(len(depth[depth.index(h1) + 1:])):
             try:
                 shear = spi.simpson(sigma[last_index:i + last_index], depth[last_index:i + last_index]) + shear_h1
+            except:
+                shear = 0.0
+            shear_values.append(float(shear))
+
+        depth = np.array(depth)
+        shear_values = np.array(shear_values)
+        plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
+        return plot, shear_values
+
+    def shear_multi(self):
+        T = self.T
+        h = self.h1
+        depth = self.depth
+        sigma = self.sigma
+        delta_h = self.delta_h
+        unit_system = self.unit_system
+
+        if unit_system == "us":
+            load_unit = "lb"  # if unit of gama was pcf
+            length_unit = "ft"
+        else:
+            load_unit = "N"  # if unit of gama was N/M^3
+            length_unit = "m"
+
+        anchor_number = len(h) - 1
+        first_index = 0
+        shear_h1 = 0
+        shear_values = []
+        for j in range(anchor_number):
+            last_index = depth.index(sum(h[:j + 1]))
+            for i in range(len(depth[first_index:last_index])):
+                try:
+                    shear = spi.simpson(sigma[first_index:i + first_index], depth[first_index:i + first_index]) + shear_h1
+                except:
+                    shear = 0.0
+                shear_values.append(float(shear))
+            first_index = copy.deepcopy(last_index) + 1
+            shear_h1 = shear_values[-1] - T[j]
+            shear_values.append(float(shear_h1))
+
+        shear_values_end = shear_values[-1]
+        for i in range(len(depth[depth.index(sum(h[:-1])) + 1:])):
+            try:
+                shear = spi.simpson(sigma[first_index:i + first_index], depth[first_index:i + first_index]) + shear_values_end
             except:
                 shear = 0.0
             shear_values.append(float(shear))
