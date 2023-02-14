@@ -8,6 +8,7 @@ number_of_layer = 1
 
 delta_h = 0.01
 
+
 anchor_number = 4
 # anchor_number = 1
 h = 60  # ft or m
@@ -95,7 +96,8 @@ elif k_formula == "Coulomb":
 
 tieback_spacing = 10  # ft or m
 FS = 1.3
-anchor_angel = 15  # degree
+# anchor_angel = 15  # degree
+anchor_angel = 0  # degree
 anchor_angel = anchor_angel * np.pi / 180
 
 input_values = {"number_of_project": number_of_project,
