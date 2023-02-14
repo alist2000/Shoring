@@ -12,7 +12,8 @@ import plotly.graph_objects as go
 from plotly.graph_objs import Layout
 
 
-def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, passive_pressure, Th, h1, x_title, y_title,
+def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, passive_pressure, surcharge_pressure, Th,
+                 h1, x_title, y_title,
                  x_unit,
                  y_unit):
     plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
@@ -35,6 +36,9 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
     )
     plot.update_layout(layout)
 
+    plot.add_scatter(x=surcharge_pressure, y=depth_final, showlegend=False,
+                     marker=dict(color='rgba(255, 178, 107, 0.5)'))
+
     zero_list = []
     for i in range(len(sigma_final)):
         zero_list.append(0)
@@ -45,6 +49,15 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
                                fillcolor="rgba(242, 87, 87, 0.7)", marker=dict(color="rgba(242, 87, 87, 0.7)")
                                ))
+
+    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=surcharge_pressure, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
+                               fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
+                               ))
+
 
     j = int((len(depth_final) - 1) / 5)
     arrow0 = go.layout.Annotation(dict(
@@ -82,6 +95,8 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
 
     plot.update_layout(title_text='Load Diagram', title_y=0.96)
 
+
+
     plot.add_scatter(x=active_pressure, y=embedment_depht + depth_final[-1], showlegend=False,
                      marker=dict(color='rgba(255, 178, 107, 0.7)'))
     plot.add_scatter(x=-passive_pressure, y=embedment_depht + depth_final[-1], showlegend=False,
@@ -97,7 +112,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=active_pressure, y=embedment_depht + depth_final[-1],
                                mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(255, 178, 107, 0.7)"
+                               fillcolor="rgba(255, 178, 107, 0.7)", line_color="#969696"
                                ))
 
     zero_list = []
@@ -108,7 +123,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=-passive_pressure, y=embedment_depht + depth_final[-1],
                                mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(70, 194, 203, 0.7)"
+                               fillcolor="rgba(70, 194, 203, 0.7)", line_color="#969696"
                                ))
 
     j = int((len(embedment_depht) - 1) / 3)
