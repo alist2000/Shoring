@@ -46,7 +46,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                fillcolor="rgba(242, 87, 87, 0.7)", marker=dict(color="rgba(242, 87, 87, 0.7)")
                                ))
 
-    j = int(len(depth_final) / 5)
+    j = int((len(depth_final) - 1) / 5)
     arrow0 = go.layout.Annotation(dict(
         x=0.01,
         y=depth_final[0],
@@ -60,72 +60,22 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
         arrowwidth=1.5,
         arrowcolor='#595959', )
     )
-
-    arrow1 = go.layout.Annotation(dict(
-        x=0.01,
-        y=depth_final[j],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=sigma_final[j],
-        ay=depth_final[j],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow2 = go.layout.Annotation(dict(
-        x=0.01,
-        y=depth_final[2 * j],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=sigma_final[2 * j],
-        ay=depth_final[2 * j],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow3 = go.layout.Annotation(dict(
-        x=0.01,
-        y=depth_final[3 * j],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=sigma_final[3 * j],
-        ay=depth_final[3 * j],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow4 = go.layout.Annotation(dict(
-        x=0.01,
-        y=depth_final[4 * j],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=sigma_final[4 * j],
-        ay=depth_final[4 * j],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow5 = go.layout.Annotation(dict(
-        x=0.01,
-        y=depth_final[5 * j - 1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=sigma_final[5 * j - 1],
-        ay=depth_final[5 * j - 1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
+    list_of_all_arrows = [arrow0]
+    for i in range(1, 6):
+        arrow = go.layout.Annotation(dict(
+            x=0.01,
+            y=depth_final[j * i],
+            xref="x", yref="y",
+            text="",
+            showarrow=True,
+            axref="x", ayref='y',
+            ax=sigma_final[j * i],
+            ay=depth_final[j * i],
+            arrowhead=3,
+            arrowwidth=1.5,
+            arrowcolor='#595959', )
+        )
+        list_of_all_arrows.append(arrow)
 
     # list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5]
     # plot.update_layout(annotations=list_of_all_arrows)
@@ -161,7 +111,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                fillcolor="rgba(70, 194, 203, 0.7)"
                                ))
 
-    j = int(len(embedment_depht) / 3)
+    j = int((len(embedment_depht) - 1) / 3)
     arrow6 = go.layout.Annotation(dict(
         x=0.01,
         y=embedment_depht[0] + depth_final[-1],
@@ -175,115 +125,103 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
         arrowwidth=1.5,
         arrowcolor='#595959', )
     )
+    list_of_all_arrows.append(arrow6)
+    for i in range(1, 4):
+        arrow = go.layout.Annotation(dict(
+            x=0.01,
+            y=embedment_depht[j * i] + depth_final[-1],
+            xref="x", yref="y",
+            text="",
+            showarrow=True,
+            axref="x", ayref='y',
+            ax=active_pressure[j * i],
+            ay=embedment_depht[j * i] + depth_final[-1],
+            arrowhead=3,
+            arrowwidth=1.5,
+            arrowcolor='#595959', )
+        )
 
-    arrow7 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=active_pressure[j],
-        ay=embedment_depht[j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow8 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[2 * j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=active_pressure[2 * j],
-        ay=embedment_depht[2 * j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow9 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[3 * j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=active_pressure[3 * j],
-        ay=embedment_depht[3 * j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
+        arrow1 = go.layout.Annotation(dict(
+            x=0.01,
+            y=embedment_depht[j * i] + depth_final[-1],
+            xref="x", yref="y",
+            text="",
+            showarrow=True,
+            axref="x", ayref='y',
+            ax=-passive_pressure[j * i],
+            ay=embedment_depht[j * i] + depth_final[-1],
+            arrowhead=3,
+            arrowwidth=1.5,
+            arrowcolor='#595959', )
+        )
+        list_of_all_arrows.append(arrow)
+        list_of_all_arrows.append(arrow1)
 
-    arrow10 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=-passive_pressure[j],
-        ay=embedment_depht[j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow11 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[2 * j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=-passive_pressure[2 * j],
-        ay=embedment_depht[2 * j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
-    arrow12 = go.layout.Annotation(dict(
-        x=0.01,
-        y=embedment_depht[3 * j] + depth_final[-1],
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=-passive_pressure[3 * j],
-        ay=embedment_depht[3 * j] + depth_final[-1],
-        arrowhead=3,
-        arrowwidth=1.5,
-        arrowcolor='#595959', )
-    )
+    if type(Th) == list or type(Th) == np.ndarray:
+        # for multi anchor
+        for i in range(len(Th)):
+            arrow_T = go.layout.Annotation(dict(
+                x=0.1,
+                y=sum(h1[:i + 1]),
+                xref="x", yref="y",
+                text="",
+                showarrow=True,
+                axref="x", ayref='y',
+                ax=-active_pressure[2 * j],
+                ay=sum(h1[:i + 1]),
+                arrowhead=5,
+                arrowwidth=4,
+                arrowcolor='#595959', )
+            )
+            list_of_all_arrows.append(arrow_T)
 
-    arrow_T = go.layout.Annotation(dict(
-        x=0.1,
-        y=h1,
-        xref="x", yref="y",
-        text="",
-        showarrow=True,
-        axref="x", ayref='y',
-        ax=-active_pressure[2 * j],
-        ay=h1,
-        arrowhead=5,
-        arrowwidth=4,
-        arrowcolor='#595959', )
-    )
 
-    plot.add_annotation(dict(font=dict(color="#595959", size=16),
-                             # x=x_loc,
-                             x=-active_pressure[2 * j] * 18 / 20,
-                             y=12 * h1 / 13,
-                             showarrow=False,
-                             text=f'<b>{round(Th, 1)} {x_unit}</b>',
-                             textangle=0
-                             # xref="x",
-                             # yref="paper"
-                             ))
+    else:
+        arrow_T = go.layout.Annotation(dict(
+            x=0.1,
+            y=h1[0],
+            xref="x", yref="y",
+            text="",
+            showarrow=True,
+            axref="x", ayref='y',
+            ax=-active_pressure[2 * j],
+            ay=h1[0],
+            arrowhead=5,
+            arrowwidth=4,
+            arrowcolor='#595959', )
+        )
+        list_of_all_arrows.append(arrow_T)
 
-    list_of_all_arrows = [arrow0, arrow1, arrow2, arrow3, arrow4, arrow5, arrow6, arrow7, arrow8, arrow9, arrow10,
-                          arrow11, arrow12, arrow_T]
+        plot.add_annotation(dict(font=dict(color="#595959", size=16),
+                                 # x=x_loc,
+                                 x=-active_pressure[2 * j] * 18 / 20,
+                                 y=12 * h1[0] / 13,
+                                 showarrow=False,
+                                 text=f'<b>{round(Th, 1)} {x_unit}</b>',
+                                 textangle=0
+                                 # xref="x",
+                                 # yref="paper"
+                                 ))
+
     plot.update_layout(annotations=list_of_all_arrows)
+
+    # NOTE annotation must be added after arrows to show all arrows.
+    if type(Th) == list or type(Th) == np.ndarray:
+        for i in range(len(Th)):
+            plot.add_annotation(dict(font=dict(color="#595959", size=16),
+                                     # x=x_loc,
+                                     x=-active_pressure[2 * j] * 18 / 20,
+                                     # this value can define better to look good in output.
+                                     y=12 * sum(h1[:i + 1]) / 13,
+                                     # this value can define better to look good in output.
+                                     showarrow=False,
+                                     text=f'<b>{round(Th[i], 1)} {x_unit}</b>',
+                                     textangle=0
+                                     # xref="x",
+                                     # yref="paper"
+                                     ))
+
+    # plot.update_layout(annotations=list_of_all_arrows_new, )
 
     # plot.add_scatter(x=[i for i in range(10)], y=[j for j in range(10, 20)])
 
@@ -326,7 +264,7 @@ def plotter_load_result(depth_final, sigma_final, x_title, y_title, x_unit, y_un
                                fillcolor="rgba(242, 87, 87, 0.7)"
                                ))
 
-    j = int(len(depth_final) / 5)
+    j = int((len(depth_final) - 1) / 5)
     arrow0 = go.layout.Annotation(dict(
         x=0.01,
         y=depth_final[0],
