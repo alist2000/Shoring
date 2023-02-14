@@ -167,6 +167,7 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main=0):
                      for i in
                      range(0, int((sum(h) + delta_h) * pow(10, delta_h_decimal)),
                            int(delta_h * pow(10, delta_h_decimal)))]
+    h_list_detail[-1] = h_list_edited[-1]
     h_array_detail = np.array(h_list_detail)
     sigma_edited = []
     h_edited = []
