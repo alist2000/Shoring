@@ -85,7 +85,7 @@ def single_anchor(inputs):
                 sigma_a, h_list = pressure.pressure_cohesion_less_multi(anchor_number, h1, hn)
 
         else:
-            # this part should be developed.
+            # this part should be developed for cohesive soil.
             pass
 
         main_surcharge = surcharge(unit_system, h, delta_h)
@@ -100,55 +100,69 @@ def single_anchor(inputs):
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
         if anchor_number != 1:
-            output = multi_anchor(tieback_spacing, FS, h_list_first, h_array_detail, sigma_a_array_detail,
-                                  surcharge_pressure, force_active,
-                                  arm_active, force_passive, arm_passive)
-        driving_force = []
-        for i in force_active:
-            for j in i:
-                driving_force.append(j)
-        driving_force += [trapezoidal_force] + [surcharge_force]
+            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = multi_anchor(
+                tieback_spacing, FS, h_list_first,
+                h_array_detail, sigma_a_array_detail,
+                surcharge_pressure, force_active,
+                arm_active, force_passive, arm_passive,
+                sigma_active, sigma_passive, delta_h)
 
-        resisting_force = []
-        for i in force_passive:
-            for j in i:
-                resisting_force.append(j)
+            T_list = []
+            for T in Th:
+                T_list.append(T / cos(
+                    anchor_angle))  # ASK: this angle should be got for any anchor. or we get just one value for all?
 
-        driving_force_arm = []
-        for i in arm_active:
-            for j in i:
-                driving_force_arm.append(j - h1)
-        driving_force_arm += [trapezoidal_force_arm - h1] + [surcharge_arm - h1]
 
-        resisting_force_arm = []
-        for i in arm_passive:
-            for j in i:
-                resisting_force_arm.append(j + h - h1)
+        else:
+            # *** this part can be a separate function like multi anchor. do it later! ***
+            driving_force = []
+            for i in force_active:
+                for j in i:
+                    driving_force.append(j)
+            driving_force += [trapezoidal_force] + [surcharge_force]
 
-        d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            resisting_force = []
+            for i in force_passive:
+                for j in i:
+                    resisting_force.append(j)
 
-        # replace d0 in D for all values
-        for item in [sigma_active, sigma_passive, resisting_force, resisting_force_arm, driving_force,
-                     driving_force_arm]:
-            for i in range(len(item)):
-                if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
-                    item[i] = item[i].subs(D, d_0)
+            driving_force_arm = []
+            for i in arm_active:
+                for j in i:
+                    driving_force_arm.append(j - h1)
+            driving_force_arm += [trapezoidal_force_arm - h1] + [surcharge_arm - h1]
 
-        D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
-        D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
+            resisting_force_arm = []
+            for i in arm_passive:
+                for j in i:
+                    resisting_force_arm.append(j + h - h1)
 
-        # calculate anchor force.
-        Th = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
-        T = Th / cos(anchor_angle)
+            d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
 
-        # load diagram
-        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array, Th,
-                     h1,
+            # replace d0 in D for all values
+            for item in [sigma_active, sigma_passive, resisting_force, resisting_force_arm, driving_force,
+                         driving_force_arm]:
+                for i in range(len(item)):
+                    if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
+                        item[i] = item[i].subs(D, d_0)
+            D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
+            D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
+
+            # calculate anchor force.
+            Th = abs(sum(resisting_force) - sum(driving_force)) * tieback_spacing  # anchor force --> unit: lb
+            T = Th / cos(anchor_angle)
+        # load diagram for one anchor.
+        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array,
+                     Th,
+                     h_list_first,
                      "q", "Z", "load_unit", "length_unit")
 
         # load result
         final_pressure_under = active_pressure_array - passive_pressure_array
+        if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
+            for i in range(len(sigma_a_array_detail)):
+                sigma_a_array_detail[i] += surcharge_pressure[i]
         final_pressure = np.array(list(sigma_a_array_detail) + list(final_pressure_under))
         depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
