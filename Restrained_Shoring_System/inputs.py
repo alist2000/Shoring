@@ -7,12 +7,14 @@ number_of_project = 1
 number_of_layer = 1
 
 delta_h = 0.01
+delta_h_decimal = str(delta_h)[::-1].find('.')
+if delta_h_decimal == -1:
+    delta_h_decimal = 0
 
-
-anchor_number = 4
-# anchor_number = 1
-h = 60  # ft or m
-# h = 25  # ft or m
+# anchor_number = 4
+anchor_number = 1
+# h = 60  # ft or m
+h = 25  # ft or m
 gama = 115  # pcf or Mpa
 c = 0
 if anchor_number == 1:
@@ -20,10 +22,15 @@ if anchor_number == 1:
     h_list = [h1]
 else:
     h1 = 7
+    h1 = round(h1, delta_h_decimal)
     h2 = 16
+    h2 = round(h2, delta_h_decimal)
     h3 = 12
+    h3 = round(h3, delta_h_decimal)
     h4 = 15
+    h4 = round(h4, delta_h_decimal)
     hn = h - (h1 + h2 + h3 + h4)
+    hn = round(hn, delta_h_decimal)
     h_list = [h1, h2, h3, h4, hn]  # len = anchor number + 1
 if c != 0:
     gama_s = ...
@@ -99,6 +106,8 @@ FS = 1.3
 # anchor_angel = 15  # degree
 anchor_angel = 0  # degree
 anchor_angel = anchor_angel * np.pi / 180
+
+h = round(h, delta_h_decimal)
 
 input_values = {"number_of_project": number_of_project,
                 "number_of_layer": [number_of_layer],
