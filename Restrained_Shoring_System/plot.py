@@ -58,7 +58,6 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
                                fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
                                ))
 
-
     j = int((len(depth_final) - 1) / 5)
     arrow0 = go.layout.Annotation(dict(
         x=0.01,
@@ -94,8 +93,6 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
     # plot.update_layout(annotations=list_of_all_arrows)
 
     plot.update_layout(title_text='Load Diagram', title_y=0.96)
-
-
 
     plot.add_scatter(x=active_pressure, y=embedment_depht + depth_final[-1], showlegend=False,
                      marker=dict(color='rgba(255, 178, 107, 0.7)'))
@@ -243,7 +240,7 @@ def plotter_load(depth_final, sigma_final, embedment_depht, active_pressure, pas
     # plot.write_html("output.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    plot.show()
+    # plot.show()
     return plot
 
 
@@ -367,7 +364,7 @@ def plotter_load_result(depth_final, sigma_final, x_title, y_title, x_unit, y_un
     # plot.write_html("output.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    plot.show()
+    # plot.show()
     return plot
 
 
@@ -408,7 +405,7 @@ def plotter_shear(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     # plot.write_html("output.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    plot.show()
+    # plot.show()
     return plot
 
 
@@ -445,6 +442,34 @@ def plotter_moment(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
                                ))
 
     plot.update_layout(title_text='Moment Diagram', title_y=0.96)
+
+    # plot.write_html("output.html",
+    #                 full_html=False,
+    #                 include_plotlyjs='cdn')
+    plot.show()
+    return plot
+
+
+def plotter_deflection(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
+    plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
+        xaxis_title=f"{x_title} ({x_unit})",
+        yaxis_title=f"{y_title} ({y_unit})",
+        xaxis={"side": "top",
+               "zeroline": True,
+               "mirror": "ticks",
+               "zerolinecolor": "#000000",
+               "zerolinewidth": 7},
+        yaxis={"zeroline": True,
+               "mirror": "ticks",
+               "zerolinecolor": "#969696",
+               "zerolinewidth": 4}
+    )
+    plot['layout']['yaxis']['autorange'] = "reversed"
+    layout = Layout(
+        paper_bgcolor='#ffffff',
+        plot_bgcolor='#ffffff'
+    )
+    plot.update_layout(layout)
 
     # plot.write_html("output.html",
     #                 full_html=False,
