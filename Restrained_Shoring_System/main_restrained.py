@@ -161,6 +161,7 @@ def main_restrained(inputs):
                                          unit_system)
             shear_plot, shear_values = analysis_instance.shear_multi()
         moment_plot, moment_values = analysis_instance.moment(shear_values)
+        deflections = analysis_instance.deflection_single2(moment_values, d_0, h1)
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
