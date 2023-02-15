@@ -109,10 +109,9 @@ def edit_sigma_and_height(sigma, h, delta_h):
         else:
             h_list_edited.append(round(h_list_edited[i - 1] + h[i - 1], delta_h_decimal))
 
-    h_list_detail = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= sum(h) else sum(h)
-                     for i in
-                     range(0, int((sum(h) + delta_h) * pow(10, delta_h_decimal)),
-                           int(delta_h * pow(10, delta_h_decimal)))]
+    h_array_detail = np.arange(0, sum(h) + delta_h, delta_h)
+    h_list_detail = list(h_array_detail)
+    h_list_detail[-1] = h_list_edited[-1]
     h_array_detail = np.array(h_list_detail)
 
     sigma_a_detail = []
@@ -138,7 +137,7 @@ def edit_sigma_and_height(sigma, h, delta_h):
     return h_array_detail, sigma_a_array_detail
 
 
-def edit_sigma_and_height_general(sigma, h, delta_h, h_main=0):
+def edit_sigma_and_height_general(sigma, h, delta_h, h_main):
     x = symbols("x")
     """
     :param sigma: list. any index is a list with two value for pressure on the top and below of layer. and len = len h
@@ -163,10 +162,8 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main=0):
     if h_main != 0:
         h_list_edited[-1] = h_main
 
-    h_list_detail = [i / pow(10, delta_h_decimal) if i / pow(10, delta_h_decimal) <= sum(h) else sum(h)
-                     for i in
-                     range(0, int((sum(h) + delta_h) * pow(10, delta_h_decimal)),
-                           int(delta_h * pow(10, delta_h_decimal)))]
+    h_array_detail = np.arange(0, h_main + delta_h, delta_h)
+    h_list_detail = list(h_array_detail)
     h_list_detail[-1] = h_list_edited[-1]
     h_array_detail = np.array(h_list_detail)
     sigma_edited = []
