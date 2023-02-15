@@ -110,8 +110,16 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     for i in arm_passive:
         for j in i:
             resisting_arm.append(j)
+
+    delta_h_decimal = str(delta_h)[::-1].find('.')
+    if delta_h_decimal == -1:
+        delta_h_decimal = 0
+
     d = find_D(FS, resisting_force, resisting_arm, driving_force, driving_arm)
     d_0 = find_D(1, resisting_force, resisting_arm, driving_force, driving_arm)
+
+    d = round(d, delta_h_decimal)
+    d_0 = round(d_0, delta_h_decimal)
 
     # step2: calculate force in last anchor with d_0
     # replace d0 in D for all values
@@ -122,8 +130,8 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
             if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
                 item[i] = item[i].subs(D, d_0)
 
-    D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
-    D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
+    D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h, d_0)
+    D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h, d_0)
 
     T_end_l = abs(sum(resisting_force) - sum(driving_force))
     T_list.append([T_end_l, 0])

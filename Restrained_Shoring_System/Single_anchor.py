@@ -35,17 +35,22 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
         for j in i:
             resisting_force_arm.append(j + h - h1)
 
+    delta_h_decimal = str(delta_h)[::-1].find('.')
+    if delta_h_decimal == -1:
+        delta_h_decimal = 0
+
     d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
     d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-
+    d = round(d, delta_h_decimal)
+    d_0 = round(d_0, delta_h_decimal)
     # replace d0 in D for all values
     for item in [sigma_active, sigma_passive, resisting_force, resisting_force_arm, driving_force,
                  driving_force_arm]:
         for i in range(len(item)):
             if type(item[i]) == sympy.core.mul.Mul or type(item[i]) == sympy.core.add.Add:
                 item[i] = item[i].subs(D, d_0)
-    D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h)
-    D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h)
+    D_array, active_pressure_array = edit_sigma_and_height_general([sigma_active], [d_0], delta_h, d_0)
+    D_array, passive_pressure_array = edit_sigma_and_height_general([sigma_passive], [d_0], delta_h, d_0)
 
     # calculate anchor force.
     Th = abs(sum(resisting_force) - sum(driving_force)) * spacing  # anchor force --> unit: lb
