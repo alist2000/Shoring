@@ -89,6 +89,13 @@ def main_restrained(inputs):
             # this part should be developed for cohesive soil.
             pass
 
+        delta_h_decimal = str(delta_h)[::-1].find('.')
+        if delta_h_decimal == -1:
+            delta_h_decimal = 0
+
+        for i in range(len(h_list)):
+            h_list[i] = round(h_list[i], delta_h_decimal)
+
         main_surcharge = surcharge(unit_system, h, delta_h)
         surcharge_force, surcharge_arm, surcharge_pressure, error_surcharge_list = result_surcharge(
             main_surcharge,
