@@ -163,6 +163,8 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main):
         h_list_edited[-1] = h_main
 
     h_array_detail = np.arange(0, h_main + delta_h, delta_h)
+    for i in range(len(h_array_detail)):
+        h_array_detail[i] = round(h_array_detail[i], delta_h_decimal)
     h_list_detail = list(h_array_detail)
     h_list_detail[-1] = h_list_edited[-1]
     h_array_detail = np.array(h_list_detail)
