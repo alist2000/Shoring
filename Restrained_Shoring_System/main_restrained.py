@@ -156,12 +156,14 @@ def main_restrained(inputs):
             analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
                                          unit_system)
             shear_plot, shear_values = analysis_instance.shear()
+            moment_plot, moment_values = analysis_instance.moment(shear_values)
+            deflections = analysis_instance.deflection_single3(moment_values, d_0, h1)
         else:
             analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
                                          unit_system)
             shear_plot, shear_values = analysis_instance.shear_multi()
-        moment_plot, moment_values = analysis_instance.moment(shear_values)
-        deflections = analysis_instance.deflection_single2(moment_values, d_0, h1)
+            moment_plot, moment_values = analysis_instance.moment(shear_values)
+            deflections = analysis_instance.deflection_multi(moment_values, d_0, h_list_first)
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
