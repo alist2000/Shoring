@@ -33,7 +33,8 @@ from Passive_Active.active_passive import rankine, coulomb
 def main_restrained(inputs):
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list,
-     k_formula_list, soil_properties_list, surcharge_type_list, surcharge_inputs_list, tieback_spacing_list,
+     k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
+     surcharge_inputs_list, tieback_spacing_list,
      FS_list, anchor_angle_list] = inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
@@ -45,6 +46,8 @@ def main_restrained(inputs):
         cohesive_properties = cohesive_properties_list[project]
         k_formula = k_formula_list[project]
         soil_properties = soil_properties_list[project]
+        there_is_water = there_is_water_list[project]
+        water_started = water_started_list[project]
         surcharge_type = surcharge_type_list[project]
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 

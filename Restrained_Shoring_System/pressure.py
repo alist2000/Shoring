@@ -268,6 +268,22 @@ def find_D(FS, force_r, arm_r, force_d, arm_d):
     d = control_solution(d)
     return d
 
+
+gama_w = {"us": 62.4, "metric": 9810}
+
+
+def water_pressure(there_is_water, water_started, h, unit_system):
+    gama_water = gama_w.get(unit_system)
+
+    D = symbols("D")
+    if there_is_water == "Yes":
+        water_pressure_list = [[0, 0], [0, (h + D) * gama_water]]
+        hw_list = [water_started, h + D - water_started]
+    else:
+        water_pressure_list = [0]
+        hw_list = [0]
+    return hw_list, water_pressure_list
+
 # test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
 # sigma_active, sigma_passive = test.soil_pressure()
 # sigma_a, h_list = test.pressure_cohesion_less_single(10)

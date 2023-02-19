@@ -1,4 +1,5 @@
 import numpy as np
+from sympy import symbols
 
 unit_system = "us"
 
@@ -15,7 +16,7 @@ if delta_h_decimal == -1:
 anchor_number = 1
 # h = 60  # ft or m
 h = 25  # ft or m
-gama = 115  # pcf or Mpa
+gama = 115  # pcf or N/m^3
 c = 20
 if anchor_number == 1:
     h1 = 10
@@ -37,6 +38,18 @@ if c != 0:
 else:
     gama_s = 0
 cohesive_properties = [c, gama_s]
+
+# water
+"""
+user can define is there any water or no.
+then if there was water user should input 
+z that water started from that. z is a height from 
+top of soil."""
+there_is_water = "Yes"
+if there_is_water == "Yes":
+    water_started = 2  # ft or m
+else:
+    water_started = 0
 
 # surcharge
 surcharge_type = ["Uniform"]
@@ -120,6 +133,8 @@ input_values = {"number_of_project": number_of_project,
                 "cohesive_properties": [cohesive_properties],
                 "k_formula": [k_formula],
                 "soil_properties": [soil_properties],
+                "there_is_water": [there_is_water],
+                "water_started": [water_started],
                 "surcharge_type": [surcharge_type],
                 "surcharge_inputs": [surcharge_inputs],
                 "tieback_spacing": [tieback_spacing],
