@@ -508,7 +508,7 @@ class analysis:
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
         z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection_array, z_max, max_deflection
+        return deflection, deflection_array, z_max, max_deflection
 
     def deflection_multi(self, moment, d, h):
         """
@@ -669,4 +669,4 @@ class analysis:
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
         z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection_array, z_max, max_deflection
+        return deflection, deflection_array, z_max, max_deflection
