@@ -85,9 +85,15 @@ def main_restrained(inputs):
                 hn = h_list_first[-1]
                 sigma_a, h_list = pressure.pressure_cohesion_less_multi(anchor_number, h1, hn)
 
+            h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
+                [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
+
         else:
-            # this part should be developed for cohesive soil.
-            pass
+            h1 = h_list_first[0]
+            sigma_a, h_list = pressure.pressure_cohesive(gama_s, h1)
+
+            h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
+                [[0, sigma_a], [sigma_a, sigma_a]], h_list, delta_h, h)
 
         delta_h_decimal = str(delta_h)[::-1].find('.')
         if delta_h_decimal == -1:
@@ -103,8 +109,6 @@ def main_restrained(inputs):
             teta, ka)
 
         # h_array_detail_1, sigma_a_array_detail_1 = edit_sigma_and_height(sigma_a, h_list, delta_h)
-        h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
-            [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
         if anchor_number != 1:
