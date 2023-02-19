@@ -75,6 +75,7 @@ class analysis:
         sigma = self.sigma
         delta_h = self.delta_h
         unit_system = self.unit_system
+        delta_h_decimal = self.delta_h_decimal
 
         if unit_system == "us":
             load_unit = "lb"  # if unit of gama was pcf
@@ -88,7 +89,8 @@ class analysis:
         shear_h1 = 0
         shear_values = []
         for j in range(anchor_number):
-            last_index = depth.index(sum(h[:j + 1]))
+            linker = round(sum(h[:j + 1]), delta_h_decimal)
+            last_index = depth.index(linker)
             for i in range(len(depth[first_index:last_index])):
                 try:
                     shear = spi.simpson(sigma[first_index:i + first_index],
@@ -101,7 +103,8 @@ class analysis:
             shear_values.append(float(shear_h1))
 
         shear_values_end = shear_values[-1]
-        for i in range(len(depth[depth.index(sum(h[:-1])) + 1:])):
+        link = round(sum(h[:-1]), delta_h_decimal)
+        for i in range(len(depth[depth.index(link) + 1:])):
             try:
                 shear = spi.simpson(sigma[first_index:i + first_index],
                                     depth[first_index:i + first_index]) + shear_values_end

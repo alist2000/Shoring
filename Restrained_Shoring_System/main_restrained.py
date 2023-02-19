@@ -149,6 +149,8 @@ def main_restrained(inputs):
 
         final_pressure = np.array(list(sigma_a_array_detail_copy) + list(final_pressure_under))
         depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
+        for i in range(len(depth)):
+            depth[i] = round(depth[i], delta_h_decimal)
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
 
         # shear and moment values and diagrams

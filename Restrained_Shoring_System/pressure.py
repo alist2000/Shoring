@@ -113,7 +113,8 @@ def edit_sigma_and_height(sigma, h, delta_h):
     h_list_detail = list(h_array_detail)
     h_list_detail[-1] = h_list_edited[-1]
     h_array_detail = np.array(h_list_detail)
-
+    for i in range(len(h_array_detail)):
+        h_array_detail[i] = round(h_array_detail[i], delta_h_decimal)
     sigma_a_detail = []
     for z in h_list_detail[:h_list_detail.index(h_list_edited[1]) + 1]:
         sigma_a = (sigma / (h_list_edited[1] - h_list_edited[0])) * z

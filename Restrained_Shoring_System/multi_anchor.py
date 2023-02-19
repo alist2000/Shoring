@@ -22,6 +22,10 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     force_passive: force of soil in resisting side under excavation line.
     arm_passive: arm of passive force. started from top of soil in passive side. ( x*D )
     """
+    delta_h_decimal = str(delta_h)[::-1].find('.')
+    if delta_h_decimal == -1:
+        delta_h_decimal = 0
+
     surcharge_pressure_copy = copy.deepcopy(surcharge_pressure)
     if type(surcharge_pressure) == int or type(surcharge_pressure) == float:
         sigma_a_copy = copy.deepcopy(sigma_a)
@@ -52,7 +56,8 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
         if i == 0:
             # fist part
             first_index = cantilever_index
-            last_index = ha.index(h_list[0] + h_list[1]) + 1
+            linker = round(h_list[0] + h_list[1], delta_h_decimal)
+            last_index = ha.index(linker) + 1
             last_index_last = copy.deepcopy(last_index)
             force, arm = force_calculator(ha[first_index:last_index], sigma_a[first_index:last_index])
             force_su, arm_su = force_calculator(ha[first_index:last_index], surcharge_pressure[first_index:last_index])
@@ -65,7 +70,8 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
         else:
             # other parts
             first_index = last_index_last
-            last_index = ha.index(sum(h_list[:i + 2])) + 1
+            linker = round(sum(h_list[:i + 2]), delta_h_decimal)
+            last_index = ha.index(linker) + 1
             force, arm = force_calculator(ha[first_index:last_index], sigma_a[first_index:last_index])
             force_su, arm_su = force_calculator(ha[first_index:last_index], surcharge_pressure[first_index:last_index])
             if type(surcharge_pressure_copy) == int or type(surcharge_pressure_copy) == float:
