@@ -16,7 +16,7 @@ anchor_number = 1
 # h = 60  # ft or m
 h = 25  # ft or m
 gama = 115  # pcf or Mpa
-c = 0
+c = 20
 if anchor_number == 1:
     h1 = 10
     h_list = [h1]
@@ -33,7 +33,7 @@ else:
     hn = round(hn, delta_h_decimal)
     h_list = [h1, h2, h3, h4, hn]  # len = anchor number + 1
 if c != 0:
-    gama_s = ...
+    gama_s = 20
 else:
     gama_s = 0
 cohesive_properties = [c, gama_s]
