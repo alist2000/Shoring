@@ -146,7 +146,7 @@ def main_restrained(inputs):
                      surcharge_pressure,
                      Th,
                      h_list_first,
-                     "q", "Z", "load_unit", "length_unit")
+                     "q", "Z", unit_system)
 
         # load result
         final_pressure_under = active_pressure_array - passive_pressure_array

@@ -30,6 +30,16 @@ class analysis:
 
         self.delta_h_decimal = delta_h_decimal
 
+        if unit_system == "us":
+            deflection_unit = "in"
+            length_unit = "ft"
+        else:
+            deflection_unit = "mm"
+            length_unit = "m"
+
+        self.deflection_unit = deflection_unit
+        self.length_unit = length_unit
+
     def shear(self):
         T = self.T
         h1 = self.h1
@@ -375,6 +385,8 @@ class analysis:
         depth = self.depth
         delta_h = self.delta_h
         delta_h_decimal = self.delta_h_decimal
+        deflection_unit = self.deflection_unit
+        length_unit = self.length_unit
 
         h_total = round(depth[-1], delta_h_decimal)
         # calculate PoF
@@ -489,7 +501,7 @@ class analysis:
         deflection_list += list(deflection3) + list(deflection1_2)
         deflection_list.reverse()
         deflection_array = np.array(deflection_list)
-        deflection = plotter_deflection(depth, deflection_array, 'x_title', 'y_title', 'x_unit', 'y_unit')
+        deflection = plotter_deflection(depth, deflection_array, 'Deflection', 'z', deflection_unit, length_unit)
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
 
@@ -509,6 +521,8 @@ class analysis:
         depth = self.depth
         delta_h = self.delta_h
         delta_h_decimal = self.delta_h_decimal
+        deflection_unit = self.deflection_unit
+        length_unit = self.length_unit
 
         h_total = round(depth[-1], delta_h_decimal)
         # calculate PoF
@@ -647,7 +661,7 @@ class analysis:
         deflection_list += list(deflection1_2) + list(deflection3)
         # deflection.reverse()
         deflection_array = np.array(deflection_list)
-        deflection = plotter_deflection(depth, deflection_array, 'x_title', 'y_title', 'x_unit', 'y_unit')
+        deflection = plotter_deflection(depth, deflection_array, 'Deflection', "z", deflection_unit, length_unit)
 
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
