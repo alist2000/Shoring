@@ -71,7 +71,7 @@ class anchor_pressure:
         c = self.c
         ka = self.ka
 
-        h_list = [(2 / 3) * h1, h - ((2 / 3) * h1), 0]
+        h_list = [(2 / 3) * h1, h - ((2 / 3) * h1)]
 
         Ns = gama_s * h / c
         if Ns <= 4:
