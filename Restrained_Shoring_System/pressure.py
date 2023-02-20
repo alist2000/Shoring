@@ -276,9 +276,13 @@ def water_pressure(there_is_water, water_started, h, unit_system):
     gama_water = gama_w.get(unit_system)
 
     D = symbols("D")
-    if there_is_water == "Yes":
+    if there_is_water == "Yes" and water_started != 0:
         water_pressure_list = [[0, 0], [0, (h + D) * gama_water]]
         hw_list = [water_started, h + D - water_started]
+
+    elif there_is_water == "Yes" and water_started == 0:
+        water_pressure_list = [[0, (h + D) * gama_water]]
+        hw_list = [h + D]
     else:
         water_pressure_list = [0]
         hw_list = [0]
