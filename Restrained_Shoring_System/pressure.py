@@ -210,7 +210,7 @@ def force_calculator(h, sigma):
     return force, centroid
 
 
-def force_calculator_x(retaining_h, h, sigma, status="active"):
+def force_calculator_x(retaining_h, h, sigma, status="active", pressure_due="soil"):
     """
     sigma and h must be a list.
     for example: h = [2 , D]
@@ -224,13 +224,19 @@ def force_calculator_x(retaining_h, h, sigma, status="active"):
         force_final.append([force1, force2])
 
         # arm from top of soil
-        if status == "active":
-            arm1 = retaining_h + h[i] / 2
-            arm2 = retaining_h + 2 * h[i] / 3
-            arm_final.append([arm1, arm2])
+        if pressure_due == "soil":
+            if status == "active":
+                arm1 = retaining_h + h[i] / 2
+                arm2 = retaining_h + 2 * h[i] / 3
+                arm_final.append([arm1, arm2])
+            else:
+                arm1 = h[i] / 2
+                arm2 = 2 * h[i] / 3
+                arm_final.append([arm1, arm2])
         else:
+            # for water force arm started form bottom
             arm1 = h[i] / 2
-            arm2 = 2 * h[i] / 3
+            arm2 = 1 * h[i] / 3
             arm_final.append([arm1, arm2])
     return force_final, arm_final
 
@@ -276,17 +282,31 @@ def water_pressure(there_is_water, water_started, h, unit_system):
     gama_water = gama_w.get(unit_system)
 
     D = symbols("D")
-    if there_is_water == "Yes" and water_started != 0:
-        water_pressure_list = [[0, 0], [0, (h + D) * gama_water]]
-        hw_list = [water_started, h + D - water_started]
+    if there_is_water == "Yes":
+        if water_started <= h and water_started != 0:
+            water_pressure_list_active = [[0, 0], [0, (h + D) * gama_water]]
+            hw_list_active = [water_started, h + D - water_started]
+            water_pressure_list_passive = [[0, D * gama_water]]
+            hw_list_passive = [D]
 
-    elif there_is_water == "Yes" and water_started == 0:
-        water_pressure_list = [[0, (h + D) * gama_water]]
-        hw_list = [h + D]
+        elif water_started == 0:
+            water_pressure_list_active = [[0, (h + D) * gama_water]]
+            hw_list_active = [h + D]
+            water_pressure_list_passive = [[0, D * gama_water]]
+            hw_list_passive = [D]
+        else:
+            # in this situation water started is larger than main h
+            water_pressure_list_active = [[0, 0], [0, D * gama_water]]
+            hw_list_active = [water_started, D]
+            water_pressure_list_passive = [[0, 0], [0, D * gama_water]]
+            hw_list_passive = [water_started - h, D]
     else:
-        water_pressure_list = [0]
-        hw_list = [0]
-    return hw_list, water_pressure_list
+        water_pressure_list_active = [0]
+        hw_list_active = [0]
+        water_pressure_list_passive = [0]
+        hw_list_passive = [0]
+
+    return hw_list_active, water_pressure_list_active, hw_list_passive, water_pressure_list_passive
 
 # test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
 # sigma_active, sigma_passive = test.soil_pressure()

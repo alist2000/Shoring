@@ -10,7 +10,7 @@ import numpy as np
 
 from inputs import input_values
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
-    force_calculator_x, find_D
+    force_calculator_x, find_D, water_pressure
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
@@ -105,15 +105,23 @@ def main_restrained(inputs):
         for i in range(len(h_list)):
             h_list[i] = round(h_list[i], delta_h_decimal)
 
+        # surcharge
         main_surcharge = surcharge(unit_system, h, delta_h)
         surcharge_force, surcharge_arm, surcharge_pressure, error_surcharge_list = result_surcharge(
             main_surcharge,
             surcharge_type, q, l1, l2,
             teta, ka)
 
-        # h_array_detail_1, sigma_a_array_detail_1 = edit_sigma_and_height(sigma_a, h_list, delta_h)
-
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
+
+        # water
+        hw_list_active, water_pressure_list_active, hw_list_passive, water_pressure_list_passive = water_pressure(
+            there_is_water, water_started, h, unit_system)
+        water_force_active, water_arm_active = force_calculator_x(h, hw_list_active, water_pressure_list_active,
+                                                                  "active", "water")
+        water_force_passive, water_arm_passive = force_calculator_x(h, hw_list_passive, water_pressure_list_passive,
+                                                                    "passive", "water")
+
         if anchor_number != 1:
             d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = multi_anchor(
                 tieback_spacing, FS, h_list_first,
