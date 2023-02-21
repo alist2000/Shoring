@@ -15,6 +15,7 @@ from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
 from analysis import analysis
+from design import design, subscription, min_weight
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
@@ -35,7 +36,8 @@ def main_restrained(inputs):
      h_list_list, cohesive_properties_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
      surcharge_inputs_list, tieback_spacing_list,
-     FS_list, anchor_angle_list] = inputs.values()
+     anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
+     selected_design_sections_list] = inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
         anchor_number = anchor_number_list[project]
@@ -52,8 +54,14 @@ def main_restrained(inputs):
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 
         tieback_spacing = tieback_spacing_list[project]
-        FS = FS_list[project]
         anchor_angle = anchor_angle_list[project]
+
+        FS = FS_list[project]
+        E = E_list[project]
+        Fy = Fy_list[project]
+        allowable_deflection = allowable_deflection_list[project]
+
+        selected_design_sections = selected_design_sections_list[project]
 
         if k_formula == "User Defined":
             ka, kp = soil_properties[0], soil_properties[1]
@@ -183,6 +191,21 @@ def main_restrained(inputs):
             moment_plot, moment_values = analysis_instance.moment(shear_values)
             deflection_plot, deflection_values, z_max, max_deflection = analysis_instance.deflection_multi(
                 moment_values, d_0, h_list_first)
+
+        V_max = max(max(shear_values), abs(min(shear_values)))
+        M_max = max(max(moment_values), abs(min(moment_values)))
+        deflection_max = max(max(deflection_values), abs(min(deflection_values)))
+
+        for section in selected_design_sections:
+            section = section[1:]
+            section_design = design(section, E, Fy, unit_system)
+            moment_ok = section_design.moment_design(M_max)
+            shear_ok = section_design.shear_design(V_max)
+            deflection_ok = section_design.moment_design(deflection_max)
+
+            qualified_sections = subscription(moment_ok, shear_ok, deflection_ok)
+            best_section = min_weight(qualified_sections)
+
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
