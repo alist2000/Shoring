@@ -4,6 +4,7 @@ import numpy as np
 import scipy.integrate as spi
 
 from plot import plotter_shear, plotter_moment, plotter_deflection
+from report import create_feather
 
 
 def find_max(z, value):
@@ -73,10 +74,21 @@ class analysis:
                 shear = 0.0
             shear_values.append(float(shear))
 
+        V_max = max(max(shear_values), abs(min(shear_values)))
+        try:
+            Y_zero_load_index = shear_values.index(V_max)
+            Y_zero_load = depth[Y_zero_load_index]
+        except:
+            Y_zero_load_index = shear_values.index(-V_max)
+            Y_zero_load = depth[Y_zero_load_index]
+
         depth = np.array(depth)
         shear_values = np.array(shear_values)
+
+        create_feather(depth, shear_values, "Shear", "shear_project")
+
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
-        return plot, shear_values
+        return plot, shear_values, V_max, Y_zero_load
 
     def shear_multi(self):
         T = self.T
@@ -122,14 +134,25 @@ class analysis:
                 shear = 0.0
             shear_values.append(float(shear))
 
+        V_max = max(max(shear_values), abs(min(shear_values)))
+        try:
+            Y_zero_load_index = shear_values.index(V_max)
+            Y_zero_load = depth[Y_zero_load_index]
+        except:
+            Y_zero_load_index = shear_values.index(-V_max)
+            Y_zero_load = depth[Y_zero_load_index]
+
         depth = np.array(depth)
         shear_values = np.array(shear_values)
+
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
-        return plot, shear_values
+        create_feather(depth, shear_values, "Shear", "shear_project")
+        return plot, shear_values, V_max, Y_zero_load
 
     def moment(self, shear_values):
         depth = self.depth
         unit_system = self.unit_system
+        delta_h_decimal = self.delta_h_decimal
         if unit_system == "us":
             load_unit = "lb-ft"
             length_unit = "ft"
@@ -146,9 +169,19 @@ class analysis:
         moment_values[-1] = 0
         moment_values = np.array(moment_values)
 
+        M_max = max(max(moment_values), abs(min(moment_values)))
+        try:
+            Y_zero_shear_index = list(moment_values).index(M_max)
+            Y_zero_shear = depth[Y_zero_shear_index]
+        except:
+            Y_zero_shear_index = list(moment_values).index(-M_max)
+            Y_zero_shear = depth[Y_zero_shear_index]
+
+        create_feather(depth, moment_values, "Moment", "moment_project")
+
         plot = plotter_moment(depth, moment_values, "M", "Z", load_unit, length_unit)
 
-        return plot, moment_values
+        return plot, moment_values, M_max, Y_zero_shear
 
     def deflection_single(self, moment, d, h1):
         """
@@ -507,8 +540,10 @@ class analysis:
 
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
-        z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection_array, z_max, max_deflection
+        max_deflection, z_max = find_max([x1, x2], [max1, max2])
+        z_max = depth[z_max]
+
+        return deflection_array, z_max, abs(max_deflection)
 
     def deflection_multi(self, moment, d, h):
         """
@@ -668,8 +703,9 @@ class analysis:
 
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
-        z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection_array, z_max, max_deflection
+        max_deflection, z_max = find_max([x1, x2], [max1, max2])
+        z_max = depth[z_max]
+        return deflection_array, z_max, abs(max_deflection)
 
     def final_deflection(self, deflection_values, final_sections, E, unit_system):
         depth = self.depth
@@ -692,8 +728,26 @@ class analysis:
                 max_deflection = max(max(deflection_copy), abs(min(deflection_copy)))
                 max_deflection_list.append(max_deflection)
                 final_deflections.append(deflection_copy)
+
+                create_feather(depth, deflection_copy, "Deflection", "Deflection_project_section" + str(i + 1))
+
                 deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
                                                      length_unit)
                 deflection_plot_list.append(deflection_plot)
 
         return final_deflections, max_deflection_list, deflection_plot_list
+
+
+def DCR_calculator(max_deflection, allowable_deflection, Sx, S_required, A, A_required):
+    DCR_deflection, DCR_shear, DCR_moment = [], [], []
+    for i in range(len(max_deflection)):
+        DCR_d = max_deflection[i] / allowable_deflection
+        DCR_deflection.append(DCR_d)
+
+        DCR_s = A_required / A[i]
+        DCR_shear.append(DCR_s)
+
+        DCR_m = S_required / Sx[i]
+        DCR_moment.append(DCR_m)
+
+    return DCR_deflection, DCR_shear, DCR_moment
