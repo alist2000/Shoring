@@ -501,14 +501,14 @@ class analysis:
         deflection_list += list(deflection3) + list(deflection1_2)
         deflection_list.reverse()
         deflection_array = np.array(deflection_list)
-        deflection = plotter_deflection(depth, deflection_array, 'Deflection', 'z', deflection_unit, length_unit)
+        # deflection = plotter_deflection(depth, deflection_array, 'Deflection', 'z', deflection_unit, length_unit)
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
 
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
         z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection, deflection_array, z_max, max_deflection
+        return deflection_array, z_max, max_deflection
 
     def deflection_multi(self, moment, d, h):
         """
@@ -661,7 +661,7 @@ class analysis:
         deflection_list += list(deflection1_2) + list(deflection3)
         # deflection.reverse()
         deflection_array = np.array(deflection_list)
-        deflection = plotter_deflection(depth, deflection_array, 'Deflection', "z", deflection_unit, length_unit)
+        # deflection = plotter_deflection(depth, deflection_array, 'Deflection', "z", deflection_unit, length_unit)
 
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
@@ -669,4 +669,31 @@ class analysis:
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
         z_max, max_deflection = find_max([x1, x2], [max1, max2])
-        return deflection, deflection_array, z_max, max_deflection
+        return deflection_array, z_max, max_deflection
+
+    def final_deflection(self, deflection_values, final_sections, E, unit_system):
+        depth = self.depth
+        deflection_unit = self.deflection_unit
+        length_unit = self.length_unit
+        final_deflections = []
+        deflection_plot_list = []
+        max_deflection_list = []
+        for item in final_sections:
+            section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
+            if section != "" and Ix != "":
+                if unit_system == "us":
+                    EI = E * 1000 * float(Ix) / (12 ** 3)  # E: Ksi , M: lb.ft
+                else:
+                    EI = E * float(Ix) * (10 ** 9)  # E: Mpa , M: N.m
+
+                deflection_copy = copy.deepcopy(deflection_values)
+                for i in range(len(deflection_values)):
+                    deflection_copy[i] = deflection_copy[i] / EI
+                max_deflection = max(max(deflection_copy), abs(min(deflection_copy)))
+                max_deflection_list.append(max_deflection)
+                final_deflections.append(deflection_copy)
+                deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
+                                                     length_unit)
+                deflection_plot_list.append(deflection_plot)
+
+        return final_deflections, max_deflection_list, deflection_plot_list
