@@ -449,9 +449,9 @@ def plotter_moment(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
 
     plot.update_layout(title_text='Moment Diagram', title_y=0.96)
 
-    plot.write_html("moment.html",
-                    full_html=False,
-                    include_plotlyjs='cdn')
+    # plot.write_html("moment.html",
+    #                 full_html=False,
+    #                 include_plotlyjs='cdn')
     # plot.show()
     return plot
 
@@ -488,8 +488,8 @@ def plotter_deflection(depth_final, sigma_final, x_title, y_title, x_unit, y_uni
                                fillcolor="rgba(255, 123, 0, 0.5)"
                                ))
 
-    plot.write_html("output1.html",
-                    full_html=False,
-                    include_plotlyjs='cdn')
+    # plot.write_html("output1.html",
+    #                 full_html=False,
+    #                 include_plotlyjs='cdn')
     # plot.show()
     return plot
