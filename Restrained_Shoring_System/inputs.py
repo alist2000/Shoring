@@ -16,6 +16,8 @@ if delta_h_decimal == -1:
 anchor_number = 1
 # h = 60  # ft or m
 h = 25  # ft or m
+h = round(h, delta_h_decimal)
+
 gama = 115  # pcf or N/m^3
 c = 20
 if anchor_number == 1:
@@ -120,7 +122,11 @@ FS = 1.3
 anchor_angel = 0  # degree
 anchor_angel = anchor_angel * np.pi / 180
 
-h = round(h, delta_h_decimal)
+allowable_deflection = 0.5  # in
+Fy = 36  # ksi or MpaNo
+E = 29000  # ksi or MPa
+
+selected_design_sections = ["W18", "W21", "W24", "W27"]
 
 input_values = {"number_of_project": number_of_project,
                 "number_of_layer": [number_of_layer],
@@ -138,6 +144,10 @@ input_values = {"number_of_project": number_of_project,
                 "surcharge_type": [surcharge_type],
                 "surcharge_inputs": [surcharge_inputs],
                 "tieback_spacing": [tieback_spacing],
+                "anchor_angel": [anchor_angel],
                 "FS": [FS],
-                "anchor_angel": [anchor_angel]
+                "E": [E],
+                "Fy": [Fy],
+                "allowable_deflection": [allowable_deflection],
+                "selected_design_sections": [selected_design_sections]
                 }
