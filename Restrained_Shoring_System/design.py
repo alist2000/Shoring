@@ -69,6 +69,7 @@ def subscription(moment_section, shear_section, deflection_section):
     bf_list = []
     tw_list = []
     tf_list = []
+    number_of_section = 0
     for i in range(len(base_subscription["section"])):
         if base_subscription["section"][i] in moment_section["section"][i] and shear_section["section"][i] and \
                 deflection_section["section"][i]:
@@ -81,9 +82,10 @@ def subscription(moment_section, shear_section, deflection_section):
             bf_list.append(base_subscription["bf"][i])
             tw_list.append(base_subscription["tw"][i])
             tf_list.append(base_subscription["tf"][i])
+            number_of_section += 1
 
     return {"section": section_list, "Ix": Ix_list, "area": area_list, "Sx": Sx_list, "wc": wc_list, "h": h_list,
-            "bf": bf_list, "tw": tw_list, "tf": tf_list}
+            "bf": bf_list, "tw": tw_list, "tf": tf_list}, number_of_section
 
 
 def min_weight(sections):
