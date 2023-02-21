@@ -14,8 +14,9 @@ from pressure import anchor_pressure, edit_sigma_and_height_general, force_calcu
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
-from analysis import analysis
+from analysis import analysis, DCR_calculator
 from design import design, subscription, min_weight
+from Output import output_single_solved
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
@@ -161,11 +162,12 @@ def main_restrained(inputs):
             for i in range(len(surcharge_pressure)):
                 surcharge_pressure[i] = 0
         # load diagram for one anchor.
-        plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array, passive_pressure_array,
-                     surcharge_pressure,
-                     Th,
-                     h_list_first,
-                     "q", "Z", unit_system)
+        load_diagram = plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array,
+                                    passive_pressure_array,
+                                    surcharge_pressure,
+                                    Th,
+                                    h_list_first,
+                                    "q", "Z", unit_system)
 
         # load result
         final_pressure_under = active_pressure_array - passive_pressure_array
@@ -180,46 +182,58 @@ def main_restrained(inputs):
         if anchor_number == 1:
             analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
                                          unit_system)
-            shear_plot, shear_values = analysis_instance.shear()
-            moment_plot, moment_values = analysis_instance.moment(shear_values)
+            shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear()
+            moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
             deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
                 moment_values, d_0, h1)
         else:
             analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
                                          unit_system)
-            shear_plot, shear_values = analysis_instance.shear_multi()
-            moment_plot, moment_values = analysis_instance.moment(shear_values)
+            shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear_multi()
+            moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
             deflection_values, z_max, max_deflection = analysis_instance.deflection_multi(
                 moment_values, d_0, h_list_first)
 
-        V_max = max(max(shear_values), abs(min(shear_values)))
-        M_max = max(max(moment_values), abs(min(moment_values)))
-        deflection_max = max(max(deflection_values), abs(min(deflection_values)))
-
         final_sections = []
+        final_sections_names = []
+        Sx = []
+        A = []
         for section in selected_design_sections:
             section = section[1:]
             section_design = design(section, E, Fy, unit_system)
-            moment_ok = section_design.moment_design(M_max)
-            shear_ok = section_design.shear_design(V_max)
-            deflection_ok = section_design.moment_design(deflection_max)
+            moment_ok, S_required = section_design.moment_design(M_max)
+            shear_ok, A_required = section_design.shear_design(V_max)
+            deflection_ok = section_design.deflection_design(allowable_deflection, max_deflection)
 
             qualified_sections, number_of_section = subscription(moment_ok, shear_ok, deflection_ok)
             if number_of_section != 0:
                 best_section = min_weight(qualified_sections)
                 final_sections.append(best_section)
+                final_sections_names.append(best_section["section"])
+                Sx.append(best_section["Sx"])
+                A.append(best_section["area"])
 
         if final_sections:
             section_error = "No Error!"
             final_deflections, max_deflections, deflection_plots = analysis_instance.final_deflection(deflection_values,
                                                                                                       final_sections, E,
                                                                                                       unit_system)
+            DCR_deflection, DCR_shear, DCR_moment = DCR_calculator(max_deflections, allowable_deflection, Sx,
+                                                                   S_required, A, A_required)
         else:
             section_error = "No Section is Matched!"
             final_deflections, max_deflections, deflection_plots = "", "", ""
 
-
-
+        if number_of_project == 1 and section_error == "No Error!":  # errors can be develop
+            general_plot = [load_diagram, shear_diagram, moment_diagram]
+            general_values = [d, V_max, M_max, Y_zero_shear, A_required, S_required]
+            general_output = {"plot": general_plot, "value": general_values}
+            specific_plot = deflection_plots
+            specific_values = [final_sections_names, max_deflections, DCR_moment, DCR_shear, DCR_deflection,
+                               "timber_size",
+                               "status_lagging", "d_concrete_list", "h_list", "bf_list", "tw_list", "tf_list"]
+            specific_output = {"plot": specific_plot, "value": specific_values}
+            output_single = output_single_solved(unit_system, general_output, specific_output)
 
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
