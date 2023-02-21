@@ -21,7 +21,7 @@ class design:
         else:
             s_required = M_max * 10 ** 6 / fb  # s unit --> mm^3
         output = SQL_reader(section, "not important A", s_required, "not important I", "moment", unit_system)
-        return output
+        return output, s_required
 
     def shear_design(self, V_max):
         section = self.section
@@ -33,7 +33,7 @@ class design:
         else:
             A_required = V_max * 1000 / (0.44 * Fy)  # mm^2
         output = SQL_reader(section, A_required, " not important s", "not important I", "shear", unit_system)
-        return output
+        return output, A_required
 
     def deflection_design(self, allowable_deflection, deflection_max):
         section = self.section
