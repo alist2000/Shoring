@@ -182,20 +182,21 @@ def main_restrained(inputs):
                                          unit_system)
             shear_plot, shear_values = analysis_instance.shear()
             moment_plot, moment_values = analysis_instance.moment(shear_values)
-            deflection_plot, deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
+            deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
                 moment_values, d_0, h1)
         else:
             analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
                                          unit_system)
             shear_plot, shear_values = analysis_instance.shear_multi()
             moment_plot, moment_values = analysis_instance.moment(shear_values)
-            deflection_plot, deflection_values, z_max, max_deflection = analysis_instance.deflection_multi(
+            deflection_values, z_max, max_deflection = analysis_instance.deflection_multi(
                 moment_values, d_0, h_list_first)
 
         V_max = max(max(shear_values), abs(min(shear_values)))
         M_max = max(max(moment_values), abs(min(moment_values)))
         deflection_max = max(max(deflection_values), abs(min(deflection_values)))
 
+        final_sections = []
         for section in selected_design_sections:
             section = section[1:]
             section_design = design(section, E, Fy, unit_system)
@@ -203,8 +204,22 @@ def main_restrained(inputs):
             shear_ok = section_design.shear_design(V_max)
             deflection_ok = section_design.moment_design(deflection_max)
 
-            qualified_sections = subscription(moment_ok, shear_ok, deflection_ok)
-            best_section = min_weight(qualified_sections)
+            qualified_sections, number_of_section = subscription(moment_ok, shear_ok, deflection_ok)
+            if number_of_section != 0:
+                best_section = min_weight(qualified_sections)
+                final_sections.append(best_section)
+
+        if final_sections:
+            section_error = "No Error!"
+            final_deflections, max_deflections, deflection_plots = analysis_instance.final_deflection(deflection_values,
+                                                                                                      final_sections, E,
+                                                                                                      unit_system)
+        else:
+            section_error = "No Section is Matched!"
+            final_deflections, max_deflections, deflection_plots = "", "", ""
+
+
+
 
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
