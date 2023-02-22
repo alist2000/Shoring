@@ -714,6 +714,8 @@ class analysis:
         final_deflections = []
         deflection_plot_list = []
         max_deflection_list = []
+
+        section_number = 1
         for item in final_sections:
             section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
             if section != "" and Ix != "":
@@ -729,11 +731,12 @@ class analysis:
                 max_deflection_list.append(max_deflection)
                 final_deflections.append(deflection_copy)
 
-                create_feather(depth, deflection_copy, "Deflection", "Deflection_project_section" + str(i + 1))
+                create_feather(depth, deflection_copy, "Deflection", "Deflection_project_section" + str(section_number))
 
                 deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
                                                      length_unit)
                 deflection_plot_list.append(deflection_plot)
+            section_number += 1
 
         return final_deflections, max_deflection_list, deflection_plot_list
 
