@@ -692,8 +692,8 @@ generate_html_response_cantilever_shoring_output = generate_html_response_cantil
     [['Cantilever Soldier Pile - Output Summary', 'Final Solution Alternatives'], ['General Plots', 'General Values'],
      ['Section', 'Deflection Plot', 'Checks'], ['load', 'shear', 'moment'],
      ['deflection1', 'deflection2', 'deflection3', 'deflection4']], [
-        ['Excavation depth ( ft ) = 6.09', 'maximum Shear ( lb ) = 8030.25', 'maximum Moment ( lb-ft ) = 22362.08',
-         'Y zero Shear ( ft ) = 10.01', 'Required Area ( in^2 ) = 0.51', 'Required Sx ( in^3 ) = 11.29'], [
+        ['Embedment Depth ( ft ) = 6.09', 'maximum Shear ( lb ) = 8020.92', 'maximum Moment ( lb-ft ) = 22378.49',
+         'Y zero Shear ( ft ) = 10.0', 'Required Area ( in^2 ) = 0.51', 'Required Sx ( in^3 ) = 11.3'], [
             ['W18X35', 'Maximum Deflection ( in ) = 0.04', 'DCR Moment = 0.2', 'DCR Shear = 0.05',
              'DCR Deflection = 0.08', 'lagging status for timber size timber_size: \n\ns', 'd = d ( in )',
              'h = h ( in )', 'b = b ( in )', 'tw = t ( in )', 'tf = t ( in )'],
