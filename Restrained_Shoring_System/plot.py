@@ -15,13 +15,15 @@ from plotly.graph_objs import Layout
 def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, passive_pressure, surcharge_pressure, Th,
                  h1, x_title, y_title,
                  unit_system):
-    
     if unit_system == "us":
         x_unit = "lb/ft"
         y_unit = "ft"
+        point_load = "lb"
     else:
         x_unit = "N/m"
         y_unit = "m"
+        point_load = "N"
+
     plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
         xaxis_title=f"{x_title} ({x_unit})",
         yaxis_title=f"{y_title} ({y_unit})",
@@ -215,7 +217,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                  x=-active_pressure[2 * j] * 18 / 20,
                                  y=12 * h1[0] / 13,
                                  showarrow=False,
-                                 text=f'<b>{round(Th, 1)} {x_unit}</b>',
+                                 text=f'<b>{round(Th, 1)} {point_load}</b>',
                                  textangle=0
                                  # xref="x",
                                  # yref="paper"
@@ -233,7 +235,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                      y=12 * sum(h1[:i + 1]) / 13,
                                      # this value can define better to look good in output.
                                      showarrow=False,
-                                     text=f'<b>{round(Th[i], 1)} {x_unit}</b>',
+                                     text=f'<b>{round(Th[i], 1)} {point_load}</b>',
                                      textangle=0
                                      # xref="x",
                                      # yref="paper"
@@ -395,6 +397,9 @@ def plotter_shear(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     )
     plot.update_layout(layout)
 
+    plot.update_traces(hovertemplate="<br>".join(["V: %{x}", "Z: %{y}"]),
+                       name="")  # this part could be better! size and color.
+
     zero_list = []
     for i in range(len(sigma_final)):
         zero_list.append(0)
@@ -435,6 +440,9 @@ def plotter_moment(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
         plot_bgcolor='#ffffff'
     )
     plot.update_layout(layout)
+
+    plot.update_traces(hovertemplate="<br>".join(["Moment: %{x}", "Z: %{y}"]),
+                       name="")  # this part could be better! size and color.
 
     zero_list = []
     for i in range(len(sigma_final)):
@@ -477,6 +485,9 @@ def plotter_deflection(depth_final, sigma_final, x_title, y_title, x_unit, y_uni
     )
     plot.update_layout(layout)
 
+    plot.update_traces(hovertemplate="<br>".join(["Δ: %{x}", "Z: %{y}"]),
+                       name="")
+
     zero_list = []
     for i in range(len(sigma_final)):
         zero_list.append(0)
@@ -485,8 +496,9 @@ def plotter_deflection(depth_final, sigma_final, x_title, y_title, x_unit, y_uni
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=sigma_final, y=depth_final,
                                mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(255, 123, 0, 0.5)"
+                               fillcolor="rgba(247, 200, 224, 0.5)"
                                ))
+    # this part could be better! size and color.
 
     # plot.write_html("output1.html",
     #                 full_html=False,
