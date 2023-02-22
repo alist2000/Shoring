@@ -14,7 +14,7 @@ from pressure import anchor_pressure, edit_sigma_and_height_general, force_calcu
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
-from analysis import analysis, DCR_calculator
+from analysis_openAI import analysis, DCR_calculator
 from design import design, subscription, min_weight
 from Output import output_single_solved
 
@@ -234,6 +234,7 @@ def main_restrained(inputs):
                                "status_lagging", "d_concrete_list", "h_list", "bf_list", "tw_list", "tf_list"]
             specific_output = {"plot": specific_plot, "value": specific_values}
             output_single = output_single_solved(unit_system, general_output, specific_output)
+            return output_single
 
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
