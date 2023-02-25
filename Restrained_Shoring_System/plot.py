@@ -13,7 +13,7 @@ from plotly.graph_objs import Layout
 
 
 def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, passive_pressure, surcharge_pressure, Th,
-                 h1, x_title, y_title,
+                 h1, water_active, water_passive, total_depth, x_title, y_title,
                  unit_system):
     if unit_system == "us":
         x_unit = "lb/ft"
@@ -106,6 +106,12 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                      marker=dict(color='rgba(255, 178, 107, 0.7)'))
     plot.add_scatter(x=-passive_pressure, y=embedment_depth + depth_final[-1], showlegend=False,
                      marker=dict(color='rgba(70, 194, 203, 0.7)'))
+
+    plot.add_scatter(x=water_active, y=total_depth, showlegend=False,
+                     marker=dict(color='rgba(70, 194, 203, 0.5)'))
+    plot.add_scatter(x=-water_passive, y=total_depth, showlegend=False,
+                     marker=dict(color='rgba(255, 178, 107, 0.5)'))
+
     plot.update_traces(hovertemplate="<br>".join(["Pressure: %{x}", "Z: %{y}"]),
                        name="")  # this part could be better! size and color.
 
@@ -128,7 +134,28 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=-passive_pressure, y=embedment_depth + depth_final[-1],
                                mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(70, 194, 203, 0.7)", line_color="#969696"
+                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
+                               ))
+
+    zero_list = []
+    for i in range(len(water_active)):
+        zero_list.append(0)
+    plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=water_active, y=total_depth,
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
+                               fillcolor="rgba(255, 128, 7, 0.2)", line_color="#969696"
+                               ))
+    zero_list = []
+    for i in range(len(water_passive)):
+        zero_list.append(0)
+    plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=-water_passive, y=total_depth,
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
+                               fillcolor="rgba(265, 178, 107, 0.2)", line_color="#969696"
                                ))
 
     j = int((len(embedment_depth) - 1) / 3)
@@ -248,7 +275,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
     # plot.write_html("load.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    # plot.show()
+    plot.show()
     return plot
 
 
