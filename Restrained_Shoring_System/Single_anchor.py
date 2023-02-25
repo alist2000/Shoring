@@ -68,10 +68,10 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
                     resisting_force_arm.append(
                         water_started + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
 
-        d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d = round(d + (water_started - h), delta_h_decimal)
-        d_0 = round(d_0 + water_started - h, delta_h_decimal)
+            d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            d = round(d + (water_started - h), delta_h_decimal)
+            d_0 = round(d_0 + water_started - h, delta_h_decimal)
 
     else:
         # add water pressure
