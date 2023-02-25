@@ -19,7 +19,7 @@ h = 25  # ft or m
 h = round(h, delta_h_decimal)
 
 gama = 115  # pcf or N/m^3
-c = 20
+c = 0
 if anchor_number == 1:
     h1 = 10
     h_list = [h1]
@@ -47,11 +47,11 @@ user can define is there any water or no.
 then if there was water user should input 
 z that water started from that. z is a height from 
 top of soil."""
-there_is_water = "Yes"
+there_is_water = "No"
 if there_is_water == "Yes":
-    water_started = 2  # ft or m
+    water_started = round(62, delta_h_decimal)  # ft or m
 else:
-    water_started = 0
+    water_started = h * 9999999999  # just a big number
 
 # surcharge
 surcharge_type = ["Uniform"]
