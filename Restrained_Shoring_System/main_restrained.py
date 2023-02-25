@@ -10,7 +10,7 @@ import numpy as np
 
 from inputs import input_values
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
-    force_calculator_x, find_D, water_pressure
+    force_calculator_x, find_D, water_pressure, water_pressure_detail_D
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
@@ -137,7 +137,9 @@ def main_restrained(inputs):
                 h_array_detail, sigma_a_array_detail,
                 surcharge_pressure, force_active,
                 arm_active, force_passive, arm_passive,
-                sigma_active, sigma_passive, delta_h)
+                sigma_active, sigma_passive, water_started, water_force_active, water_arm_active, water_force_passive,
+                water_arm_passive,
+                delta_h, unit_system)
 
             T_list = []
             for T in Th:
@@ -149,7 +151,8 @@ def main_restrained(inputs):
             d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = single_anchor(
                 tieback_spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, surcharge_force, surcharge_arm,
                 force_active, arm_active, force_passive,
-                arm_passive, sigma_active, sigma_passive,
+                arm_passive, sigma_active, sigma_passive, water_force_active, water_arm_active, water_force_passive,
+                water_arm_passive, water_started,
                 delta_h)
             T = Th / cos(anchor_angle)
 
@@ -162,20 +165,36 @@ def main_restrained(inputs):
             for i in range(len(surcharge_pressure)):
                 surcharge_pressure[i] = 0
         # load diagram for one anchor.
+
+        # load result
+        depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
+        for i in range(len(depth)):
+            depth[i] = round(depth[i], delta_h_decimal)
+
+        final_pressure_under = active_pressure_array - passive_pressure_array
+
+        final_pressure = np.array(list(sigma_a_array_detail_copy) + list(final_pressure_under))
+
+        if water_started <= depth[-1]:
+            water_pressure_active_final = water_pressure_detail_D(water_started, depth, unit_system)
+            water_pressure_passive_final = water_pressure_detail_D(max(h, water_started), depth, unit_system)
+
+
+        else:
+            water_pressure_active_final = water_pressure_detail_D(depth[-1], depth, unit_system)
+            water_pressure_passive_final = water_pressure_detail_D(depth[-1], depth, unit_system)
+        # load diagram for one anchor.
         load_diagram = plotter_load(h_array_detail, sigma_a_array_detail, D_array, active_pressure_array,
                                     passive_pressure_array,
                                     surcharge_pressure,
                                     Th,
                                     h_list_first,
+                                    water_pressure_active_final,
+                                    water_pressure_passive_final,
+                                    depth,
                                     "q", "Z", unit_system)
 
-        # load result
-        final_pressure_under = active_pressure_array - passive_pressure_array
-
-        final_pressure = np.array(list(sigma_a_array_detail_copy) + list(final_pressure_under))
-        depth = np.array(list(h_array_detail) + list(D_array + h_array_detail[-1]))
-        for i in range(len(depth)):
-            depth[i] = round(depth[i], delta_h_decimal)
+        final_pressure = final_pressure + water_pressure_active_final - water_pressure_passive_final
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
 
         # shear and moment values and diagrams
