@@ -284,7 +284,7 @@ def water_pressure(there_is_water, water_started, h, unit_system):
     D = symbols("D")
     if there_is_water == "Yes":
         if water_started <= h and water_started != 0:
-            water_pressure_list_active = [[0, 0], [0, (h + D) * gama_water]]
+            water_pressure_list_active = [[0, 0], [0, (h + D - water_started) * gama_water]]
             hw_list_active = [water_started, h + D - water_started]
             water_pressure_list_passive = [[0, D * gama_water]]
             hw_list_passive = [D]
@@ -301,13 +301,53 @@ def water_pressure(there_is_water, water_started, h, unit_system):
             water_pressure_list_passive = [[0, 0], [0, D * gama_water]]
             hw_list_passive = [water_started - h, D]
     else:
-        water_pressure_list_active = [0]
+        water_pressure_list_active = [[0, 0]]
         hw_list_active = [0]
-        water_pressure_list_passive = [0]
+        water_pressure_list_passive = [[0, 0]]
         hw_list_passive = [0]
 
     return hw_list_active, water_pressure_list_active, hw_list_passive, water_pressure_list_passive
 
+
+def water_pressure_detail(excavation_depth, water_started, unit_system):
+    D = symbols("D")
+    gama_water = gama_w.get(unit_system)
+
+    excavation_depth = list(excavation_depth)
+    zero_index = excavation_depth.index(water_started)
+
+    waterPressure_edited = np.zeros_like(excavation_depth)
+    pressure_index = zero_index
+    for h in excavation_depth[zero_index:]:
+        hw = h - water_started
+        waterPressure_edited[pressure_index] = gama_water * hw
+        pressure_index += 1
+    # calculate force just for embedment depth
+    force1 = waterPressure_edited[-1] * D
+    force2 = D * D * gama_water / 2
+    arm1 = D / 2
+    arm2 = D / 3
+    force = [[force1, force2]]
+    arm = [[arm1, arm2]]
+
+    return waterPressure_edited, force, arm
+
+
+def water_pressure_detail_D(water_started, depth, unit_system):
+    D = symbols("D")
+    gama_water = gama_w.get(unit_system)
+
+    depth = list(depth)
+    zero_index = depth.index(water_started)
+
+    waterPressure_edited = np.zeros_like(depth)
+    pressure_index = zero_index
+    for h in depth[zero_index:]:
+        hw = h - water_started
+        waterPressure_edited[pressure_index] = gama_water * hw
+        pressure_index += 1
+
+    return waterPressure_edited
 # test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
 # sigma_active, sigma_passive = test.soil_pressure()
 # sigma_a, h_list = test.pressure_cohesion_less_single(10)
