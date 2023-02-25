@@ -59,12 +59,14 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
             for i in water_force_passive:
                 for j in i:
                     resisting_force.append(j)
-            for i in water_arm_active:
+            for i in water_arm_active:  # note: just last index in water pressure and arm is important.
                 for j in i:
-                    driving_force_arm.append(j)
-            for i in water_arm_passive:
+                    driving_force_arm.append(
+                        water_started + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
+            for i in water_arm_passive:  # note: just last index in water pressure and arm is important.
                 for j in i:
-                    resisting_force_arm.append(j)
+                    resisting_force_arm.append(
+                        water_started + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
 
         d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
         d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
@@ -81,10 +83,12 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
                 resisting_force.append(j)
         for i in water_arm_active:
             for j in i:
-                driving_force_arm.append(j)
+                driving_force_arm.append(
+                    h + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
         for i in water_arm_passive:
             for j in i:
-                resisting_force_arm.append(j)
+                resisting_force_arm.append(
+                    h + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
         d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
         d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
         d = round(d, delta_h_decimal)
