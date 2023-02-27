@@ -24,7 +24,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
         y_unit = "m"
         point_load = "N"
 
-    plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["#595959"]).update_layout(
+    plot = px.line(y=depth_final, x=sigma_final, color_discrete_sequence=["rgba(242, 87, 87, 0.7)"]).update_layout(
         xaxis_title=f"{x_title} ({x_unit})",
         yaxis_title=f"{y_title} ({y_unit})",
         xaxis={"side": "top",
@@ -47,24 +47,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
     plot.add_scatter(x=surcharge_pressure, y=depth_final, showlegend=False,
                      marker=dict(color='rgba(255, 178, 107, 0.5)'))
 
-    zero_list = []
-    for i in range(len(sigma_final)):
-        zero_list.append(0)
-    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
-                               line_color="#969696"))
-    plot.add_traces(go.Scatter(x=sigma_final, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(242, 87, 87, 0.7)", marker=dict(color="rgba(242, 87, 87, 0.7)")
-                               ))
 
-    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
-                               line_color="#969696"))
-    plot.add_traces(go.Scatter(x=surcharge_pressure, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
-                               ))
 
     j = int((len(depth_final) - 1) / 5)
     arrow0 = go.layout.Annotation(dict(
@@ -78,7 +61,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
         ay=depth_final[0],
         arrowhead=3,
         arrowwidth=1.5,
-        arrowcolor='#595959', )
+        arrowcolor="rgba(242, 87, 87,1)", )
     )
     list_of_all_arrows = [arrow0]
     for i in range(1, 6):
@@ -93,7 +76,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
             ay=depth_final[j * i],
             arrowhead=3,
             arrowwidth=1.5,
-            arrowcolor='#595959', )
+            arrowcolor="rgba(242, 87, 87,1)", )
         )
         list_of_all_arrows.append(arrow)
 
@@ -103,17 +86,40 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
     plot.update_layout(title_text='Load Diagram', title_y=0.96)
 
     plot.add_scatter(x=active_pressure, y=embedment_depth + depth_final[-1], showlegend=False,
-                     marker=dict(color='rgba(255, 178, 107, 0.7)'))
+                     marker=dict(color='rgba(242, 146, 29, 0.6)'))
     plot.add_scatter(x=-passive_pressure, y=embedment_depth + depth_final[-1], showlegend=False,
-                     marker=dict(color='rgba(70, 194, 203, 0.7)'))
+                     marker=dict(color='rgba(242, 146, 29, 0.6)'))
 
     plot.add_scatter(x=water_active, y=total_depth, showlegend=False,
                      marker=dict(color='rgba(70, 194, 203, 0.5)'))
     plot.add_scatter(x=-water_passive, y=total_depth, showlegend=False,
-                     marker=dict(color='rgba(255, 178, 107, 0.5)'))
+                     marker=dict(color='rgba(70, 194, 203, 0.5)'))
 
     plot.update_traces(hovertemplate="<br>".join(["Pressure: %{x}", "Z: %{y}"]),
                        name="")  # this part could be better! size and color.
+
+    zero_list = []
+    for i in range(len(sigma_final)):
+        zero_list.append(0)
+    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=sigma_final, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Trapezoidal Pressure",
+                               fillcolor="rgba(242, 87, 87, 0.4)", marker=dict(color="rgba(242, 87, 87,0.9)")
+                               ))
+
+    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                               line_color="#969696"))
+    plot.add_traces(go.Scatter(x=surcharge_pressure, y=depth_final,
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Surcharge Pressure",
+                               fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
+                               ))
+
+
 
     zero_list = []
     for i in range(len(active_pressure)):
@@ -122,8 +128,9 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=active_pressure, y=embedment_depth + depth_final[-1],
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(255, 178, 107, 0.7)", line_color="#969696"
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Soil Pressure - active",
+                               fillcolor="rgba(255, 178, 107, 0.4)", line_color='rgba(255, 178, 107,1)'
                                ))
 
     zero_list = []
@@ -133,8 +140,9 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=-passive_pressure, y=embedment_depth + depth_final[-1],
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Soil Pressure - passive",
+                               fillcolor="rgba(255, 178, 107, 0.4)", line_color='rgba(255, 178, 107,1)'
                                ))
 
     zero_list = []
@@ -144,8 +152,9 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=water_active, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(255, 128, 7, 0.2)", line_color="#969696"
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Water pressure - active",
+                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
                                ))
     zero_list = []
     for i in range(len(water_passive)):
@@ -154,8 +163,9 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
                                line_color="#969696"))
     plot.add_traces(go.Scatter(x=-water_passive, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=False,
-                               fillcolor="rgba(265, 178, 107, 0.2)", line_color="#969696"
+                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                               name="Water pressure - passive",
+                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
                                ))
 
     j = int((len(embedment_depth) - 1) / 3)
@@ -170,7 +180,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
         ay=embedment_depth[0] + depth_final[-1],
         arrowhead=3,
         arrowwidth=1.5,
-        arrowcolor='#595959', )
+        arrowcolor='#F2921D', )
     )
     list_of_all_arrows.append(arrow6)
     for i in range(1, 4):
@@ -185,7 +195,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
             ay=embedment_depth[j * i] + depth_final[-1],
             arrowhead=3,
             arrowwidth=1.5,
-            arrowcolor='#595959', )
+            arrowcolor='#F2921D', )
         )
 
         arrow1 = go.layout.Annotation(dict(
@@ -199,11 +209,31 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
             ay=embedment_depth[j * i] + depth_final[-1],
             arrowhead=3,
             arrowwidth=1.5,
-            arrowcolor='#595959', )
+            arrowcolor='#F2921D', )
         )
+
         list_of_all_arrows.append(arrow)
         list_of_all_arrows.append(arrow1)
 
+    j = int((len(total_depth) - 1) / 5)
+
+    for i in range(6):
+        arrow_water = go.layout.Annotation(dict(
+            x=0.01,
+            y=total_depth[i * j],
+            xref="x", yref="y",
+            text="",
+            showarrow=True,
+            axref="x", ayref='y',
+            ax=water_active[i * j],
+            ay=total_depth[i * j],
+            arrowhead=3,
+            arrowwidth=1.5,
+            arrowcolor="rgba(70, 194, 203, 1)", )
+        )
+        list_of_all_arrows.append(arrow_water)
+
+    j = int((len(embedment_depth) - 1) / 3)
     if type(Th) == list or type(Th) == np.ndarray:
         # for multi anchor
         for i in range(len(Th)):
@@ -275,7 +305,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
     # plot.write_html("load.html",
     #                 full_html=False,
     #                 include_plotlyjs='cdn')
-    plot.show()
+    # plot.show()
     return plot
 
 
@@ -468,7 +498,7 @@ def plotter_moment(depth_final, sigma_final, x_title, y_title, x_unit, y_unit):
     )
     plot.update_layout(layout)
 
-    plot.update_traces(hovertemplate="<br>".join(["Moment: %{x}", "Z: %{y}"]),
+    plot.update_traces(hovertemplate="<br>".join(["M: %{x}", "Z: %{y}"]),
                        name="")  # this part could be better! size and color.
 
     zero_list = []
