@@ -3,6 +3,7 @@ import copy
 import numpy as np
 import scipy.integrate as spi
 
+from Lagging import lagging_design
 from plot import plotter_shear, plotter_moment, plotter_deflection
 from report import create_feather
 
@@ -691,13 +692,21 @@ class analysis:
         z_max = depth[z_max]
         return deflection_array, z_max, abs(max_deflection)
 
-    def final_deflection(self, deflection_values, final_sections, E, unit_system):
+    def final_deflection_and_lagging(self, deflection_values, final_sections, E, Pile_spacing, ph, timber_size, Fb,
+                                     unit_system):
         depth = self.depth
         deflection_unit = self.deflection_unit
         length_unit = self.length_unit
         final_deflections = []
         deflection_plot_list = []
         max_deflection_list = []
+        DCR_lagging = []
+        status_lagging = []
+        d_concrete_list = []
+        h_list = []
+        bf_list = []
+        tw_list = []
+        tf_list = []
 
         for section_number, item in enumerate(final_sections, start=1):
             section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
@@ -710,12 +719,25 @@ class analysis:
                 max_deflection_list.append(max_deflection)
                 final_deflections.append(deflection_copy)
 
+                # lagging control
+                lagging = lagging_design(unit_system, Pile_spacing, section, ph, timber_size)
+                DCR_moment_timber, status, d_concrete = lagging.moment_design(Fb, tw, 1.25, 1.1, 1.1)
+                DCR_lagging.append(DCR_moment_timber)
+                status_lagging.append(status)
+                d_concrete_list.append(d_concrete)
+
                 create_feather(depth, deflection_copy, "Deflection", f"Deflection_project_section{section_number}")
                 deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
                                                      length_unit)
                 deflection_plot_list.append(deflection_plot)
 
-        return final_deflections, max_deflection_list, deflection_plot_list
+                h_list.append(h)
+                bf_list.append(bf)
+                tw_list.append(tw)
+                tf_list.append(tf)
+
+
+        return final_deflections, max_deflection_list, deflection_plot_list, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list
 
 
 # OpenAI code: NOTE: first version has error I edit.

@@ -126,6 +126,12 @@ allowable_deflection = 0.5  # in
 Fy = 36  # ksi or MpaNo
 E = 29000  # ksi or MPa
 
+#  *** LAGGING ***
+
+ph_max = 125
+Fb = 20
+timber_size = "3 x 16"
+
 selected_design_sections = ["W18", "W21", "W24", "W27"]
 
 input_values = {"number_of_project": number_of_project,
@@ -149,5 +155,8 @@ input_values = {"number_of_project": number_of_project,
                 "E": [E],
                 "Fy": [Fy],
                 "allowable_deflection": [allowable_deflection],
-                "selected_design_sections": [selected_design_sections]
+                "selected_design_sections": [selected_design_sections],
+                "ph_max": [ph_max],
+                "Fb": [Fb],
+                "timber_size": [timber_size]
                 }

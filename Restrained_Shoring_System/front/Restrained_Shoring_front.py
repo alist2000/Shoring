@@ -468,7 +468,7 @@ def generate_html_response_cantilever_shoring(titles, values):
                                                 <td style="width: 11.25%;text-align: center; vertical-align: middle", height="90" ><t2>
                                                 """
         image_column = """
-                                        <td style="width: 33.75%;text-align: center; vertical-align: middle;background-color: white" colspan="3"  ><img src="D:\git\Shoring\database\section_picture_para_new.jpg" height = "360"></td>
+                                        <td style="width: 33.75%;text-align: center; vertical-align: middle;background-color: white" colspan="3"  ><img src="D:/git/Shoring/Restrained_Shoring_System/front/section_picture_para_new.jpg" height = "360"></td>
                                         """
         image_column_prop = """
                                                 <td style="width: 11.25%;text-align: right; vertical-align: middle;background-color: white" ><t2>
@@ -695,17 +695,17 @@ generate_html_response_cantilever_shoring_output = generate_html_response_cantil
         ['Embedment Depth ( ft ) = 6.09', 'maximum Shear ( lb ) = 8020.92', 'maximum Moment ( lb-ft ) = 22378.49',
          'Y zero Shear ( ft ) = 10.0', 'Required Area ( in^2 ) = 0.51', 'Required Sx ( in^3 ) = 11.3'], [
             ['W18X35', 'Maximum Deflection ( in ) = 0.04', 'DCR Moment = 0.2', 'DCR Shear = 0.05',
-             'DCR Deflection = 0.08', 'lagging status for timber size timber_size: \n\ns', 'd = d ( in )',
-             'h = h ( in )', 'b = b ( in )', 'tw = t ( in )', 'tf = t ( in )'],
+             'DCR Deflection = 0.08', 'Timber Size 3 x 16: \n\nFail! Your timber fail in moment design.',
+             'd = 24 ( in )', 'h = 17.7 ( in )', 'b = 6.0 ( in )', 'tw = 0.3 ( in )', 'tf = 0.425 ( in )'],
             ['W21X44', 'Maximum Deflection ( in ) = 0.02', 'DCR Moment = 0.14', 'DCR Shear = 0.04',
-             'DCR Deflection = 0.05', 'lagging status for timber size timber_size: \n\nt', 'd = _ ( in )',
-             'h = _ ( in )', 'b = f ( in )', 'tw = w ( in )', 'tf = f ( in )'],
+             'DCR Deflection = 0.05', 'Timber Size 3 x 16: \n\nFail! Your timber fail in moment design.',
+             'd = 24 ( in )', 'h = 20.7 ( in )', 'b = 6.5 ( in )', 'tw = 0.35 ( in )', 'tf = 0.45 ( in )'],
             ['W24X55', 'Maximum Deflection ( in ) = 0.01', 'DCR Moment = 0.1', 'DCR Shear = 0.03',
-             'DCR Deflection = 0.03', 'lagging status for timber size timber_size: \n\na', 'd = c ( in )',
-             'h = l ( in )', 'b = _ ( in )', 'tw = _ ( in )', 'tf = _ ( in )'],
+             'DCR Deflection = 0.03', 'Timber Size 3 x 16: \n\nFail! Your timber fail in moment design.',
+             'd = 24 ( in )', 'h = 23.6 ( in )', 'b = 7.01 ( in )', 'tw = 0.395 ( in )', 'tf = 0.505 ( in )'],
             ['W27X84', 'Maximum Deflection ( in ) = 0.01', 'DCR Moment = 0.05', 'DCR Shear = 0.02',
-             'DCR Deflection = 0.01', 'lagging status for timber size timber_size: \n\nt', 'd = o ( in )',
-             'h = i ( in )', 'b = l ( in )', 'tw = l ( in )', 'tf = l ( in )']]])
+             'DCR Deflection = 0.01', 'Timber Size 3 x 16: \n\nFail! Your timber fail in moment design.',
+             'd = 30.0 ( in )', 'h = 26.7 ( in )', 'b = 10.0 ( in )', 'tw = 0.46 ( in )', 'tf = 0.64 ( in )']]])
 a = open("output.html", "w", encoding='UTF8')
 a.write(generate_html_response_cantilever_shoring_output)
 a.close()

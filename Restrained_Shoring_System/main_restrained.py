@@ -38,7 +38,7 @@ def main_restrained(inputs):
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
      surcharge_inputs_list, tieback_spacing_list,
      anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
-     selected_design_sections_list] = inputs.values()
+     selected_design_sections_list, ph_max_list, Fb_list, timber_size_list] = inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
         anchor_number = anchor_number_list[project]
@@ -63,6 +63,10 @@ def main_restrained(inputs):
         allowable_deflection = allowable_deflection_list[project]
 
         selected_design_sections = selected_design_sections_list[project]
+
+        ph_max = ph_max_list[project]
+        Fb = Fb_list[project]
+        timber_size = timber_size_list[project]
 
         if k_formula == "User Defined":
             ka, kp = soil_properties[0], soil_properties[1]
@@ -234,9 +238,10 @@ def main_restrained(inputs):
 
         if final_sections:
             section_error = "No Error!"
-            final_deflections, max_deflections, deflection_plots = analysis_instance.final_deflection(deflection_values,
-                                                                                                      final_sections, E,
-                                                                                                      unit_system)
+            final_deflections, max_deflections, deflection_plots, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list = analysis_instance.final_deflection_and_lagging(
+                deflection_values,
+                final_sections, E, tieback_spacing, ph_max, timber_size, Fb,
+                unit_system)
             DCR_deflection, DCR_shear, DCR_moment = DCR_calculator(max_deflections, allowable_deflection, Sx,
                                                                    S_required, A, A_required)
         else:
@@ -249,8 +254,8 @@ def main_restrained(inputs):
             general_output = {"plot": general_plot, "value": general_values}
             specific_plot = deflection_plots
             specific_values = [final_sections_names, max_deflections, DCR_moment, DCR_shear, DCR_deflection,
-                               "timber_size",
-                               "status_lagging", "d_concrete_list", "h_list", "bf_list", "tw_list", "tf_list"]
+                               timber_size,
+                               status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list]
             specific_output = {"plot": specific_plot, "value": specific_values}
             output_single = output_single_solved(unit_system, general_output, specific_output)
             return output_single
