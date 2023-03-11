@@ -16,7 +16,7 @@ from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
 from analysis_openAI import analysis, DCR_calculator
 from design import design, subscription, min_weight
-from Output import output_single_solved
+from Output import output_single_solved, output_single_no_solution
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
@@ -33,6 +33,7 @@ from Passive_Active.active_passive import rankine, coulomb
 
 
 def main_restrained(inputs):
+    project_error = []
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
@@ -245,7 +246,9 @@ def main_restrained(inputs):
             DCR_deflection, DCR_shear, DCR_moment = DCR_calculator(max_deflections, allowable_deflection, Sx,
                                                                    S_required, A, A_required)
         else:
-            section_error = "No Section is Matched!"
+            section_error = ["No Section is Matched!"]
+            project_error.append(section_error)
+
             final_deflections, max_deflections, deflection_plots = "", "", ""
 
         if number_of_project == 1 and section_error == "No Error!":  # errors can be develop
@@ -258,6 +261,9 @@ def main_restrained(inputs):
                                status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list]
             specific_output = {"plot": specific_plot, "value": specific_values}
             output_single = output_single_solved(unit_system, general_output, specific_output)
+            return output_single
+        elif number_of_project == 1 and section_error != "No Error!":
+            output_single = output_single_no_solution(project_error)
             return output_single
 
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T

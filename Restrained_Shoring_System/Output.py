@@ -96,4 +96,4 @@ def output_single_no_solution(error):
     for i in range(number_of_error):
         errors.append((i + 1, error[i][0]))
     output = [otitle, header, errors]
-    return output
+    return output, "NO SOLUTION"
