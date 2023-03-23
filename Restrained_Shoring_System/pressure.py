@@ -16,12 +16,13 @@ import numpy as np
 
 
 class anchor_pressure:
-    def __init__(self, h, gama, c, ka, kp):
+    def __init__(self, h, gama, c, ka, kp, pressure_distribution):
         self.h = h
         self.gama = gama
         self.c = c
         self.ka = ka
         self.kp = kp
+        self.pressure_distribution = pressure_distribution
 
     # soil pressure
     def soil_pressure(self):
@@ -45,8 +46,12 @@ class anchor_pressure:
         h = self.h
         gama = self.gama
         ka = self.ka
+        pressure_distribution = self.pressure_distribution
 
-        h_list = [(2 / 3) * h1, (1 / 3) * h, (2 / 3) * (h - h1)]
+        if pressure_distribution == "Trapezoidal":
+            h_list = [(2 / 3) * h1, (1 / 3) * h, (2 / 3) * (h - h1)]
+        else:
+            h_list = [h, 0, 0]
 
         P = 0.5 * gama * ka * (h ** 2)
         f = 1.3
@@ -57,8 +62,12 @@ class anchor_pressure:
         h = self.h
         gama = self.gama
         ka = self.ka
+        pressure_distribution = self.pressure_distribution
 
-        h_list = [(2 / 3) * h1, h - ((2 / 3) * h1 + (2 / 3) * hn), (2 / 3) * hn]
+        if pressure_distribution == "Trapezoidal":
+            h_list = [(2 / 3) * h1, h - ((2 / 3) * h1 + (2 / 3) * hn), (2 / 3) * hn]
+        else:
+            h_list = [h, 0, 0]
 
         P = 0.5 * gama * ka * (h ** 2)
         f = 1.3
@@ -70,8 +79,12 @@ class anchor_pressure:
         gama = self.gama
         c = self.c
         ka = self.ka
+        pressure_distribution = self.pressure_distribution
 
-        h_list = [(2 / 3) * h1, h - ((2 / 3) * h1)]
+        if pressure_distribution == "Trapezoidal":
+            h_list = [(2 / 3) * h1, h - ((2 / 3) * h1)]
+        else:
+            h_list = [h, 0]
 
         Ns = gama_s * h / c
         if Ns <= 4:

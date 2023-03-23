@@ -1,6 +1,7 @@
 import numpy as np
 from sympy import symbols
 
+# NOTE: we can receive pressure distribution anyway. ask dr.
 unit_system = "us"
 
 number_of_project = 1
@@ -18,7 +19,6 @@ anchor_number = 1
 h = 25  # ft or m
 h = round(h, delta_h_decimal)
 
-gama = 115  # pcf or N/m^3
 c = 0
 if anchor_number == 1:
     h1 = 10
@@ -98,18 +98,33 @@ for i in range(len(surcharge_type)):
 
 surcharge_inputs = [q_all, l1_all, l2_all, teta_all]
 
+pressure_distribution = "Trapezoidal"
+
 k_formula = "User Defined"  # Rankin or Coulomb
 if k_formula == "User Defined":
-    ka = 0.333
-    kp = 4.7
-    soil_properties = [ka, kp]
+    pressure_distribution = "Trapezoidal"
+    sigma_a = 100
+    gama = 1  # pcf or N/m^3
+    """
+    inputs: EFPa, EFPp, Ka surcharge, sigma_a, Pressure distribution.
+    consider Ka = EFPa , Kp = EFPp and gama = 1
+    if pressure distribution = triangle --> sigma_a = EFPa × h"""
+    ka = 38.3  # EFPa
+    kp = 540.5  # EFPp
+    ka_surcharge = 0.333
+    if pressure_distribution == "Triangle":
+        sigma_a = ka * h
+
+    soil_properties = [ka, kp, sigma_a, ka_surcharge]
 
 elif k_formula == "Rankine":
+    gama = 115  # pcf or N/m^3
     phi = [30]  # degree
     beta = [0]
     soil_properties = [phi, beta]
 
 elif k_formula == "Coulomb":
+    gama = 115  # pcf or N/m^3
     phi = [30]  # degree
     beta = [0]
     delta = [0]
@@ -143,6 +158,7 @@ input_values = {"number_of_project": number_of_project,
                 "gama": [gama],
                 "h_list": [h_list],
                 "cohesive_properties": [cohesive_properties],
+                "pressure_distribution": [pressure_distribution],
                 "k_formula": [k_formula],
                 "soil_properties": [soil_properties],
                 "there_is_water": [there_is_water],

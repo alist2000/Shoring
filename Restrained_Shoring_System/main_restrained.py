@@ -35,7 +35,7 @@ from Passive_Active.active_passive import rankine, coulomb
 def main_restrained(inputs):
     project_error = []
     [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
-     h_list_list, cohesive_properties_list,
+     h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
      surcharge_inputs_list, tieback_spacing_list,
      anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
@@ -48,6 +48,7 @@ def main_restrained(inputs):
         gama = gama_list[project]
         h_list_first = h_list_list[project]
         cohesive_properties = cohesive_properties_list[project]
+        pressure_distribution = pressure_distribution_list[project]
         k_formula = k_formula_list[project]
         soil_properties = soil_properties_list[project]
         there_is_water = there_is_water_list[project]
@@ -70,13 +71,14 @@ def main_restrained(inputs):
         timber_size = timber_size_list[project]
 
         if k_formula == "User Defined":
-            ka, kp = soil_properties[0], soil_properties[1]
+            ka, kp, sigma_a_user, ka_surcharge = soil_properties
         elif k_formula == "Rankine":
             phi, beta = soil_properties
             # phi and beta are lists. every index is for a separate soil layer.
             # here we just have one soil layer. (for now) this part can be developed.
             ka = rankine(phi[0], beta[0], "active")
             kp = rankine(phi[0], beta[0], "passive")
+            ka_surcharge = ka
 
         else:  # coulomb
             phi, beta, delta, omega = soil_properties
@@ -84,10 +86,11 @@ def main_restrained(inputs):
             # here we just have one soil layer. (for now) this part can be developed.
             ka = coulomb(phi[0], beta[0], delta[0], omega[0], "active")
             kp = coulomb(phi[0], beta[0], delta[0], omega[0], "passive")
+            ka_surcharge = ka
 
         c, gama_s = cohesive_properties[0], cohesive_properties[1]
 
-        pressure = anchor_pressure(h, gama, c, ka, kp)
+        pressure = anchor_pressure(h, gama, c, ka, kp, pressure_distribution)
         sigma_active, sigma_passive = pressure.soil_pressure()
         D = symbols("D")
         force_active, arm_active = force_calculator_x(h, [D], [sigma_active])
@@ -101,6 +104,10 @@ def main_restrained(inputs):
                 h1 = h_list_first[0]
                 hn = h_list_first[-1]
                 sigma_a, h_list = pressure.pressure_cohesion_less_multi(anchor_number, h1, hn)
+            if pressure_distribution == "Triangle":
+                sigma_a = gama * ka * h
+            if k_formula == "User Defined":
+                sigma_a = sigma_a_user
 
             h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
                 [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
@@ -108,6 +115,11 @@ def main_restrained(inputs):
         else:
             h1 = h_list_first[0]
             sigma_a, h_list = pressure.pressure_cohesive(gama_s, h1)
+
+            if pressure_distribution == "Triangle":
+                sigma_a = gama * ka * h
+            if k_formula == "User Defined":
+                sigma_a = sigma_a_user
 
             h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
                 [[0, sigma_a], [sigma_a, sigma_a]], h_list, delta_h, h)
@@ -124,7 +136,7 @@ def main_restrained(inputs):
         surcharge_force, surcharge_arm, surcharge_pressure, error_surcharge_list = result_surcharge(
             main_surcharge,
             surcharge_type, q, l1, l2,
-            teta, ka)
+            teta, ka_surcharge)
 
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
 
