@@ -186,8 +186,11 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main):
     h_edited = []
     equation_list = []
     for i in range(len(h)):
-        slope = (sigma[i][1] - sigma[i][0]) / h[i]
-        c = sigma[i][0]
+        if h[i] == 0:
+            slope, c = 0, 0
+        else:
+            slope = (sigma[i][1] - sigma[i][0]) / h[i]
+            c = sigma[i][0]
         equation = slope * x + c
         equation_list.append(equation)
 

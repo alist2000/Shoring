@@ -102,7 +102,7 @@ pressure_distribution = "Trapezoidal"
 
 k_formula = "User Defined"  # Rankin or Coulomb
 if k_formula == "User Defined":
-    pressure_distribution = "Trapezoidal"
+    pressure_distribution = "Triangle"
     sigma_a = 100
     gama = 1  # pcf or N/m^3
     """
