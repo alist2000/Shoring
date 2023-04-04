@@ -8,7 +8,8 @@ from sympy import symbols
 from sympy.solvers import solve
 import numpy as np
 
-from inputs import input_values
+from inputs import input_single
+from site_input import site_input
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
     force_calculator_x, find_D, water_pressure, water_pressure_detail_D
 from multi_anchor import multi_anchor
@@ -33,13 +34,14 @@ from Passive_Active.active_passive import rankine, coulomb
 
 
 def main_restrained(inputs):
+    Inputs = input_single(inputs)
     project_error = []
-    [number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
+    [input_errors, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
      surcharge_inputs_list, tieback_spacing_list,
      anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
-     selected_design_sections_list, ph_max_list, Fb_list, timber_size_list] = inputs.values()
+     selected_design_sections_list, ph_max_list, Fb_list, timber_size_list] = Inputs.values()
     for project in range(number_of_project):
         number_of_layer = number_of_layer_list[project]
         anchor_number = anchor_number_list[project]
@@ -73,19 +75,19 @@ def main_restrained(inputs):
         if k_formula == "User Defined":
             ka, kp, sigma_a_user, ka_surcharge = soil_properties
         elif k_formula == "Rankine":
-            phi, beta = soil_properties
+            phi, beta_active, beta_passive = soil_properties
             # phi and beta are lists. every index is for a separate soil layer.
             # here we just have one soil layer. (for now) this part can be developed.
-            ka = rankine(phi[0], beta[0], "active")
-            kp = rankine(phi[0], beta[0], "passive")
+            ka = rankine(phi[0], beta_active[0], "active")
+            kp = rankine(phi[0], beta_passive[0], "passive")
             ka_surcharge = ka
 
         else:  # coulomb
-            phi, beta, delta, omega = soil_properties
+            phi, beta_active, beta_passive, delta, omega = soil_properties
             # phi and beta and etc are lists. every index is for a separate soil layer.
             # here we just have one soil layer. (for now) this part can be developed.
-            ka = coulomb(phi[0], beta[0], delta[0], omega[0], "active")
-            kp = coulomb(phi[0], beta[0], delta[0], omega[0], "passive")
+            ka = coulomb(phi[0], beta_active[0], delta[0], omega[0], "active")
+            kp = coulomb(phi[0], beta_passive[0], delta[0], omega[0], "passive")
             ka_surcharge = ka
 
         c, gama_s = cohesive_properties[0], cohesive_properties[1]
@@ -281,4 +283,5 @@ def main_restrained(inputs):
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
 
 
-outputs = main_restrained(input_values)
+
+outputs = main_restrained(site_input)
