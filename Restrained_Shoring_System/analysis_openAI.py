@@ -81,6 +81,7 @@ class analysis:
         create_feather(depth, shear_values, "Shear", "shear_project")
 
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
+        depth, shear_values = control_index_for_plot(depth, shear_values)
         return plot, shear_values, V_max, Y_zero_load
 
     def shear_multi(self):
@@ -140,6 +141,7 @@ class analysis:
 
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
         create_feather(depth, shear_values, "Shear", "shear_project")
+        depth, shear_values = control_index_for_plot(depth, shear_values)
         return plot, shear_values, V_max, Y_zero_load
 
     import numpy as np
@@ -165,7 +167,7 @@ class analysis:
 
         create_feather(depth, moment_values, "Moment", "moment_project")
         plot = plotter_moment(depth, moment_values, "M", "Z", load_unit, length_unit)
-
+        depth, moment_values = control_index_for_plot(depth, moment_values)
         return plot, moment_values, M_max, Y_zero_shear
 
     def deflection_single(self, moment, d, h1):
@@ -528,6 +530,8 @@ class analysis:
         max_deflection, z_max = find_max([x1, x2], [max1, max2])
         z_max = depth[z_max]
 
+        depth, deflection_array = control_index_for_plot(depth, deflection_array)
+
         return deflection_array, z_max, abs(max_deflection)
 
     def deflection_multi(self, moment, d, h):
@@ -690,6 +694,9 @@ class analysis:
         x2 = deflection_list.index(max1)
         max_deflection, z_max = find_max([x1, x2], [max1, max2])
         z_max = depth[z_max]
+
+        depth, deflection_array = control_index_for_plot(depth, deflection_array)
+
         return deflection_array, z_max, abs(max_deflection)
 
     def final_deflection_and_lagging(self, deflection_values, final_sections, E, Pile_spacing, ph, timber_size, Fb,
@@ -736,7 +743,6 @@ class analysis:
                 tw_list.append(tw)
                 tf_list.append(tf)
 
-
         return final_deflections, max_deflection_list, deflection_plot_list, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list
 
 
@@ -747,3 +753,17 @@ def DCR_calculator(max_deflection, allowable_deflection, Sx, S_required, A, A_re
     DCR_moment = [S_required / Sx_val for Sx_val in Sx]
 
     return DCR_deflection, DCR_shear, DCR_moment
+
+
+def control_index_for_plot(depth, pressure):
+    pressure = list(pressure)
+    len_depth = len(depth)
+    len_pressure = len(pressure)
+    while len_depth != len_pressure:
+        if len_depth > len_pressure:
+            pressure.append(pressure[-1])
+        elif len_depth < len_pressure:
+            del pressure[-1]
+        len_pressure = len(pressure)
+
+    return depth, pressure
