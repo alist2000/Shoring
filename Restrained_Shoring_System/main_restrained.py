@@ -178,6 +178,8 @@ def main_restrained(inputs):
         sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
         if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
             for i in range(len(sigma_a_array_detail_copy)):
+                if list(surcharge_pressure) == [0]:
+                    surcharge_pressure = np.zeros_like(sigma_a_array_detail_copy)
                 sigma_a_array_detail_copy[i] += surcharge_pressure[i]
         else:
             surcharge_pressure = copy.deepcopy(sigma_a_array_detail)

@@ -10,7 +10,8 @@ from pressure import force_calculator, force_calculator_x, find_D, edit_sigma_an
 
 
 def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_active, arm_active, force_passive,
-                 arm_passive, sigma_active, sigma_passive, water_started, force_active_water, arm_active_water, water_force_passive,
+                 arm_passive, sigma_active, sigma_passive, water_started, force_active_water, arm_active_water,
+                 water_force_passive,
                  water_arm_passive,
                  delta_h, unit_system):
     """
@@ -51,8 +52,11 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     # cantilever span
     cantilever_index = ha.index(h_list[0]) + 1
     force_cantilever, arm_cantilever = force_calculator(ha[:cantilever_index], sigma_a[:cantilever_index])
-    force_cantilever_su, arm_cantilever_su = force_calculator(ha[:cantilever_index],
-                                                              surcharge_pressure[:cantilever_index])
+    if surcharge_pressure != [0]:
+        force_cantilever_su, arm_cantilever_su = force_calculator(ha[:cantilever_index],
+                                                                  surcharge_pressure[:cantilever_index])
+    else:
+        force_cantilever_su, arm_cantilever_su = 0, 0
     force_cantilever_w, arm_cantilever_w = force_calculator(ha[:cantilever_index],
                                                             water_pressure[:cantilever_index])
     if type(surcharge_pressure_copy) == int or type(surcharge_pressure_copy) == float:
@@ -76,7 +80,11 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
             last_index = ha.index(linker) + 1
             last_index_last = copy.deepcopy(last_index)
             force, arm = force_calculator(ha[first_index:last_index], sigma_a[first_index:last_index])
-            force_su, arm_su = force_calculator(ha[first_index:last_index], surcharge_pressure[first_index:last_index])
+            if surcharge_pressure != [0]:
+                force_su, arm_su = force_calculator(ha[first_index:last_index],
+                                                    surcharge_pressure[first_index:last_index])
+            else:
+                force_su, arm_su = 0, 0
             force_w, arm_w = force_calculator(ha[first_index:last_index], water_pressure[first_index:last_index])
 
             if type(surcharge_pressure_copy) == int or type(surcharge_pressure_copy) == float:
@@ -91,7 +99,11 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
             linker = round(sum(h_list[:i + 2]), delta_h_decimal)
             last_index = ha.index(linker) + 1
             force, arm = force_calculator(ha[first_index:last_index], sigma_a[first_index:last_index])
-            force_su, arm_su = force_calculator(ha[first_index:last_index], surcharge_pressure[first_index:last_index])
+            if surcharge_pressure != [0]:
+                force_su, arm_su = force_calculator(ha[first_index:last_index],
+                                                    surcharge_pressure[first_index:last_index])
+            else:
+                force_su, arm_su = 0, 0
             force_w, arm_w = force_calculator(ha[first_index:last_index], water_pressure[first_index:last_index])
             if type(surcharge_pressure_copy) == int or type(surcharge_pressure_copy) == float:
                 arm_su = 0
@@ -105,7 +117,10 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     # step1: calculate D and D0 ( FS = user defined and FS = 1 )
     first_index = last_index_last
     force_embedment, arm_embedment = force_calculator(ha[first_index:], sigma_a[first_index:])
-    force_embedment_su, arm_embedment_su = force_calculator(ha[first_index:], surcharge_pressure[first_index:])
+    if surcharge_pressure != [0]:
+        force_embedment_su, arm_embedment_su = force_calculator(ha[first_index:], surcharge_pressure[first_index:])
+    else:
+        force_embedment_su, arm_embedment_su = 0, 0
     # water pressure here has two part. 1) till excavation line 2) under that.
     # water pressure part one.
     force_embedment_w, arm_embedment_w = force_calculator(ha[first_index:], water_pressure[first_index:])
@@ -227,4 +242,3 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
         anchor_force.append(force)
     anchor_force = np.array(anchor_force)
     return d, d_0, anchor_force, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array
-
