@@ -1,22 +1,14 @@
-# max_general_plot = 3
-# general_plot = []
-# for i in range(max_general_plot):
-#     general_plot.append(open(f"../plot/general_output{i + 1}.html", "r").read())
+max_general_plot = 3
+general_plot = []
+for i in range(max_general_plot):
+    general_plot.append(open(f"../plot/general_output{i + 1}.html", "r", encoding='UTF8').read())
 
 
-def generate_html_response_restrained_shoring(titles, values):
+def generate_html_response_cantilever_shoring(titles, values):
     # otitle = titles[0]
     # header_general = titles[1]
     # header_specific = titles[2]
     # excel_names = titles[3]
-
-    max_general_plot = 3
-    general_plot = []
-    for i in range(max_general_plot):
-        general_plot.append(f"https://civision.balafan.com/unrestrained_shoring/plot/general_output{i + 1}")
-        # general_plot.append(
-        #     open(f"/app/app/Shoring/Unrestrained_Shoring_System/soldier_pile/plot/general_output{i + 1}.html",
-        #          "r").read())
 
     general_values = values[0]
     specific_values = values[1]
@@ -24,10 +16,7 @@ def generate_html_response_restrained_shoring(titles, values):
     max_specific_plot = len(specific_values)  # this value can be changed according to site inputs
     specific_plot = []
     for i in range(max_specific_plot):
-        # specific_plot.append(
-        #     open(f"/app/app/Shoring/Unrestrained_Shoring_System/soldier_pile/plot/deflection_output{i + 1}.html",
-        #          "r").read())
-        specific_plot.append(f"https://civision.balafan.com/unrestrained_shoring/plot/deflection_output{i + 1}")
+        specific_plot.append(open(f"../plot/deflection_output{i + 1}.html", "r", encoding='UTF8').read())
 
     html = "<html>"
     html_end = "</html>"
@@ -36,7 +25,6 @@ def generate_html_response_restrained_shoring(titles, values):
 	<title>Output Summary</title>
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-	<script src="/app/app/HTML/plotly.js"></script> 
 	<script>
       function ShowAndHide(id) {
         var x = document.getElementById(id);
@@ -374,26 +362,18 @@ def generate_html_response_restrained_shoring(titles, values):
     excel_start = """
 
                     					<td style="width: 7%;text-align: center; vertical-align: middle"><t1b>Download Values:</t1b></td>
-                    					<td style="width: 7%;text-align: center; vertical-align: middle"><a href="https://civision.balafan.com/report/unrestrained_shoring/excel/"""
+                    					<td style="width: 7%;text-align: center; vertical-align: middle"><a href="http://civision.balafan.com:8010/report/unrestrained_shoring/excel/"""
     excel_start_specific = """
 
-                    					<td style="width: 12%;text-align: left; vertical-align: middle"><t1b>Download Report:</t1b></td>
-                    					<td style="width: 8%;text-align: left; vertical-align: middle"><a href="https://civision.balafan.com/report/unrestrained_shoring/excel/"""
-    report_start = """
-
-                        					<td style="width: 8%;text-align: left; vertical-align: middle"><a href="https://civision.balafan.com/report/unrestrained_shoring/"""
+                    					<td style="width: 7%;text-align: left; vertical-align: middle"><t1b>Download Values:</t1b></td>
+                    					<td style="width: 7%;text-align: left; vertical-align: middle"><a href="http://civision.balafan.com:8010/report/unrestrained_shoring/excel/"""
 
     excel_end = """
-                            " target="_blank" ><img height = "20px" src="https://civision.balafan.com/icon/CSV_data"></a></td>
+                            " target="_blank" ><img height = "20px" src="http://civision.balafan.com:8010/icon/PDF_Detailed"></a></td>
                             """
-    space_td = """<td style="width:1%"></td>"""
     excel_end_specific = """
-                               " target="_blank" ><img height = "20px" src="https://civision.balafan.com/icon/CSV_data"></a></td>
+                               " target="_blank" ><img height = "20px" src="http://civision.balafan.com:8010/icon/PDF_Detailed"></a></td><td style="width:76%"></td>
                                """
-
-    report_end = """
-                                   " target="_blank" ><img height = "20px" src="https://civision.balafan.com/icon/PDF_Detailed"></a></td><td style="width:79%"></td>
-                                   """
     end_table = """</tr>
                               </tbody>
                             </table>"""
@@ -438,7 +418,7 @@ def generate_html_response_restrained_shoring(titles, values):
             if header == 0:  # general plots
                 s += tr
                 for plot in range(len(general_plot)):
-                    s += plot_row + f'<img src="{general_plot[plot]}" width="100%" height="auto">' + end_plot_row
+                    s += plot_row + general_plot[plot] + end_plot_row
 
                 #  download values for general plots
                 s += start_table
@@ -468,7 +448,7 @@ def generate_html_response_restrained_shoring(titles, values):
               </h3>
              </ol>
             </nav>"""
-        specific_t1_mid1 = """<td  class="menu" style="width: 20%; text-align: center; vertical-align: middle;  padding: 0.1%"><h3>"""
+        specific_t1_mid1 = """<td  class="menu" style="width: 20%; text-align: center; vertical-align: middle;  padding: 0.1%">"""
         specific_t1_mid2 = """<td  class="menu" style="width: 35%; text-align: center; vertical-align: middle;  padding: 0.1%"><h3>"""
         specific_t1_mid3 = """<td  class="menu" style="width: 45%; text-align: center; vertical-align: middle;  padding: 0.1%"><h3>"""
         specific_t1_mid_end = """</h3></td>"""
@@ -482,38 +462,44 @@ def generate_html_response_restrained_shoring(titles, values):
                                 """
 
         second_column = """
-                                        <td style="width: 35%;text-align: center; vertical-align: middle"><t2>
+                                        <td style="width: 35%;text-align: center; vertical-align: middle", rowspan="2" ><t2>
                                         """
-        second_column_white = """
-                                                <td style="background-color:white; width: 35%;text-align: center; vertical-align: middle"><t2>
-                                                """
         third_column = """
                                                 <td style="width: 11.25%;text-align: center; vertical-align: middle", height="90" ><t2>
                                                 """
         image_column = """
-                                        <td style="width: 33.75%;text-align: center; vertical-align: middle;background-color: white" colspan="3"  ><img src="https://civision.balafan.com/section" width="80%" height="auto"></td>
+                                        <td style="width: 33.75%;text-align: center; vertical-align: middle;background-color: white" colspan="3"  ><img src="D:\git\Shoring\database\section_picture_para_new.jpg" height = "360"></td>
                                         """
         image_column_prop = """
-                                                <td style="width: 11.25%;text-align: center; vertical-align: middle;background-color: white" ><t2>
+                                                <td style="width: 11.25%;text-align: right; vertical-align: middle;background-color: white" ><t2>
                                                 """
         end_column = """
                                 </t2></td>
                                 """
         # create titles
-        s += specific_t1 + specific_t1_mid1 + titles[2][0] + specific_t1_mid_end + specific_t1_mid2 + titles[2][
-            1] + specific_t1_mid_end + specific_t1_mid3 + \
+        s += specific_t1 + specific_t1_mid1 + drop_down_1 + titles[2][
+            0] + """  <span class="dropdown-caret"></span>""" + drop_down_2
+        for i in range(len(specific_values)):
+            drop_down_3 = f"""<h3
+              style="cursor: pointer"
+              class="menu-item"
+              ONCLICK="ShowAndHide('{specific_values[i][0]}')"
+            >
+              {specific_values[i][0]}
+            </h3>"""
+            s += drop_down_3
+
+        s += drop_down_end
+        s += specific_t1_mid2 + titles[2][1] + specific_t1_mid_end + specific_t1_mid3 + \
              titles[2][
                  2] + specific_t1_end
 
         for i in range(len(specific_values)):
-            drop_down_values = f"""<div style="display:block" id="{specific_values[i][0]}">"""
+            drop_down_values = f"""<div style="display:none" id="{specific_values[i][0]}">"""
             s += drop_down_values
 
             # create reports
-            s += start_table + excel_start_specific + titles[4][i] + excel_end_specific + space_td + report_start + \
-                 titles[5][
-                     i] + report_end + end_table
-            # s += start_table + report_start + titles[5][i] + excel_end_specific + end_table
+            s += start_table + excel_start_specific + titles[4][i] + excel_end_specific + end_table
 
             # add values
             s += m1
@@ -524,12 +510,10 @@ def generate_html_response_restrained_shoring(titles, values):
                 '''
             s += tr
             s += first_column + specific_values[i][0] + end_column
-            s += second_column + "" + end_column
-            # s += second_column + f'<img src="{specific_plot[i]}" height="20px">' + end_column
+            s += second_column + specific_plot[i] + end_column
             for j in range(2, 6):
                 s += third_column + specific_values[i][j] + end_column
             s += tr_end + tr + first_column + specific_values[i][1] + end_column
-            s += second_column_white + f'<img src="{specific_plot[i]}" width="100%" height="auto">' + end_column
             s += image_column_prop + specific_values[i][6] + empty_line + specific_values[i][7] + empty_line + \
                  specific_values[i][8] + empty_line + specific_values[i][9] + empty_line + specific_values[i][
                      10] + end_column
@@ -546,7 +530,7 @@ def generate_html_response_restrained_shoring(titles, values):
     return export
 
 
-def generate_html_response_restrained_shoring_no_solution(output):
+def generate_html_response_cantilever_shoring_no_solution(output):
     html = "<html>"
     html_end = "</html>"
 
@@ -704,31 +688,28 @@ def generate_html_response_restrained_shoring_no_solution(output):
     return export
 
 
-def unrestrained_front_checker(titles, values):
-    if values == "NO SOLUTION":
-        response = generate_html_response_restrained_shoring_no_solution(titles)
-    else:
-        response = generate_html_response_restrained_shoring(titles, values)
-    return response
-
-
-generate_html_response_restrained_shoring_output = generate_html_response_restrained_shoring(
+generate_html_response_cantilever_shoring_output = generate_html_response_cantilever_shoring(
     [['Cantilever Soldier Pile - Output Summary', 'Final Solution Alternatives'], ['General Plots', 'General Values'],
      ['Section', 'Deflection Plot', 'Checks'], ['load', 'shear', 'moment'],
-     ['deflection1', 'deflection2', 'deflection3'],
-     ['Rep_Unrestrained_Shoring_Section_1', 'Rep_Unrestrained_Shoring_Section_2',
-      'Rep_Unrestrained_Shoring_Section_3']], [
-        ['Embedment Depth ( ft ) = -212.01', 'maximum Shear ( lb ) = 6962.11', 'maximum Moment ( lb-ft ) = 21330.17',
-         'Y zero Shear ( ft ) = 12.46', 'Required Area ( in^2 ) = 0.44', 'Required Sx ( in^3 ) = 10.77'], [
-            ['W40X149', 'Maximum Deflection ( in ) = 0.0', 'DCR Moment = 0.02', 'DCR Shear = 0.01',
-             'DCR Deflection = 0.0', 'Timber Size 1 x 2: \n\nFail! Your timber fail in moment design.',
-             'd = 42.0 ( in )', 'h = 38.2 ( in )', 'b = 11.8 ( in )', 'tw = 0.63 ( in )', 'tf = 0.83 ( in )'],
-            ['W36X135', 'Maximum Deflection ( in ) = 0.0', 'DCR Moment = 0.02', 'DCR Shear = 0.01',
-             'DCR Deflection = 0.0', 'Timber Size 1 x 2: \n\nFail! Your timber fail in moment design.', 'd = 36 ( in )',
-             'h = 35.6 ( in )', 'b = 12.0 ( in )', 'tw = 0.6 ( in )', 'tf = 0.79 ( in )'],
-            ['W33X118', 'Maximum Deflection ( in ) = 0.0', 'DCR Moment = 0.03', 'DCR Shear = 0.01',
-             'DCR Deflection = 0.01', 'Timber Size 1 x 2: \n\nFail! Your timber fail in moment design.',
-             'd = 36 ( in )', 'h = 32.9 ( in )', 'b = 11.5 ( in )', 'tw = 0.55 ( in )', 'tf = 0.74 ( in )']]])
+     ['deflection1', 'deflection2', 'deflection3', 'deflection4']], [
+        ['Embedment Depth ( ft ) = 6.09', 'maximum Shear ( lb ) = 8020.92', 'maximum Moment ( lb-ft ) = 22378.49',
+         'Y zero Shear ( ft ) = 10.0', 'Required Area ( in^2 ) = 0.51', 'Required Sx ( in^3 ) = 11.3'], [
+            ['W18X35', 'Maximum Deflection ( in ) = 0.04', 'DCR Moment = 0.2', 'DCR Shear = 0.05',
+             'DCR Deflection = 0.08',
+             'lagging status for timber size 3 x 16: \n\nFail! Your timber fail in moment design.', 'd = 24 ( in )',
+             'h = 17.7 ( in )', 'b = 6.0 ( in )', 'tw = 0.3 ( in )', 'tf = 0.425 ( in )'],
+            ['W21X44', 'Maximum Deflection ( in ) = 0.02', 'DCR Moment = 0.14', 'DCR Shear = 0.04',
+             'DCR Deflection = 0.05',
+             'lagging status for timber size 3 x 16: \n\nFail! Your timber fail in moment design.', 'd = 24 ( in )',
+             'h = 20.7 ( in )', 'b = 6.5 ( in )', 'tw = 0.35 ( in )', 'tf = 0.45 ( in )'],
+            ['W24X55', 'Maximum Deflection ( in ) = 0.01', 'DCR Moment = 0.1', 'DCR Shear = 0.03',
+             'DCR Deflection = 0.03',
+             'lagging status for timber size 3 x 16: \n\nFail! Your timber fail in moment design.', 'd = 24 ( in )',
+             'h = 23.6 ( in )', 'b = 7.01 ( in )', 'tw = 0.395 ( in )', 'tf = 0.505 ( in )'],
+            ['W27X84', 'Maximum Deflection ( in ) = 0.01', 'DCR Moment = 0.05', 'DCR Shear = 0.02',
+             'DCR Deflection = 0.01',
+             'lagging status for timber size 3 x 16: \n\nFail! Your timber fail in moment design.', 'd = 30.0 ( in )',
+             'h = 26.7 ( in )', 'b = 10.0 ( in )', 'tw = 0.46 ( in )', 'tf = 0.64 ( in )']]])
 a = open("output.html", "w", encoding='UTF8')
-a.write(generate_html_response_restrained_shoring_output)
+a.write(generate_html_response_cantilever_shoring_output)
 a.close()
