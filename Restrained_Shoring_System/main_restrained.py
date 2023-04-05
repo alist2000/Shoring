@@ -75,7 +75,7 @@ def main_restrained(inputs):
         timber_size = timber_size_list[project]
 
         if k_formula == "User Defined":
-            ka, kp, sigma_a_user, ka_surcharge = soil_properties
+            ka, kp, sigma_a_user, ka_surcharge, h_list_pressure = soil_properties
         elif k_formula == "Rankine":
             phi, beta_active, beta_passive = soil_properties
             # phi and beta are lists. every index is for a separate soil layer.
@@ -112,6 +112,8 @@ def main_restrained(inputs):
                 sigma_a = gama * ka * h
             if k_formula == "User Defined":
                 sigma_a = sigma_a_user
+                if h_list_pressure[0] != "default":
+                    h_list = h_list_pressure
 
             h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
                 [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
@@ -124,9 +126,13 @@ def main_restrained(inputs):
                 sigma_a = gama * ka * h
             if k_formula == "User Defined":
                 sigma_a = sigma_a_user
-
-            h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
-                [[0, sigma_a], [sigma_a, sigma_a]], h_list, delta_h, h)
+                if h_list_pressure[0] != "default":
+                    h_list = h_list_pressure
+                    h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
+                        [[0, sigma_a], [sigma_a, sigma_a], [sigma_a, 0]], h_list, delta_h, h)
+                else:
+                    h_array_detail, sigma_a_array_detail = edit_sigma_and_height_general(
+                        [[0, sigma_a], [sigma_a, sigma_a]], h_list, delta_h, h)
 
         delta_h_decimal = str(delta_h)[::-1].find('.')
         if delta_h_decimal == -1:
@@ -217,8 +223,10 @@ def main_restrained(inputs):
                                     depth,
                                     "q", "Z", unit_system)
         # all pressure should have same shaped.
-        final_pressure, water_pressure_active_final = control_index_for_plot(final_pressure, water_pressure_active_final)
-        water_pressure_active_final, water_pressure_passive_final = control_index_for_plot(water_pressure_active_final, water_pressure_passive_final)
+        final_pressure, water_pressure_active_final = control_index_for_plot(final_pressure,
+                                                                             water_pressure_active_final)
+        water_pressure_active_final, water_pressure_passive_final = control_index_for_plot(water_pressure_active_final,
+                                                                                           water_pressure_passive_final)
         water_pressure_active_final = np.array(water_pressure_active_final)
         water_pressure_passive_final = np.array(water_pressure_passive_final)
 
