@@ -502,8 +502,12 @@ class analysis:
             x_point_moment_last += 1
 
         # Add last value for deflection.
-        delta_xb = abs(spi.simpson(moment[x_point_moment_last:C_index - 1:-1] * (CD[:]),
-                                   depth[x_point_moment_last:C_index - 1:-1]))
+        try:
+            delta_xb = abs(spi.simpson(moment[x_point_moment_last:C_index - 1:-1] * (CD[:]),
+                                       depth[x_point_moment_last:C_index - 1:-1]))
+        except:  # sometimes we got index error
+            delta_xb = deflection3[-1]
+
         deflection3.append(delta_xb)
 
         deflection_list = []
@@ -740,7 +744,8 @@ class analysis:
                 status_lagging.append(status)
                 d_concrete_list.append(d_concrete)
 
-                create_feather(depth, deflection_copy, "Deflection", f"Deflection_project" + str(project_number) + "_section{section_number}")
+                create_feather(depth, deflection_copy, "Deflection",
+                               f"Deflection_project" + str(project_number) + "_section{section_number}")
                 deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
                                                      length_unit)
                 deflection_plot_list.append(deflection_plot)
