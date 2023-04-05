@@ -251,7 +251,8 @@ def input_single(input_values):
         EFPa = Ka = abs(
             float(input_values.get("data").get("Soil Properties").get("Equivalent Fluid Pressure Active").get("value")))
         EFPp = Kp = abs(
-            float(input_values.get("data").get("Soil Properties").get("Equivalent Fluid Pressure Passive").get("value")))
+            float(
+                input_values.get("data").get("Soil Properties").get("Equivalent Fluid Pressure Passive").get("value")))
         Ka_surcharge = abs(float(input_values.get("data").get("Soil Properties").get("Ka Surcharge").get("value")))
         pressure_distribution = json.loads(
             input_values.get("data").get("Soil Properties").get("Pressure Distribution").get("value")).get(
@@ -260,8 +261,24 @@ def input_single(input_values):
             float(input_values.get("data").get("Soil Properties").get("σa").get("value")))
         if pressure_distribution == "Triangle":
             sigma_a = Ka * retaining_height
+            h_list_pressure = ["default"]
+        else:
+            try:
+                ht1 = abs(float(input_values.get("data").get("Soil Properties").get("Ht1").get("value")))
+                ht1 = round(ht1, delta_h_decimal)
+            except:
+                ht1 = retaining_height
+            try:
+                ht2 = abs(float(input_values.get("data").get("Soil Properties").get("Ht2").get("value")))
+                ht2 = round(ht2, delta_h_decimal)
+            except:
+                ht2 = ht1
+            if ht2 + ht1 >= retaining_height:
+                h_list_pressure = ["default"]
+            else:
+                h_list_pressure = [ht1, round(retaining_height - (ht1 + ht2), delta_h_decimal), ht2]
 
-        soil_properties = [Ka, Kp, sigma_a, Ka_surcharge]
+        soil_properties = [Ka, Kp, sigma_a, Ka_surcharge, h_list_pressure]
 
         EFPa_valid = EFPa
         EFPp_valid = EFPp
