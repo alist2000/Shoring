@@ -494,10 +494,16 @@ class analysis:
             #     delta_xb = 0.  # this part is not necessary ( number of index )
             # else:
             if x_point != 0:
-                delta_xb = abs(
-                    spi.simpson(moment[x_point_moment_last:C_index:-1] * (CD[:x_point]),
-                                depth[x_point_moment_last:C_index:-1]))
-                deflection3.append(delta_xb)  # start C end D --> should be reversed --> convert to: start D end C
+                try:
+                    delta_xb = abs(
+                        spi.simpson(moment[x_point_moment_last:C_index:-1] * (CD[:x_point]),
+                                    depth[x_point_moment_last:C_index:-1]))
+                    deflection3.append(delta_xb)  # start C end D --> should be reversed --> convert to: start D end C
+                except:
+                    # delta_xb = abs(
+                    #     spi.simpson(moment[x_point_moment_last:C_index:-1] * (CD[:x_point - 1]),
+                    #                 depth[x_point_moment_last:C_index:-1]))
+                    pass
 
             x_point_moment_last += 1
 
@@ -665,13 +671,16 @@ class analysis:
                 for x in CD_last:
                     x_point = CD_list_last.index(x)
                     if x_point != 0:
-                        delta_xb_last = abs(
-                            spi.simpson(moment[x_point_moment_last:C_index_mid:-1] * (CD_last[:x_point]),
-                                        depth[x_point_moment_last:C_index_mid:-1]))
-                        delta_xb_last = -(delta_xb_last - delta_bc_mid * CD_list_last[x_point] / BC_length_mid)
+                        try:
+                            delta_xb_last = abs(
+                                spi.simpson(moment[x_point_moment_last:C_index_mid:-1] * (CD_last[:x_point]),
+                                            depth[x_point_moment_last:C_index_mid:-1]))
+                            delta_xb_last = -(delta_xb_last - delta_bc_mid * CD_list_last[x_point] / BC_length_mid)
 
-                        deflection3.append(
-                            delta_xb_last)  # start C end D --> should be reversed --> convert to: start D end C
+                            deflection3.append(
+                                delta_xb_last)  # start C end D --> should be reversed --> convert to: start D end C
+                        except:
+                            pass
 
                     x_point_moment_last += 1
 
