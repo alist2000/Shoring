@@ -122,7 +122,7 @@ site_input5 = {
                          'Timber Size': {'value': '{"id":1403,"item":"1 x 2","section_product_item":"49_93"}',
                                          'unit': None}}}, 'type': 1, 'number_of_projects': 1}
 
-site_input = {
+site_input6 = {
     'information': {'title': '1', 'jobNo': '1', 'designer': '1', 'checker': '1', 'company': '1', 'client': '1',
                     'unit': 'us', 'date': None, 'comment': None, 'other': None}, 'product_id': 27, 'user_id': 44,
     'data': {'General Properties': {'FS': {'value': '1.5', 'unit': None}, 'E': {'value': '29000', 'unit': 'ksi'},
@@ -147,6 +147,37 @@ site_input = {
             'Load Type ': {'value': '{"id":1382,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
             'Load Type  ': {'value': '{"id":1383,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
             'Load Type   ': {'value': '{"id":1384,"item":"No Load","section_product_item":"48_92"}', 'unit': None}},
+             'Lagging': {'Ph max': {'value': '111', 'unit': 'psf'}, 'Fb': {'value': '111', 'unit': 'ksi'},
+                         'Timber Size': {'value': '{"id":1403,"item":"1 x 2","section_product_item":"49_93"}',
+                                         'unit': None}}}, 'type': 1, 'number_of_projects': 1}
+
+site_input = {
+    'information': {'title': '1', 'jobNo': '1', 'designer': '1', 'checker': '1', 'company': '1', 'client': '1',
+                    'unit': 'us', 'date': None, 'comment': None, 'other': None}, 'product_id': 27, 'user_id': 44,
+    'data': {'General Properties': {'FS': {'value': '1.5', 'unit': None}, 'E': {'value': '29000', 'unit': 'ksi'},
+                                    'Pile Spacing': {'value': '6', 'unit': 'ft'}, 'Fy': {'value': '36', 'unit': 'ksi'},
+                                    'Allowable Deflection': {'value': '0.56', 'unit': 'in'}, 'Sections': {
+            'value': '{"id":1371,"item":"W40,W36,W33","section_product_item":"44_86"}', 'unit': None}},
+             'Geometrical Properties': {'Retaining Height': {'value': '12', 'unit': 'ft'}, 'Number of Anchors': {
+                 'value': '{"id":1472,"item":"1","section_product_item":"45_96"}', 'unit': None},
+                                        'Angle of Anchors': {'value': '0', 'unit': '°'},
+                                        'h1': {'value': '3', 'unit': 'ft'}}, 'Soil Properties': {
+            'Formula': {'value': '{"id":1488,"item":"User Defined","section_product_item":"46_97"}', 'unit': None},
+            'Equivalent Fluid Pressure Active': {'value': '68', 'unit': 'pcf'},
+            'Equivalent Fluid Pressure Passive': {'value': '199', 'unit': 'pcf'},
+            'Pressure Distribution': {'value': '{"id":1533,"item":"Trapezoidal","section_product_item":"46_97"}',
+                                      'unit': None}, 'σa': {'value': '333', 'unit': 'psf'},
+            'Ka Surcharge': {'value': '0.43', 'unit': 'pcf'},
+            'Soil Cohesion': {'value': '{"id":1538,"item":"Cohesionless","section_product_item":"46_97"}',
+                              'unit': None}, 'Ht1': {'value': '13', 'unit': 'ft'}, 'Ht2': {'value': '3', 'unit': 'ft'}},
+             'Water Properties': {
+                 'There is water?': {'value': '{"id":1541,"item":"No","section_product_item":"47_99"}', 'unit': None}},
+             'Surcharge': {
+                 'Load Type': {'value': '{"id":1381,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
+                 'Load Type ': {'value': '{"id":1382,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
+                 'Load Type  ': {'value': '{"id":1383,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
+                 'Load Type   ': {'value': '{"id":1384,"item":"No Load","section_product_item":"48_92"}',
+                                  'unit': None}},
              'Lagging': {'Ph max': {'value': '111', 'unit': 'psf'}, 'Fb': {'value': '111', 'unit': 'ksi'},
                          'Timber Size': {'value': '{"id":1403,"item":"1 x 2","section_product_item":"49_93"}',
                                          'unit': None}}}, 'type': 1, 'number_of_projects': 1}
