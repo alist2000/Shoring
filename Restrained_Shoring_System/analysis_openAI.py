@@ -500,9 +500,6 @@ class analysis:
                                     depth[x_point_moment_last:C_index:-1]))
                     deflection3.append(delta_xb)  # start C end D --> should be reversed --> convert to: start D end C
                 except:
-                    # delta_xb = abs(
-                    #     spi.simpson(moment[x_point_moment_last:C_index:-1] * (CD[:x_point - 1]),
-                    #                 depth[x_point_moment_last:C_index:-1]))
                     pass
 
             x_point_moment_last += 1
@@ -684,12 +681,14 @@ class analysis:
 
                     x_point_moment_last += 1
 
-                # Add
-                delta_xb_last = abs(
-                    spi.simpson(moment[x_point_moment_last:C_index_mid:-1] * (CD_last[:]),
-                                depth[x_point_moment_last:C_index_mid:-1]))
-                delta_xb_last = -(delta_xb_last - delta_bc_mid * CD_list_last[x_point] / BC_length_mid)
-
+                try:
+                    # Add
+                    delta_xb_last = abs(
+                        spi.simpson(moment[x_point_moment_last:C_index_mid:-1] * (CD_last[:]),
+                                    depth[x_point_moment_last:C_index_mid:-1]))
+                    delta_xb_last = -(delta_xb_last - delta_bc_mid * CD_list_last[x_point] / BC_length_mid)
+                except:
+                    delta_xb_last = deflection3[-1]
                 deflection3.append(
                     delta_xb_last)  # start C end D --> should be reversed --> convert to: start D end C
                 # deflection3.reverse()  # now started from D to C
