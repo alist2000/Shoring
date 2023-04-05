@@ -15,7 +15,7 @@ from pressure import anchor_pressure, edit_sigma_and_height_general, force_calcu
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
-from analysis_openAI import analysis, DCR_calculator
+from analysis_openAI import analysis, DCR_calculator, control_index_for_plot
 from design import design, subscription, min_weight
 from report import create_feather
 from Output import output_single_solved, output_single_no_solution
@@ -216,6 +216,11 @@ def main_restrained(inputs):
                                     water_pressure_passive_final,
                                     depth,
                                     "q", "Z", unit_system)
+        # all pressure should have same shaped.
+        final_pressure, water_pressure_active_final = control_index_for_plot(final_pressure, water_pressure_active_final)
+        water_pressure_active_final, water_pressure_passive_final = control_index_for_plot(water_pressure_active_final, water_pressure_passive_final)
+        water_pressure_active_final = np.array(water_pressure_active_final)
+        water_pressure_passive_final = np.array(water_pressure_passive_final)
 
         final_pressure = final_pressure + water_pressure_active_final - water_pressure_passive_final
         create_feather(depth, final_pressure, "Load", "load_project" + str(project + 1))
