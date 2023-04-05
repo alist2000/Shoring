@@ -18,13 +18,14 @@ def find_max(z, value):
 
 
 class analysis:
-    def __init__(self, T, h1, depth, sigma, delta_h, unit_system):
+    def __init__(self, T, h1, depth, sigma, delta_h, unit_system, project_number):
         self.T = T  # for single just a number for multi it's a list.
         self.h1 = h1  # for single just h1 and for other  h_list_first.
         self.depth = depth
         self.sigma = sigma
         self.delta_h = delta_h
         self.unit_system = unit_system
+        self.project_number = project_number
         # count number of decimals
         delta_h_decimal = str(delta_h)[::-1].find('.')
         if delta_h_decimal == -1:
@@ -49,6 +50,7 @@ class analysis:
         sigma = self.sigma
         delta_h = self.delta_h
         unit_system = self.unit_system
+        project_number = self.project_number
 
         if unit_system == "us":
             load_unit = "lb"  # if unit of gama was pcf
@@ -78,7 +80,7 @@ class analysis:
         Y_zero_load_index = np.argmax(np.abs(shear_values))
         Y_zero_load = depth[Y_zero_load_index]
 
-        create_feather(depth, shear_values, "Shear", "shear_project")
+        create_feather(depth, shear_values, "Shear", "shear_project" + str(project_number))
 
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
         depth, shear_values = control_index_for_plot(depth, shear_values)
@@ -92,6 +94,7 @@ class analysis:
         delta_h = self.delta_h
         unit_system = self.unit_system
         delta_h_decimal = self.delta_h_decimal
+        project_number = self.project_number
 
         if unit_system == "us":
             load_unit = "lb"  # if unit of gama was pcf
@@ -140,7 +143,7 @@ class analysis:
         shear_values = np.array(shear_values)
 
         plot = plotter_shear(depth, shear_values, "V", "Z", load_unit, length_unit)
-        create_feather(depth, shear_values, "Shear", "shear_project")
+        create_feather(depth, shear_values, "Shear", "shear_project" + str(project_number))
         depth, shear_values = control_index_for_plot(depth, shear_values)
         return plot, shear_values, V_max, Y_zero_load
 
@@ -151,6 +154,8 @@ class analysis:
     def moment(self, shear_values):
         depth = self.depth
         unit_system = self.unit_system
+        project_number = self.project_number
+
         if unit_system == "us":
             load_unit = "lb-ft"
             length_unit = "ft"
@@ -165,7 +170,7 @@ class analysis:
         Y_zero_shear_index = np.argmax(np.abs(moment_values))
         Y_zero_shear = depth[Y_zero_shear_index]
 
-        create_feather(depth, moment_values, "Moment", "moment_project")
+        create_feather(depth, moment_values, "Moment", "moment_project" + str(project_number))
         plot = plotter_moment(depth, moment_values, "M", "Z", load_unit, length_unit)
         depth, moment_values = control_index_for_plot(depth, moment_values)
         return plot, moment_values, M_max, Y_zero_shear
@@ -704,6 +709,8 @@ class analysis:
         depth = self.depth
         deflection_unit = self.deflection_unit
         length_unit = self.length_unit
+        project_number = self.project_number
+
         final_deflections = []
         deflection_plot_list = []
         max_deflection_list = []
@@ -733,7 +740,7 @@ class analysis:
                 status_lagging.append(status)
                 d_concrete_list.append(d_concrete)
 
-                create_feather(depth, deflection_copy, "Deflection", f"Deflection_project_section{section_number}")
+                create_feather(depth, deflection_copy, "Deflection", f"Deflection_project" + str(project_number) + "_section{section_number}")
                 deflection_plot = plotter_deflection(depth, deflection_copy, 'Deflection', "z", deflection_unit,
                                                      length_unit)
                 deflection_plot_list.append(deflection_plot)
