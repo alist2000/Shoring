@@ -17,6 +17,7 @@ from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
 from analysis_openAI import analysis, DCR_calculator
 from design import design, subscription, min_weight
+from report import create_feather
 from Output import output_single_solved, output_single_no_solution
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
@@ -36,7 +37,8 @@ from Passive_Active.active_passive import rankine, coulomb
 def main_restrained(inputs):
     Inputs = input_single(inputs)
     project_error = []
-    [input_errors, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list, gama_list,
+    [input_errors, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list,
+     gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
      surcharge_inputs_list, tieback_spacing_list,
@@ -216,19 +218,21 @@ def main_restrained(inputs):
                                     "q", "Z", unit_system)
 
         final_pressure = final_pressure + water_pressure_active_final - water_pressure_passive_final
+        create_feather(depth, final_pressure, "Load", "load_project" + str(project + 1))
+
         # plot2 = plotter_load_result(depth, final_pressure, "", "", "", "")
 
         # shear and moment values and diagrams
         if anchor_number == 1:
             analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
-                                         unit_system)
+                                         unit_system, project + 1)
             shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear()
             moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
             deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
                 moment_values, d_0, h1)
         else:
             analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
-                                         unit_system)
+                                         unit_system, project + 1)
             shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear_multi()
             moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
             deflection_values, z_max, max_deflection = analysis_instance.deflection_multi(
@@ -283,7 +287,6 @@ def main_restrained(inputs):
             return output_single
 
     return sigma_active, sigma_passive, sigma_a, surcharge_pressure, surcharge_force, surcharge_arm, trapezoidal_force, trapezoidal_force_arm, d, d_0, T
-
 
 
 outputs = main_restrained(site_input)
