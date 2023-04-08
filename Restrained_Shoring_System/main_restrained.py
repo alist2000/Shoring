@@ -2,6 +2,7 @@ import copy
 import random
 import sys
 from math import cos
+import math
 
 import sympy.core.mul
 from sympy import symbols
@@ -22,6 +23,7 @@ from Output import output_single_solved, output_single_no_solution
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
 sys.path.append(r"D:/git/Shoring/Unrestrained_Shoring_System")
+sys.path.append(r"D:/git/Shoring/Restrained_Shoring_System")
 
 sys.path.append(r"F:/Cvision/Lateral-pressure-")
 sys.path.append(r"F:/Cvision/Unrestrained_Shoring_System")
@@ -29,6 +31,7 @@ sys.path.append(r"F:/Cvision/Unrestrained_Shoring_System")
 from Surcharge.result import result_surcharge
 from soldier_pile.surchargeLoad import surcharge
 from Passive_Active.active_passive import rankine, coulomb
+from front.report import load_distribution
 
 
 # from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
@@ -37,7 +40,7 @@ from Passive_Active.active_passive import rankine, coulomb
 def main_restrained(inputs):
     Inputs = input_single(inputs)
     project_error = []
-    [input_errors, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list,
+    [input_errors, project_information, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list,
      gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
@@ -124,6 +127,7 @@ def main_restrained(inputs):
 
             if pressure_distribution == "Triangle":
                 sigma_a = gama * ka * h
+                ht1 = ht2 = 0, 0
             if k_formula == "User Defined":
                 sigma_a = sigma_a_user
                 if h_list_pressure[0] != "default":
@@ -222,6 +226,7 @@ def main_restrained(inputs):
                                     water_pressure_passive_final,
                                     depth,
                                     "q", "Z", unit_system)
+
         # all pressure should have same shaped.
         final_pressure, water_pressure_active_final = control_index_for_plot(final_pressure,
                                                                              water_pressure_active_final)
@@ -285,8 +290,18 @@ def main_restrained(inputs):
             final_deflections, max_deflections, deflection_plots = "", "", ""
 
         if number_of_project == 1 and section_error == "No Error!":  # errors can be develop
+            # create report
+            if len(h_list) == 2:
+                ht2 = 0
+                ht1 = h_list[0]
+            else:
+                ht2 = h_list[-1]
+                ht1 = h_list[0]
+            load_distribution(unit_system, sigma_a, h, ht1, ht2)
+
+            # outputs
             general_plot = [load_diagram, shear_diagram, moment_diagram]
-            general_values = [d, V_max, M_max, Y_zero_shear, A_required, S_required]
+            general_values = [math.ceil(d), round(V_max / 1000, 2), round(M_max / 1000, 2), Y_zero_shear, A_required, S_required]
             general_output = {"plot": general_plot, "value": general_values}
             specific_plot = deflection_plots
             specific_values = [final_sections_names, max_deflections, DCR_moment, DCR_shear, DCR_deflection,
