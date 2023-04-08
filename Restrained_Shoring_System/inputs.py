@@ -200,6 +200,8 @@ def input_single(input_values):
     comment = input_values.get("information").get("comment")
     other = input_values.get("information").get("other")
 
+    project_information = [product_id, user_id, title, jobNo, designer, checker, company, client, date, comment, other]
+
     # *** General Properties ***
 
     FS = abs(float(input_values.get("data").get("General Properties").get("FS").get("value")))
@@ -408,6 +410,7 @@ def input_single(input_values):
     input_validation = {"error_number": error_number,
                         "description": error_description}
     final_values = {"input_validation": input_validation,
+                    "project_information": project_information,
                     "number_of_project": number_of_project,
                     "number_of_layer": [number_of_layer],
                     "unit_system": unit_system,
