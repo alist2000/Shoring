@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+  border-spacing: 1;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+table * {
+  position: relative;
+}
+table td, table th {
+  padding-left: 8px;
+}
+table thead tr {
+  height: 60px;
+  background: #D1D1D1;
+  font-size: 16px;
+}
+table tbody tr {
+  height: 48px;
+  border-bottom: 1px solid #E3F1D5;
+}
+table tbody tr:last-child {
+  border: 0;
+}
+table td, table th {
+  text-align: left;
+}
+table td.l, table th.l {
+  text-align: right;
+}
+table td.c, table th.c {
+  text-align: center;
+}
+table td.r, table th.r {
+  text-align: center;
+}
+
+@media screen and (max-width: 35.5em) {
+  table {
+    display: block;
+  }
+  table > *, table tr, table td, table th {
+    display: block;
+  }
+  table thead {
+    display: none;
+  }
+  table tbody tr {
+    height: auto;
+    padding: 8px 0;
+  }
+  table tbody tr td {
+    padding-left: 45%;
+    margin-bottom: 12px;
+  }
+  table tbody tr td:last-child {
+    margin-bottom: 0;
+  }
+  table tbody tr td:before {
+    position: absolute;
+    font-weight: 700;
+    width: 40%;
+    left: 10px;
+    top: 0;
+  }
+  table tbody tr td:nth-child(1):before {
+    content: "Code";
+  }
+  table tbody tr td:nth-child(2):before {
+    content: "Stock";
+  }
+  table tbody tr td:nth-child(3):before {
+    content: "Cap";
+  }
+  table tbody tr td:nth-child(4):before {
+    content: "Inch";
+  }
+  table tbody tr td:nth-child(5):before {
+    content: "Box Type";
+  }
+}
+body {
+  background: #DAF5FF;
+  font: 400 14px "Calibri", "Arial";
+  padding: 20px;
+}
+
+blockquote {
+  color: white;
+  text-align: center;
+}
+    </style>
+</head>
+<body>
+  <table>
+    <tr >
+      <td  style="text-align:center"><img align="middle" src="Force_pressure.png" alt="Force PRESSURE PICTURE" style="height: 230px;width:auto;"></td>
+    </tr>
+    <tr>
+      <td style="width: 100%;">
+          <t2>DR<sub>4</sub>= Force Result of Surcharge Loads</t2>
+      </td>
+  
+  </tr>
+  <tr>
+    <td style="width: 100%;">
+        <t2>DR<sub>5</sub>= Water Force in Loading Side</t2>
+    </td></tr>
+    <tr>
+      <td style="width: 100%;">
+          <t2>RS<sub>2</sub>= Water Force in Resisting Side</t2>
+      </td></tr>
+  </table>
+    <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Loading Side</th>
+            </td>
+
+        </tr>
+      </tbody></table>
+      
+    <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Force </th>
+            <th>Arm</th>
+            
+          </tr>
+          <thead></thead>
+          <tbody>
+            <tr>
+              <td>DR<sub>1</sub></td>
+              <td>{{ dr1 }} {{force_unit}}</td>
+              <td>{{ arm_dr1}} {{length_unit}} </td>
+              
+            </tr>
+            <tr>
+              <td>DR<sub>2</sub></td>
+              <td>{{ dr2 }} {{force_unit}}</td>
+              <td>{{ arm_dr2}} {{length_unit}} </td>
+              
+            </tr>
+            <tr>
+              <td>DR<sub>3</sub></td>
+              <td>{{ dr3 }} {{force_unit}}</td>
+              <td>{{ arm_dr3}} {{length_unit}} </td>
+              
+            </tr>
+            <tr>
+              <td>DR<sub>4</sub></td>
+              <td>{{ dr4 }} {{force_unit}}</td>
+              <td>{{ arm_dr4}} {{length_unit}} </td>
+              
+            </tr>
+            <tr>
+              <td>DR<sub>5</sub></td>
+              <td>{{ dr5 }} {{force_unit}}</td>
+              <td>{{ arm_dr5}} {{length_unit}} </td>
+              
+            </tr>
+            
+          </tbody>
+          <table />
+      
+        </thead>
+      </table>
+    </td>
+    <td> 
+      <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Resisting Side</th>
+            </td>
+        </tr></tbody></table>
+        <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+            <th>Force</th>
+            <th>Arm</th>
+          
+        </tr>
+        <thead></thead>
+        <tbody>
+          <tr>
+            <td>RS<sub>1</sub></td>
+            <td>{{ rs1 }} {{force_unit}}</td>
+            <td>{{ arm_rs1}} {{length_unit}} </td>
+            
+          </tr>
+          <tr>
+            <td>RS<sub>2</sub></td>
+            <td>{{ rs2 }} {{force_unit}}</td>
+            <td>{{ arm_rs2}} {{length_unit}} </td>
+            
+          </tr>
+          
+        </tbody>
+        <table />
+    
+      </thead>
+    </table>
+  </td>
+    </tr>
+    </table>
+</body>
+</html>
