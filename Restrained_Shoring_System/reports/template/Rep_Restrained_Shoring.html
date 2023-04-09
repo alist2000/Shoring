@@ -4,7 +4,7 @@
     <title>Report Sample</title>
     <style type="text/css">
         body {
-            font: 10px Arial, Helvetica, sans-serif;
+            font: 14px Arial, Helvetica, sans-serif;
             line-height: 1.0;
             height: 842px;
             width: 595px;
@@ -44,7 +44,7 @@
 
         h1 {
             color: #30508A;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         h2 {
@@ -61,7 +61,7 @@
 
         h3 {
             background: #a2d2ff;
-            font-size: 10px;
+            font-size: 14px;
             margin-bottom: -1px;
             margin-top: -1px;
             margin-left: -1px;
@@ -73,52 +73,52 @@
 
         t1 {
             display: block;
-            font-size: 10px;
+            font-size: 14px;
             font-style: italic;
             padding-left: 3px;
         }
 
         t1b {
-            font-size: 10px;
+            font-size: 14px;
             font-style: italic;
             font-weight: bold;
             padding-left: 3px;
         }
 
         t2 {
-            font-size: 10px;
+            font-size: 14px;
         }
 
         t2p {
-            font-size: 10px;
+            font-size: 14px;
             color: green;
         }
 
         t2f {
-            font-size: 10px;
+            font-size: 14px;
             color: red;
         }
 
         t2i {
-            font-size: 10px;
+            font-size: 14px;
             text-indent: 50px
         }
 
         tc2 {
-            font-size: 10px;
+            font-size: 14px;
             text-align: center;
         }
 
         p {
-            font-size: 10px;
+            font-size: 14px;
         }
 
         em {
-            font-size: 10px;
+            font-size: 14px;
         }
 
         sub {
-            font-size: 10px;
+            font-size: 14px;
         }
 
     </style>
@@ -144,6 +144,20 @@
       $(function () {
         $("#load_distribution").load(
           "load_distribution.html"
+        );
+      });
+    </script>
+    <script>
+      $(function () {
+        $("#surcharge_formula").load(
+          "https://civision.balafan.com/restrained_shoring/include/surcharge_formula"
+        );
+      });
+    </script>
+    <script>
+      $(function () {
+        $("#force_arm").load(
+          "force_arm.html"
         );
       });
     </script>
@@ -710,10 +724,10 @@
     <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
         <tbody>
         <tr>
-            <td style="width: 15%;">
+            <td style="width: 30%;">
                 <t1>Rankine Theory</t1>
             </td>
-            <td style="width: 85%;">
+            <td style="width: 70%;">
                 <t2>
                 </t2>
             </td>
@@ -742,10 +756,10 @@
     <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
         <tbody>
         <tr>
-            <td style="width: 15%;">
+            <td style="width: 30%;">
                 <t1>Coulomb Theory</t1>
             </td>
-            <td style="width: 85%;">
+            <td style="width: 70%;">
                 <t2>
                 </t2>
             </td>
@@ -798,6 +812,98 @@
         </table>
         <table id="load_distribution"></table>
         <table id="SoilPressure"></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.3 Surcharge Loads</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table id="surcharge_formula"></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.4 Driving & Resisting Forces</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table id="force_arm"></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.5 Embedment Depth Calculation</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+            <tbody>
+            <tr>
+                <td style="width: 15%;">
+                    <t1>Moments</t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <t2>M<sub>d</sub> = {{ Md }}</t2></td>
+                <td style="width: 50%;">
+                    <t2>M<sub>r</sub> = {{ Mr }}</t2></td>
+                    </tr>
+                
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> FS = M<sub>r</sub> / M<sub>d</sub>
+                    </t1>
+                </td>
+                <td style="width: 50%;">
+                    <t2>FS = 1</t2>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 30%;">
+                    <t1> M<sub>r</sub> = M<sub>d</sub></t1>
+                </td>
+                <td style="width: 70%;">
+                    <t2>D<sub>0</sub> = {{ d0 }} {{ length_unit }}</t2>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> FS = {{ FS }}
+                    </t1>
+                </td>
+                <td style="width: 50%;">
+                    <t2>M<sub>r</sub> = {{ FS }} &#215; M<sub>d</sub></t2>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 30%;">
+                    <t1> {{ d_equation }}</t1>
+                </td>
+                <td style="width: 70%;">
+                    <t2>D = {{ d }} {{ length_unit }}</t2>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+            <tbody>
+            <tr>
+                <td style="width: 15%;">
+                    <t1>Solution</t1>
+                </td>
+                <td style="width: 85%;">
+                    <t2><em>C<sub>pr</sub></em> = {{ cpr_left_bm }}, <em>M<sub>pr</sub></em> = {{ mpr_left_bm }}&nbsp;{{
+                        um
+                        }}
+                    </t2>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <table border="0" style="border-collapse: collapse; width: 100%;">
             <tbody>
             <tr>
