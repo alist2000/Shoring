@@ -324,3 +324,29 @@ def Formula(formula, soil_prop, retaining_height, unit_system):
     file = open("reports/template/formula.html", "w")
     file.write(table_main)
     file.close()
+
+
+def raker_force(unit_system, forces):
+    if unit_system == "us":
+        force_unit = """Kips"""
+    else:
+        force_unit = """Kips"""
+    table = """<tbody><tr>"""
+    for i in range(len(forces)):
+        if i % 2 == 0 and i != 0:
+            table += """</tr><tr>"""
+
+        table += f"""
+            <td style="width: 25%;">
+                <t1>R<sub>{ i + 1 }</sub>:</t1>
+            </td>
+            <td style="width: 25%;">
+                <t2> {forces[i]} {force_unit}</t2>
+            </td>
+    """
+    table += """</tr></tbody>"""
+    file = open("reports/template/raker_forces.html", "w")
+    file.write(table)
+    file.close()
+
+# raker_force("us", [125,4523,458,123])
