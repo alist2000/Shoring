@@ -161,6 +161,13 @@
         );
       });
     </script>
+    <script>
+      $(function () {
+        $("#raker_forces").load(
+          "raker_forces.html"
+        );
+      });
+    </script>
 </head>
 <body>
 <div class="custom-page-start">
@@ -859,7 +866,7 @@
                     </t1>
                 </td>
                 <td style="width: 50%;">
-                    <t2>FS = 1</t2>
+                    <t2></t2>
                 </td>
             </tr>
             <tr>
@@ -889,21 +896,237 @@
             </tr>
             </tbody>
         </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.6 Raker/Braced Forces Calculation</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> FS = M<sub>r</sub> / M<sub>d</sub>
+                    </t1>
+                </td>
+                <td style="width: 50%;">
+                    <t2>FS = 1</t2>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 30%;">
+                    <t1> M<sub>r</sub> = M<sub>d</sub></t1>
+                </td>
+                <td style="width: 70%;">
+                    <t2>D<sub>0</sub> = {{ d0 }} {{ length_unit }}</t2>
+                </td>
+            </tr>
+        </tbody></table>
+        <table id="raker_forces"></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.7 Moment & Shear Diagrams</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> M<sub>max</sub> = {{M_max}}
+                    </t1>
+                </td>
+                <td style="width: 50%;">
+                    <t1> V<sub>max</sub> = {{V_max}}
+                    </t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <img style="width: 100%; height: auto;  margin-top:0px;"
+                     src="https://civision.balafan.com/restrained_shoring/plot/general_output2"
+                     alt="shear diagram">
+                </td>
+                <td style="width: 50%;">
+                    <img style="width: 100%; height: auto;  margin-top:0px;"
+                     src="https://civision.balafan.com/restrained_shoring/plot/general_output3"
+                     alt="moment diagram">
+                </td>
+            </tr>
+        </tbody></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.8 Section Design</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 25%;">
+                    <t1> Use: {{section}}:</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> S<sub>x</sub> = {{Sx_section}} </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> I<sub>x</sub> = {{Ix_section}} </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> A = {{A_section}} </t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> f<sub>v</sub>=V<sub>max</sub>/A = {{V_max}}/{{A_section}}={{V_max/A_section}}</t1>
+                </td>
+                <td style="width: 50%;"></td>
+            </tr>
+            <tr>
+                <td style="width: 30%;">
+                    <t1> f<sub>v,max</sub>= {{fvmax}} </t1>
+                </td>
+                <td style="width: 70%;"><t1>{{section}} is satisfactory in shear</t1></td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> f<sub>b</sub>=M<sub>max</sub>/S = {{M_max}}/{{Sx_section}}={{M_max/Sx_section}}</t1>
+                </td>
+                <td style="width: 50%;"></td>
+            </tr>
+            <tr>
+                <td style="width: 30%;">
+                    <t1> f<sub>b,max</sub>= {{fbmax}} </t1>
+                </td>
+                <td style="width: 70%;"><t1>{{section}} is satisfactory in moment</t1></td>
+            </tr>
+        </tbody></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.9 Deflection Check</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="text-align: justify;text-justify: inter-word;">The deflection of the restrained soldier pile is calculated using moment areas method, and the 
+            corresponding deflection diagram is shown below.Considering the maximum allowable deflection
+            is {{allowable_deflection}}, section {{section}} satisfies the deflection criterion.
+            It shoul be noted that the point of fixity is assumed to be at 0.25D<sub>0</sub> below the excavation line.</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 50%;">
+                    <t1> Deflection<sub>max</sub> = {{deflection_max}}
+                    </t1>
+                </td>
+                <td style="width: 50%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100%; text-align: center;">
+                    <img style="width: 100%; height: auto;  margin-top:0px;"
+                     src="https://civision.balafan.com/restrained_shoring/plot/deflection_output1"
+                     alt="shear diagram">
+
+            </tr>
+        </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;"><h3>5.10 Lagging Design</h3></td>
+            </tr>
+            </tbody>
+        </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 25%;">
+                    <t1> Tieback/Racker Spacing:</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{tieback_spacing} </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> d<sub>pile</sub> </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{d_concrete}} </t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 25%;">
+                    <t1> L<sub>c</sub>:</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{lc} </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> PH<sub>Max</sub> </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{Ph_max}} </t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 25%;">
+                    <t1> R = 0.5 &#215; (PH &#215;L<sub>c</sub>/2):</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{R_lagging} </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> M<sub>Max</sub> </t1>
+                </td>
+                <td style="width: 25%;">
+                    <t1> {{M_max_lagging}} </t1>
+                </td>
+            </tr>
+        </tbody></table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;">
+                    <t1> S<sub>required</sub>= M<sub>max</sub>/F<sub>b</sub>= {{Sx_required_lagging}}</t1>
+                </td>
+            </tr>
+        </tbody></table>
         <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
             <tbody>
             <tr>
                 <td style="width: 15%;">
-                    <t1>Solution</t1>
+                    <t1>Try</t1>
                 </td>
                 <td style="width: 85%;">
-                    <t2><em>C<sub>pr</sub></em> = {{ cpr_left_bm }}, <em>M<sub>pr</sub></em> = {{ mpr_left_bm }}&nbsp;{{
-                        um
-                        }}
+                    <t2>{{timber_size}} :
                     </t2>
                 </td>
             </tr>
             </tbody>
         </table>
+        <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="width: 100%;">
+                    <t1> S<sub>supplied</sub> = {{Sx_supplied_lagging}}</t1>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100%;">
+                    <t1> Timber Moment Design: {{lagging_status}}</t1>
+                </td>
+            </tr>
+        </tbody></table>
         <table border="0" style="border-collapse: collapse; width: 100%;">
             <tbody>
             <tr>
