@@ -10,12 +10,14 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
         q_line = "N/m"
         q_strip = "N/m<sup>2</sup>"
 
+    number_of_surcharge = 0
+
     table = f"""<tr>
             <td style="width: 25%;">
                 <t1>Number of Surcharge Load:</t1>
             </td>
             <td style="width: 25%;">
-                <t2>{len(surcharge_type)}</t2>
+                <t2>{number_of_surcharge}</t2>
             </td>
             <td style="width: 25%;">
                 <t1>Surcharge Depth:</t1>
@@ -25,7 +27,6 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
             </td>
         </tr>
         """
-    number_of_surcharge = 0
     for i in range(len(surcharge_type)):
         if surcharge_type[i] != "No Load":
             number_of_surcharge += 1
