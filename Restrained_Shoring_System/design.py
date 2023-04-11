@@ -19,7 +19,8 @@ class design:
         if unit_system == "us":
             s_required = M_max * 12 / (fb * 1000)  # s unit --> inch^3
         else:
-            s_required = M_max * 10 ** 6 / fb  # s unit --> mm^3
+            # s_required = M_max * 10 ** 6 / fb  # s unit --> mm^3
+            s_required = M_max * 10 ** 3 / fb  # s unit --> mm^3   *** MUST BE CHECKED ***
         output = SQL_reader(section, "not important A", s_required, "not important I", "moment", unit_system)
         return output, s_required
 
@@ -31,7 +32,8 @@ class design:
         if unit_system == "us":
             A_required = V_max / (0.44 * Fy * 1000)  # in^2
         else:
-            A_required = V_max * 1000 / (0.44 * Fy)  # mm^2
+            # A_required = V_max * 1000 / (0.44 * Fy)  # mm^2
+            A_required = V_max / (0.44 * Fy)  # mm^2  *** MUST BE CHECKED ***
         output = SQL_reader(section, A_required, " not important s", "not important I", "shear", unit_system)
         return output, A_required
 
@@ -43,7 +45,9 @@ class design:
         if unit_system == "us":
             E_allowable_deflection = E * 1000 * float(allowable_deflection) / (12 ** 3)  # E: Ksi , M: lb.ft
         else:
-            E_allowable_deflection = E * float(allowable_deflection) * (10 ** 9)  # E: Mpa , M: N.m
+            # E_allowable_deflection = E * float(allowable_deflection) * (10 ** 9)  # E: Mpa , M: N.m
+            E_allowable_deflection = E * float(allowable_deflection) * (
+                        10 ** (-9))  # E: Mpa , M: N.m  *** MUST BE CHECKED ***
         Ix_min = deflection_max / E_allowable_deflection
         output = SQL_reader(section, "not important A", " not important s", Ix_min, "deflection", unit_system)
         return output
