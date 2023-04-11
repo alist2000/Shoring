@@ -733,6 +733,11 @@ class analysis:
         bf_list = []
         tw_list = []
         tf_list = []
+        lc_list = []
+        R_list = []
+        M_max_list = []
+        s_req_list = []
+        s_sup_list = []
 
         for section_number, item in enumerate(final_sections, start=1):
             section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
@@ -747,10 +752,16 @@ class analysis:
 
                 # lagging control
                 lagging = lagging_design(unit_system, Pile_spacing, section, ph, timber_size)
-                DCR_moment_timber, status, d_concrete = lagging.moment_design(Fb, tw, 1.25, 1.1, 1.1)
+                DCR_moment_timber, status, d_concrete, lc, R, M_max, s_req, s_sup = lagging.moment_design(Fb, tw, 1.25,
+                                                                                                          1.1, 1.1)
                 DCR_lagging.append(DCR_moment_timber)
                 status_lagging.append(status)
                 d_concrete_list.append(d_concrete)
+                lc_list.append(lc)
+                R_list.append(R)
+                M_max_list.append(M_max)
+                s_req_list.append(s_req)
+                s_sup_list.append(s_sup)
 
                 create_feather(depth, deflection_copy, "Deflection",
                                f"Deflection_project" + str(project_number) + "_section{section_number}")
@@ -763,10 +774,11 @@ class analysis:
                 tw_list.append(tw)
                 tf_list.append(tf)
 
-        return final_deflections, max_deflection_list, deflection_plot_list, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list
+        return final_deflections, max_deflection_list, deflection_plot_list, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list, lc_list, R_list, M_max_list, s_req_list, s_sup_list
+
+    # OpenAI code: NOTE: first version has error I edit.
 
 
-# OpenAI code: NOTE: first version has error I edit.
 def DCR_calculator(max_deflection, allowable_deflection, Sx, S_required, A, A_required):
     DCR_deflection = [max_def / allowable_deflection for max_def in max_deflection]
     DCR_shear = [A_required / A_val for A_val in A]
