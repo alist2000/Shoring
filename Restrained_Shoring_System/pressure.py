@@ -288,7 +288,11 @@ def find_D(FS, force_r, arm_r, force_d, arm_d):
     equation = sum(Mr) - FS * sum(Md)
     d = solve(equation, D)
     d = control_solution(d)
-    return d
+
+    # JUST FOR REPORT.
+    equation_for_report = [sum(Mr), sum(Md), equation]
+
+    return d, equation_for_report
 
 
 gama_w = {"us": 62.4, "metric": 9810}
