@@ -41,8 +41,8 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
         delta_h_decimal = 0
 
     if water_started > h:
-        d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d, equation_for_report = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d_0, equation_d0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
         d = round(d, delta_h_decimal)
         d_0 = round(d_0, delta_h_decimal)
         if d > water_started - h:
@@ -68,8 +68,8 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
                     resisting_force_arm.append(
                         water_started + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
 
-            d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-            d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            d, equation_for_report = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+            d_0, equation_d0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
             d = round(d + (water_started - h), delta_h_decimal)
             d_0 = round(d_0 + water_started - h, delta_h_decimal)
 
@@ -89,8 +89,8 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
             for j in i:
                 resisting_force_arm.append(
                     h + D - h1 - j)  # water arm started form end. and we should change it to started form anchor.
-        d = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
-        d_0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d, equation_for_report = find_D(FS, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
+        d_0, equation_d0 = find_D(1, resisting_force, resisting_force_arm, driving_force, driving_force_arm)
         d = round(d, delta_h_decimal)
         d_0 = round(d_0, delta_h_decimal)
 
@@ -105,4 +105,4 @@ def single_anchor(spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, 
 
     # calculate anchor force.
     Th = abs(sum(resisting_force) - sum(driving_force)) * spacing  # anchor force --> unit: lb
-    return d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array
+    return d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array, equation_for_report

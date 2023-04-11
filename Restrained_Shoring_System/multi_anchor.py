@@ -179,8 +179,8 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
             for j in i:
                 resisting_arm.append(h_list[-1] + D - j)
     else:
-        d = find_D(FS, resisting_force, resisting_arm, driving_force, driving_arm)
-        d_0 = find_D(1, resisting_force, resisting_arm, driving_force, driving_arm)
+        d, equation_for_report = find_D(FS, resisting_force, resisting_arm, driving_force, driving_arm)
+        d_0, equation_d0 = find_D(1, resisting_force, resisting_arm, driving_force, driving_arm)
 
         d = round(d, delta_h_decimal)
         d_0 = round(d_0, delta_h_decimal)
@@ -206,8 +206,8 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
                 for j in i:
                     resisting_arm.append(h_list[-1] + D - j)
 
-    d = find_D(FS, resisting_force, resisting_arm, driving_force, driving_arm)
-    d_0 = find_D(1, resisting_force, resisting_arm, driving_force, driving_arm)
+    d, equation_for_report = find_D(FS, resisting_force, resisting_arm, driving_force, driving_arm)
+    d_0, equation_d0 = find_D(1, resisting_force, resisting_arm, driving_force, driving_arm)
 
     d = round(d, delta_h_decimal)
     d_0 = round(d_0, delta_h_decimal)
@@ -241,4 +241,4 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
         force = sum(anchor) * spacing
         anchor_force.append(force)
     anchor_force = np.array(anchor_force)
-    return d, d_0, anchor_force, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array
+    return d, d_0, anchor_force, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array, equation_for_report
