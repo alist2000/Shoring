@@ -18,7 +18,7 @@ from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
 from analysis_openAI import analysis, DCR_calculator, control_index_for_plot
 from design import design, subscription, min_weight
-from report import create_feather
+from report import create_feather, report_final, create_pdf_report
 from Output import output_single_solved, output_single_no_solution
 
 sys.path.append(r"D:/git/Shoring/Lateral-pressure-")
@@ -31,7 +31,7 @@ sys.path.append(r"F:/Cvision/Unrestrained_Shoring_System")
 from Surcharge.result import result_surcharge
 from soldier_pile.surchargeLoad import surcharge
 from Passive_Active.active_passive import rankine, coulomb
-from front.report import load_distribution
+from front.report import load_distribution, raker_force, section_deflection, deflection_output, DCRs, lagging_output
 
 
 # from Unrestrained_Shoring_System.soldier_pile.shear_moment_diagram import plotter_load
@@ -40,7 +40,8 @@ from front.report import load_distribution
 def main_restrained(inputs):
     Inputs = input_single(inputs)
     project_error = []
-    [input_errors, project_information, number_of_project, number_of_layer_list, unit_system, anchor_number_list, h_list, delta_h_list,
+    [input_errors, project_information, number_of_project, number_of_layer_list, unit_system, anchor_number_list,
+     h_list, delta_h_list,
      gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
@@ -162,8 +163,24 @@ def main_restrained(inputs):
         water_force_passive, water_arm_passive = force_calculator_x(h, hw_list_passive, water_pressure_list_passive,
                                                                     "passive", "water")
 
+        # FOR REPORT
+        pressure_list_report = [sigma_active[0], sigma_active[1], sigma_passive[1], water_pressure_list_active[0][1],
+                                water_pressure_list_passive[0][1]]
+        force_list_report = [trapezoidal_force, force_active[0][0], force_active[0][1], surcharge_force,
+                             water_force_active[0][1], force_passive[0][1], water_force_passive[0][1]]
+        arm_list_report1 = list(
+            map(lambda x: 0 if (x == 0) else x - h_list_first[0],
+                [trapezoidal_force_arm, arm_active[0][0], arm_active[0][1],
+                 surcharge_arm, water_arm_active[0][1]
+                 ]))
+        arm_list_report2 = list(
+            map(lambda x: 0 if (x == 0) else x - h_list_first[0] + h,
+                [arm_passive[0][1], water_arm_passive[0][1]
+                 ]))
+        arm_list_report = arm_list_report1 + arm_list_report2
+
         if anchor_number != 1:
-            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = multi_anchor(
+            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array, equation_for_report = multi_anchor(
                 tieback_spacing, FS, h_list_first,
                 h_array_detail, sigma_a_array_detail,
                 surcharge_pressure, force_active,
@@ -176,16 +193,17 @@ def main_restrained(inputs):
             for T in Th:
                 T_list.append(T / cos(
                     anchor_angle))  # ASK: this angle should be got for any anchor. or we get just one value for all?
-
+            raker_force(unit_system, T_list)
 
         else:
-            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array = single_anchor(
+            d, d_0, Th, sigma_active, sigma_passive, D_array, active_pressure_array, passive_pressure_array, equation_for_report = single_anchor(
                 tieback_spacing, FS, h1, h, trapezoidal_force, trapezoidal_force_arm, surcharge_force, surcharge_arm,
                 force_active, arm_active, force_passive,
                 arm_passive, sigma_active, sigma_passive, water_force_active, water_arm_active, water_force_passive,
                 water_arm_passive, water_started,
                 delta_h)
             T = Th / cos(anchor_angle)
+            raker_force(unit_system, [T])
 
         sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
         if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
@@ -258,6 +276,7 @@ def main_restrained(inputs):
 
         final_sections = []
         final_sections_names = []
+        Ix = []
         Sx = []
         A = []
         for section in selected_design_sections:
@@ -271,18 +290,36 @@ def main_restrained(inputs):
             if number_of_section != 0:
                 best_section = min_weight(qualified_sections)
                 final_sections.append(best_section)
-                final_sections_names.append(best_section["section"])
-                Sx.append(best_section["Sx"])
-                A.append(best_section["area"])
+                section_name = best_section["section"]
+                final_sections_names.append(section_name)
+                ix = best_section["Ix"]
+                Ix.append(ix)
+                sx = best_section["Sx"]
+                Sx.append(sx)
+                ax = best_section["area"]
+                A.append(ax)
 
         if final_sections:
             section_error = "No Error!"
-            final_deflections, max_deflections, deflection_plots, DCR_lagging, status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list = analysis_instance.final_deflection_and_lagging(
+            final_deflections, max_deflections, deflection_plots, DCR_lagging, \
+            status_lagging, d_concrete_list, h_list_section, bf_list, tw_list, tf_list, lc_list, R_list, M_max_lagging, s_req_list, s_sup_list = analysis_instance.final_deflection_and_lagging(
                 deflection_values,
                 final_sections, E, tieback_spacing, ph_max, timber_size, Fb,
                 unit_system)
             DCR_deflection, DCR_shear, DCR_moment = DCR_calculator(max_deflections, allowable_deflection, Sx,
                                                                    S_required, A, A_required)
+            report_values = report_final(Inputs, S_required, A_required, M_max, V_max, Y_zero_shear, ka, kp,
+                                         pressure_list_report,
+                                         force_list_report, arm_list_report, equation_for_report, d_0, d,
+                                         )
+            create_pdf_report("reports/template/Rep_Restrained_Shoring.html", report_values)
+            for i in range(len(final_sections)):
+                DCRs(DCR_moment[i], DCR_shear[i], DCR_deflection[i], DCR_lagging[i], status_lagging[i])
+                section_deflection(unit_system, Fy, final_sections_names[i], A[i], Sx[i], Ix[i], V_max, M_max,
+                                   max_deflections[i], allowable_deflection, i)
+                deflection_output(max_deflections[i], unit_system)
+                lagging_output(unit_system, tieback_spacing, d_concrete_list[i], lc_list[i], ph_max, R_list[i],
+                               M_max_lagging[i], s_req_list[i], timber_size, s_sup_list[i], status_lagging[i])
         else:
             section_error = ["No Section is Matched!"]
             project_error.append(section_error)
@@ -301,12 +338,13 @@ def main_restrained(inputs):
 
             # outputs
             general_plot = [load_diagram, shear_diagram, moment_diagram]
-            general_values = [math.ceil(d), round(V_max / 1000, 2), round(M_max / 1000, 2), Y_zero_shear, A_required, S_required]
+            general_values = [math.ceil(d), round(V_max / 1000, 2), round(M_max / 1000, 2), Y_zero_shear, A_required,
+                              S_required]
             general_output = {"plot": general_plot, "value": general_values}
             specific_plot = deflection_plots
             specific_values = [final_sections_names, max_deflections, DCR_moment, DCR_shear, DCR_deflection,
                                timber_size,
-                               status_lagging, d_concrete_list, h_list, bf_list, tw_list, tf_list]
+                               status_lagging, d_concrete_list, h_list_section, bf_list, tw_list, tf_list]
             specific_output = {"plot": specific_plot, "value": specific_values}
             output_single = output_single_solved(unit_system, general_output, specific_output)
             return output_single
