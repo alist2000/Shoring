@@ -121,25 +121,123 @@
         }
 
     </style>
+    <style>
+        table {
+  border-spacing: 1;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+table * {
+  position: relative;
+}
+table td, table th {
+  padding-left: 8px;
+}
+table thead tr {
+  height: 60px;
+  background: #D1D1D1;
+  font-size: 16px;
+}
+table tbody tr {
+  height: 48px;
+  border-bottom: 1px solid #E3F1D5;
+}
+table tbody tr:last-child {
+  border: 0;
+}
+table td, table th {
+  text-align: left;
+}
+table td.l, table th.l {
+  text-align: right;
+}
+table td.c, table th.c {
+  text-align: center;
+}
+table td.r, table th.r {
+  text-align: center;
+}
+
+@media screen and (max-width: 35.5em) {
+  table {
+    display: block;
+  }
+  table > *, table tr, table td, table th {
+    display: block;
+  }
+  table thead {
+    display: none;
+  }
+  table tbody tr {
+    height: auto;
+    padding: 8px 0;
+  }
+  table tbody tr td {
+    padding-left: 45%;
+    margin-bottom: 12px;
+  }
+  table tbody tr td:last-child {
+    margin-bottom: 0;
+  }
+  table tbody tr td:before {
+    position: absolute;
+    font-weight: 700;
+    width: 40%;
+    left: 10px;
+    top: 0;
+  }
+  table tbody tr td:nth-child(1):before {
+    content: "Code";
+  }
+  table tbody tr td:nth-child(2):before {
+    content: "Stock";
+  }
+  table tbody tr td:nth-child(3):before {
+    content: "Cap";
+  }
+  table tbody tr td:nth-child(4):before {
+    content: "Inch";
+  }
+  table tbody tr td:nth-child(5):before {
+    content: "Box Type";
+  }
+}
+body {
+  background: #DAF5FF;
+  font: 400 14px "Calibri", "Arial";
+  padding: 20px;
+}
+
+blockquote {
+  color: white;
+  text-align: center;
+}
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         $(function () {
-            $("#soil_prop").load("soil_properties.html");
+            $("#soil_prop").load("template/soil_properties.html");
         });
     </script>
     <script>
         $(function () {
-            $("#surcharge_inputs").load("surcharge_input.html");
+            $("#surcharge_inputs").load("template/surcharge_input.html");
         });
     </script>
     <script>
         $(function () {
-            $("#formula").load("formula.html");
+            $("#formula").load("template/formula.html");
         });
     </script>
     <script>
         $(function () {
-            $("#SoilPressure").load("table.html");
+            $("#SoilPressure").load("template/table.html");
         });
     </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -156,29 +254,31 @@
     </script>
     <script>
         $(function () {
+            var file_name = $("#DCRs").attr("file_name");
             $("#DCRs").load(
-                "DCRs.html"
+                file_name
             );
         });
     </script>
     <script>
         $(function () {
             $("#deflection_dcr").load(
-                "deflection_dcr.html"
+                "template/deflection_dcr.html"
             );
         });
     </script>
     <script>
         $(function () {
+            var file_name = $("#deflection_max").attr("file_name");
             $("#deflection_max").load(
-                "deflection_max.html"
+                file_name
             );
         });
     </script>
     <script>
         $(function () {
             $("#load_distribution").load(
-                "load_distribution.html"
+                "template/load_distribution.html"
             );
         });
     </script>
@@ -192,28 +292,30 @@
     <script>
         $(function () {
             $("#force_arm").load(
-                "force_arm.html"
+                "template/force_arm.html"
             );
         });
     </script>
     <script>
         $(function () {
             $("#raker_forces").load(
-                "raker_forces.html"
+                "template/raker_forces.html"
             );
         });
     </script>
     <script>
         $(function () {
+            var file_name = $("#section_deflection").attr("file_name");
             $("#section_deflection").load(
-                "section_deflection.html"
+                file_name
             );
         });
     </script>
     <script>
         $(function () {
+            var file_name = $("#lagging").attr("file_name");
             $("#lagging").load(
-                "lagging_output.html"
+                file_name
             );
         });
     </script>
@@ -443,7 +545,7 @@
         </tbody>
     </table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
-        <tbody id="DCRs">
+        <tbody id="DCRs" file_name={{DCR_file}}>
         </tbody>
     </table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
@@ -505,7 +607,7 @@
                 </t2>
             </td>
         </tr>
-        <tr id="deflection_max">
+        <tr id="deflection_max" file_name={{def_max_file}}>
         </tr>
         <tr>
             <td style="width: 20%;">
@@ -546,7 +648,97 @@
         </tbody>
     </table>
     <table id="load_distribution"></table>
-    <table id="SoilPressure"></table>
+    <table>
+    <tr >
+      <td colspan="2" style="text-align:center"><img align="middle" src="template/soil_pressure.png" alt="SOIL PRESSURE PICTURE" style="height: 230px;width:auto;"></td>
+    </tr>
+    <tr>
+      <td><table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="width: 35%;">
+                <th>Active Side</th>
+            </td>
+            <td style="width: 35%;">
+                <t2>
+                </t2>
+            </td>
+        </tr>
+      </tbody></table></td>
+        <td><table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+          <tbody>
+          <tr>
+              <td style="width: 35%;">
+                  <th>Passive Side</th>
+              </td>
+              <td style="width: 35%;">
+                  <t2>
+                  </t2>
+              </td>
+          </tr></tbody></table></td>
+    </tr>
+    <tr>
+      <td>
+    <table>
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Soil <em>(K<sub>a</sub> × H × &#611;/ EFP<sub>a</sub> × H)</em></th>
+            <th>Water</th>
+
+          </tr>
+          <thead></thead>
+          <tbody>
+            <tr>
+              <td>a</td>
+              <td>{{ sp_s_a}} {{pressure_unit}}</td>
+              <td> - </td>
+
+            </tr>
+            <tr>
+              <td>b</td>
+              <td>{{ sp_e_a}} {{pressure_unit}}</td>
+              <td>{{ wp_e_a}} {{pressure_unit}}</td>
+
+            </tr>
+
+          </tbody>
+          <table />
+
+        </thead>
+      </table>
+    </td>
+    <td> <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+            <th>Soil <em>(K<sub>p</sub> × H × &#611;/ EFP<sub>p</sub> × H)</em></th>
+            <th>Water</th>
+
+        </tr>
+        <thead></thead>
+        <tbody>
+          <tr>
+            <td>a</td>
+            <td>0</td>
+            <td>0</td>
+
+          </tr>
+          <tr>
+            <td>b</td>
+            <td>{{ sp_e_p}} {{pressure_unit}}</td>
+              <td>{{ wp_e_p}} {{pressure_unit}}</td>
+
+          </tr>
+
+        </tbody>
+        <table />
+
+      </thead>
+    </table>
+  </td>
+    </tr>
+    </table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
@@ -562,7 +754,121 @@
         </tr>
         </tbody>
     </table>
-    <table id="force_arm"></table>
+    <table>
+    <tr >
+      <td  style="text-align:center"><img align="middle" src="Force_pressure.png" alt="Force PRESSURE PICTURE" style="height: 230px;width:auto;"></td>
+    </tr>
+    <tr>
+      <td style="width: 100%;">
+          <t2>DR<sub>4</sub>= Force Result of Surcharge Loads</t2>
+      </td>
+
+  </tr>
+  <tr>
+    <td style="width: 100%;">
+        <t2>DR<sub>5</sub>= Water Force in Loading Side</t2>
+    </td></tr>
+    <tr>
+      <td style="width: 100%;">
+          <t2>RS<sub>2</sub>= Water Force in Resisting Side</t2>
+      </td></tr>
+  </table>
+    <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Loading Side</th>
+            </td>
+
+        </tr>
+      </tbody></table>
+
+    <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Force </th>
+            <th>Arm</th>
+
+          </tr>
+          <thead></thead>
+          <tbody>
+            <tr>
+              <td>DR<sub>1</sub></td>
+              <td>{{ dr1 }} {{force_unit}}</td>
+              <td>{{ arm_dr1}} {{length_unit}} </td>
+
+            </tr>
+            <tr>
+              <td>DR<sub>2</sub></td>
+              <td>{{ dr2 }} {{force_unit}}</td>
+              <td>{{ arm_dr2}} {{length_unit}} </td>
+
+            </tr>
+            <tr>
+              <td>DR<sub>3</sub></td>
+              <td>{{ dr3 }} {{force_unit}}</td>
+              <td>{{ arm_dr3}} {{length_unit}} </td>
+
+            </tr>
+            <tr>
+              <td>DR<sub>4</sub></td>
+              <td>{{ dr4 }} {{force_unit}}</td>
+              <td>{{ arm_dr4}} {{length_unit}} </td>
+
+            </tr>
+            <tr>
+              <td>DR<sub>5</sub></td>
+              <td>{{ dr5 }} {{force_unit}}</td>
+              <td>{{ arm_dr5}} {{length_unit}} </td>
+
+            </tr>
+
+          </tbody>
+          <table />
+
+        </thead>
+      </table>
+    </td>
+    <td>
+      <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Resisting Side</th>
+            </td>
+        </tr></tbody></table>
+        <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+            <th>Force</th>
+            <th>Arm</th>
+
+        </tr>
+        <thead></thead>
+        <tbody>
+          <tr>
+            <td>RS<sub>1</sub></td>
+            <td>{{ rs1 }} {{force_unit}}</td>
+            <td>{{ arm_rs1}} {{length_unit}} </td>
+
+          </tr>
+          <tr>
+            <td>RS<sub>2</sub></td>
+            <td>{{ rs2 }} {{force_unit}}</td>
+            <td>{{ arm_rs2}} {{length_unit}} </td>
+
+          </tr>
+
+        </tbody>
+        <table />
+
+      </thead>
+    </table>
+  </td>
+    </tr>
+    </table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
@@ -670,18 +976,18 @@
         <tr>
             <td style="width: 50%;">
                 <img style="width: 100%; height: auto;  margin-top:0px;"
-                     src="https://civision.balafan.com/restrained_shoring/plot/general_output2"
+                     src="../plot/general_output2.png"
                      alt="shear diagram">
             </td>
             <td style="width: 50%;">
                 <img style="width: 100%; height: auto;  margin-top:0px;"
-                     src="https://civision.balafan.com/restrained_shoring/plot/general_output3"
+                     src="../plot/general_output3.png"
                      alt="moment diagram">
             </td>
         </tr>
         </tbody>
     </table>
-    <div id="section_deflection"></div>
+    <div id="section_deflection" file_name={{section_file}}></div>
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
@@ -689,7 +995,7 @@
         </tr>
         </tbody>
     </table>
-    <div id="lagging"></div>
+    <div id="lagging" file_name={{lagging_file}}></div>
 </div>
 </body>
 </html>
