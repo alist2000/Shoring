@@ -20,7 +20,7 @@ def output_single_solved(unit_system, general, specific):
     for plot in general_plot:
         plot.write_html(f"plot/general_output{i}.html",
                         full_html=False)
-        # plot.write_image(f"plot/output{i}.png")
+        plot.write_image(f"plot/general_output{i}.png")
         i += 1
 
     specific_plot, specific_values = specific.values()
@@ -30,7 +30,7 @@ def output_single_solved(unit_system, general, specific):
     for plot in specific_plot:
         plot.write_html(f"plot/deflection_output{i}.html",
                         full_html=False)
-        # plot.write_image(f"plot/output{i}.png")
+        plot.write_image(f"plot/deflection_output{i}.png")
 
         i += 1
 
