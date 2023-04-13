@@ -3,6 +3,7 @@ import random
 import sys
 from math import cos
 import math
+import shutil
 
 import sympy.core.mul
 from sympy import symbols
@@ -312,14 +313,25 @@ def main_restrained(inputs):
                                          pressure_list_report,
                                          force_list_report, arm_list_report, equation_for_report, d_0, d,
                                          )
-            create_pdf_report("reports/template/Rep_Restrained_Shoring.html", report_values)
             for i in range(len(final_sections)):
-                DCRs(DCR_moment[i], DCR_shear[i], DCR_deflection[i], DCR_lagging[i], status_lagging[i])
+                DCRs(DCR_moment[i], DCR_shear[i], DCR_deflection[i], DCR_lagging[i], status_lagging[i], i + 1)
                 section_deflection(unit_system, Fy, final_sections_names[i], A[i], Sx[i], Ix[i], V_max, M_max,
-                                   max_deflections[i], allowable_deflection, i)
-                deflection_output(max_deflections[i], unit_system)
+                                   max_deflections[i], allowable_deflection, i + 1)
+                deflection_output(max_deflections[i], unit_system, i + 1)
                 lagging_output(unit_system, tieback_spacing, d_concrete_list[i], lc_list[i], ph_max, R_list[i],
-                               M_max_lagging[i], s_req_list[i], timber_size, s_sup_list[i], status_lagging[i])
+                               M_max_lagging[i], s_req_list[i], timber_size, s_sup_list[i], status_lagging[i], i + 1)
+                
+                report_values["DCR_file"] = f"template/DCRs{i + 1}.html" 
+                report_values["def_max_file"] = f"template/deflection_max{i + 1}.html" 
+                report_values["section_file"] = f"template/section_deflection{i + 1}.html" 
+                report_values["lagging_file"] = f"template/lagging_output{i + 1}.html" 
+
+                create_pdf_report("reports/template/Rep_Restrained_Shoring.html", report_values)
+
+
+                shutil.copyfile("reports/template/Rep_Restrained_Filled.html",
+                                f"reports/Rep_Restrained_Shoring{i+1}.html")
+                
         else:
             section_error = ["No Section is Matched!"]
             project_error.append(section_error)
