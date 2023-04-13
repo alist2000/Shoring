@@ -1,7 +1,11 @@
+import imp
+from tkinter.messagebox import NO
 import pandas as pd
 import pyarrow.feather as feather
-from weasyprint import HTML
+# from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
+import datetime
+import math
 
 from front.report import surcharge_inputs, Formula
 
@@ -18,7 +22,8 @@ def create_pdf_report(html_temp_file, template_vars):
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(html_temp_file)
     html_filled = template.render(template_vars)
-    HTML(string=html_filled, base_url=__file__)
+    with open('reports/template/Rep_Restrained_Filled.html', 'w') as f:
+        f.write(html_filled)
     # return html_filled
     # file = open("report" + str(number) + ".html", "w")
     # file.write(html_filled)
@@ -66,6 +71,10 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         allowable_deflection = allowable_deflection_list[project]
 
         selected_design_sections = selected_design_sections_list[project]
+        sections = ""
+        for i in selected_design_sections:
+            sections += i + ", "
+        sections = sections[:-2]
 
         ph_max = ph_max_list[project]
         Fb = Fb_list[project]
@@ -102,12 +111,17 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
         [product_id, user_id, title, jobNo, designer, checker, company, client, date, comment,
          other] = project_information
+         
+        if comment == None:
+             comment = "-"
+        if date == None:
+            date = datetime.datetime.today().strftime('%Y-%m-%d')
 
         # UNITS
         if unit_system == "us":
             length_unit = "ft"
             force_unit = "lb"
-            moment_unit = "bl-ft"
+            moment_unit = "lb-ft"
             pressure_unit = "ksi"
             deflection_unit = "in"
             density_unit = "pcf"
@@ -116,7 +130,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         else:
             length_unit = "N"
             force_unit = "m"
-            moment_unit = "M-m"
+            moment_unit = "N-m"
             pressure_unit = "MPa"
             deflection_unit = "mm"
             density_unit = "N/m<sup>2</sup>"
@@ -148,28 +162,28 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
             # GENERAL PROPERTIES
             "E": E, "FS": FS, "Fb": Fb, "Fy": Fy,
-            "tieback_spacing": tieback_spacing, "allowable_deflection ": allowable_deflection,
-            "retaining_height ": h,
+            "tieback_spacing": tieback_spacing, "allowable_deflection": allowable_deflection,
+            "retaining_height ": h, "Sections": sections,
 
             # LAGGING INPUTS AND OUTPUTS
             "Ph_max": ph_max, "timber_size": timber_size,
 
             # IMPORTANT VALUES FROM ANALYSIS
-            "D": D,
-            "Sx_required": Sx, "Ax_required": Ax, "M_max": M_max, "shear_max": V_max,
-            "y_zero_shear": y_zero, "d0": D_0, "d_equation": d_equation, "Md": Md, "Mr": Mr,
+            "D": math.ceil(D),
+            "Sx_required": round(Sx,3), "Ax_required": round(Ax,3), "M_max": round(M_max,0), "shear_max": round(V_max,0),
+            "y_zero_shear": y_zero, "d0": round(D_0, 2), "d_equation": d_equation, "Md": Md, "Mr": Mr,
 
             # PRESSURES
             "sp_s_a": soil_top_active, "sp_e_a": soil_end_active, "sp_e_p": soil_end_passive,
             "wp_e_a": water_pre_e_a, "wp_e_p": water_pre_e_p,
 
             # LOADS & ARMS
-            "dr1": trapezoidal_force, "dr2": force_soil1, "dr3": force_soil2, "dr4": surcharge_force,
+            "dr1": round(trapezoidal_force, 2), "dr2": force_soil1, "dr3": force_soil2, "dr4": round(surcharge_force, 2),
             "dr5": water_active_force,
-            "sr1": soil_passive_force, "rs2": water_passive_force,
-            "arm_dr1": trapezoidal_arm, "arm_dr2": arm_soil1, "arm_dr3": arm_soil2, "arm_dr4": surcharge_arm,
+            "rs1": soil_passive_force, "rs2": water_passive_force,
+            "arm_dr1": round(trapezoidal_arm, 2), "arm_dr2": arm_soil1, "arm_dr3": arm_soil2, "arm_dr4": round(surcharge_arm, 2),
             "arm_dr5": water_active_arm,
-            "arm_sr1": soil_passive_arm, "arm_rs2": water_passive_arm,
+            "arm_rs1": soil_passive_arm, "arm_rs2": water_passive_arm,
 
             # STATUSES --> IT'S ALWAYS Pass BECAUSE WE CHOOSE SECTION TO Pass IN MOMENT SHEAR AND DEFLECTION.
             "moment_status": "Pass",
