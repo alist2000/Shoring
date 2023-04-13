@@ -1,4 +1,5 @@
 def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_system):
+    retaining_height = round(retaining_height, 2)
     if unit_system == "us":
         length_unit = "ft"
         q_point = "lb"
@@ -47,7 +48,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
                     <t1>q:</t1>
                 </td>
                 <td style="width: 25%;">
-                    <t2>{q[i]} {q_unit}</t2>
+                    <t2>{round(q[i], 2)} {q_unit}</t2>
                 </td>
             </tr>
             <tr>
@@ -95,6 +96,8 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
 
 
 def load_distribution(unit_system, sigma_a, retaining_height, ht1=0, ht2=0):
+    sigma_a = round(sigma_a, 2)
+    retaining_height = round(retaining_height, 2)
     if unit_system == "us":
         pressure_unit = """Kips/ft<sup>2</sup>"""
         length_unit = "ft"
@@ -441,7 +444,7 @@ def raker_force(unit_system, forces):
                 <t1>R<sub>{i + 1}</sub>:</t1>
             </td>
             <td style="width: 25%;">
-                <t2> {forces[i]} {force_unit}</t2>
+                <t2> {round(forces[i], 2)} {force_unit}</t2>
             </td>
     """
     table += """</tr></tbody>"""
@@ -452,6 +455,8 @@ def raker_force(unit_system, forces):
 
 # raker_force("us", [125,4523,458,123])
 def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflection_max, allowable_deflection, number):
+    deflection_max = round(deflection_max, 3)
+    
     cross = section.find("X")
     part1 = section[:cross]
     part2 = section[cross + 1:]
@@ -489,7 +494,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             <tbody>
             <tr>
                 <td style="width: 25%;">
-                    <t1> Use: {section}:</t1>
+                    <b> Use: {section}:</b>
                 </td>
                 <td style="width: 25%;">
                     <t1> S<sub>x</sub> = {Sx} {s_unit}</t1>
@@ -516,7 +521,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
                     <t1> f<sub>v,max</sub>= 0.44 &#215; Fy = {0.44 * fy}</t1>
                 </td>
                 <td style="width: 70%;">
-                    <t1>{section} is satisfactory in shear</t1>
+                    <b>{section} is satisfactory in shear</b>
                 </td>
             </tr>
             <tr>
@@ -530,7 +535,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
                     <t1> f<sub>b,max</sub>= 0.66 &#215; Fy = {0.66 * fy}</t1>
                 </td>
                 <td style="width: 70%;">
-                    <t1>{section} is satisfactory in moment</t1>
+                    <b>{section} is satisfactory in moment</b>
                 </td>
             </tr>
             </tbody>
@@ -548,8 +553,8 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
                 <td style="text-align: justify;text-justify: inter-word;">The deflection of the restrained soldier pile
                     is calculated using moment areas method, and the
                     corresponding deflection diagram is shown below.Considering the maximum allowable deflection
-                    is {allowable_deflection}, section {section} satisfies the deflection criterion.
-                    It should be noted that the point of fixity is assumed to be at 0.25D<sub>0</sub> below the
+                    is <b>{allowable_deflection} {deflection_unit}</b>, section <b>{section}</b> satisfies the deflection criterion.
+                    It should be noted that the point of fixity is assumed to be at <b>0.25D<sub>0</sub></b> below the
                     excavation line.
                 </td>
             </tr>
@@ -560,8 +565,8 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             <tbody>
             <tr>
                 <td style="width: 50%;">
-                    <t1> Deflection<sub>max</sub> = {deflection_max}
-                    </t1>
+                    <b> Deflection<sub>max</sub> = {deflection_max} {deflection_unit}
+                    </b>
                 </td>
                 <td style="width: 50%;">
                 </td>
@@ -575,13 +580,17 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             </tr>
             </tbody>
         </table>"""
-    file = open("reports/template/section_deflection.html", "w")
+    file = open(f"reports/template/section_deflection{number}.html", "w")
     file.write(table)
     file.close()
 
 
 # section_deflection("us", 36, "W24×45", 12, 333, 1452, 45, 2366, 0.5, 0.6, 1)
-def DCRs(DCR_moment, DCR_shear, DCR_deflection, DCR_lagging, lagging_status):
+def DCRs(DCR_moment, DCR_shear, DCR_deflection, DCR_lagging, lagging_status, number):
+    DCR_moment = round(DCR_moment, 3)
+    DCR_shear = round(DCR_shear, 3)
+    DCR_deflection = round(DCR_deflection, 3)
+    DCR_lagging = round(DCR_lagging, 3)
     moment_status = shear_status = deflection_status = "Pass"
     table = f"""<tr>
             <td style="width: 50%;">
@@ -653,7 +662,7 @@ def DCRs(DCR_moment, DCR_shear, DCR_deflection, DCR_lagging, lagging_status):
             <td style="width: 5%; text-align: center;"></td>
         </tr>"""
 
-    file = open("reports/template/DCRs.html", "w")
+    file = open(f"reports/template/DCRs{number}.html", "w")
     file.write(table)
     file.close()
 
@@ -661,7 +670,8 @@ def DCRs(DCR_moment, DCR_shear, DCR_deflection, DCR_lagging, lagging_status):
 # DCRs(0.56, 0.36, 0.98, 0.69, "PASSSSS")
 
 
-def deflection_output(deflection_max, unit_system):
+def deflection_output(deflection_max, unit_system, number):
+    deflection_max = round(deflection_max, 3)
     if unit_system == "us":
         deflection_unit = "in"
     else:
@@ -679,7 +689,7 @@ def deflection_output(deflection_max, unit_system):
     # file.write(deflection_table1)
     # file.close()
 
-    file = open("reports/template/deflection_max.html", "w")
+    file = open(f"reports/template/deflection_max{number}.html", "w")
     file.write(deflection_table2)
     file.close()
 
@@ -687,7 +697,11 @@ def deflection_output(deflection_max, unit_system):
 # deflection_output(0.5, 0.89, "us")
 
 
-def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber_size, S_sup, lagging_status):
+def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber_size, S_sup, lagging_status, number):
+    M_max = round(M_max, 0)
+    S_req = round(S_req, 3)
+    S_sup = round(S_sup, 3)
+        
     if unit_system == "us":
         length_unit = "ft"
         density_unit = "pcf"
@@ -779,11 +793,11 @@ def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber
         </tr>
         <tr>
             <td style="width: 100%;">
-                <t1> Timber Moment Design: {lagging_status}</t1>
+                <t1> Timber Moment Design: <b>{lagging_status}</b></t1>
             </td>
         </tr>
         </tbody>
     </table>"""
-    file = open("reports/template/lagging_output.html", "w")
+    file = open(f"reports/template/lagging_output{number}.html", "w")
     file.write(table)
     file.close()
