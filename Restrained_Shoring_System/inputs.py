@@ -217,7 +217,10 @@ def input_single(input_values):
     # *** Geometrical Properties ***
     retaining_height = abs(
         float(input_values.get("data").get("Geometrical Properties").get("Retaining Height").get("value")))
-    surcharge_depth = retaining_height
+    surcharge_depth = retaining_height  # I should define it in site ***
+    if surcharge_depth > retaining_height:  # surcharge has no effect under excavation line.(ASSUMED ACCORDING TO MANUAL FILE)
+        surcharge_depth = retaining_height
+
     anchor_number = abs(int(
         json.loads(input_values.get("data").get("Geometrical Properties").get("Number of Anchors").get("value")).get(
             "item")))
@@ -426,6 +429,7 @@ def input_single(input_values):
                     "there_is_water": [there_is_water],
                     "water_started": [water_started],
                     "surcharge_type": [surcharge_type],
+                    "surcharge_depth": [surcharge_depth],
                     "surcharge_inputs": [surcharge_inputs],
                     "tieback_spacing": [tieback_spacing],
                     "anchor_angel": [anchor_angel],
