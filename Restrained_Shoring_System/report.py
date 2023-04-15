@@ -41,6 +41,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
      gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
+     surcharge_depth_list,
      surcharge_inputs_list, tieback_spacing_list,
      anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
      selected_design_sections_list, ph_max_list, Fb_list, timber_size_list] = input_values.values()
@@ -58,6 +59,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         there_is_water = there_is_water_list[project]
         water_started = water_started_list[project]
         surcharge_type = surcharge_type_list[project]
+        surcharge_depth = surcharge_depth_list[project]
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 
         surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height=h, unit_system=unit_system)
@@ -111,9 +113,9 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
         [product_id, user_id, title, jobNo, designer, checker, company, client, date, comment,
          other] = project_information
-         
+
         if comment == None:
-             comment = "-"
+            comment = "-"
         if date == None:
             date = datetime.datetime.today().strftime('%Y-%m-%d')
 
@@ -139,6 +141,12 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
         # PRESSURES
         [soil_top_active, soil_end_active, soil_end_passive, water_pre_e_a, water_pre_e_p] = pressures
+        if pressure_distribution == "Trapezoidal" and c == 0:
+            distribution_pic = "template/picture_pressure1.html"
+        elif pressure_distribution == "Trapezoidal" and c != 0:
+            distribution_pic = "template/picture_pressure2.html"
+        else:
+            distribution_pic = "template/picture_pressure3.html"
 
         # LOADS
         [trapezoidal_force, force_soil1, force_soil2, surcharge_force, water_active_force, soil_passive_force,
@@ -170,18 +178,21 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
             # IMPORTANT VALUES FROM ANALYSIS
             "D": math.ceil(D),
-            "Sx_required": round(Sx,3), "Ax_required": round(Ax,3), "M_max": round(M_max,0), "shear_max": round(V_max,0),
+            "Sx_required": round(Sx, 3), "Ax_required": round(Ax, 3), "M_max": round(M_max, 0),
+            "shear_max": round(V_max, 0),
             "y_zero_shear": y_zero, "d0": round(D_0, 2), "d_equation": d_equation, "Md": Md, "Mr": Mr,
 
             # PRESSURES
             "sp_s_a": soil_top_active, "sp_e_a": soil_end_active, "sp_e_p": soil_end_passive,
-            "wp_e_a": water_pre_e_a, "wp_e_p": water_pre_e_p,
+            "wp_e_a": water_pre_e_a, "wp_e_p": water_pre_e_p, "load_distribution_pic": distribution_pic,
 
             # LOADS & ARMS
-            "dr1": round(trapezoidal_force, 2), "dr2": force_soil1, "dr3": force_soil2, "dr4": round(surcharge_force, 2),
+            "dr1": round(trapezoidal_force, 2), "dr2": force_soil1, "dr3": force_soil2,
+            "dr4": round(surcharge_force, 2),
             "dr5": water_active_force,
             "rs1": soil_passive_force, "rs2": water_passive_force,
-            "arm_dr1": round(trapezoidal_arm, 2), "arm_dr2": arm_soil1, "arm_dr3": arm_soil2, "arm_dr4": round(surcharge_arm, 2),
+            "arm_dr1": round(trapezoidal_arm, 2), "arm_dr2": arm_soil1, "arm_dr3": arm_soil2,
+            "arm_dr4": round(surcharge_arm, 2),
             "arm_dr5": water_active_arm,
             "arm_rs1": soil_passive_arm, "arm_rs2": water_passive_arm,
 
