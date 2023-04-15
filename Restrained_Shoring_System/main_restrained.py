@@ -46,6 +46,7 @@ def main_restrained(inputs):
      gama_list,
      h_list_list, cohesive_properties_list, pressure_distribution_list,
      k_formula_list, soil_properties_list, there_is_water_list, water_started_list, surcharge_type_list,
+     surcharge_depth_list,
      surcharge_inputs_list, tieback_spacing_list,
      anchor_angle_list, FS_list, E_list, Fy_list, allowable_deflection_list,
      selected_design_sections_list, ph_max_list, Fb_list, timber_size_list] = Inputs.values()
@@ -63,6 +64,7 @@ def main_restrained(inputs):
         there_is_water = there_is_water_list[project]
         water_started = water_started_list[project]
         surcharge_type = surcharge_type_list[project]
+        surcharge_depth = surcharge_depth_list[project]
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 
         tieback_spacing = tieback_spacing_list[project]
@@ -148,7 +150,7 @@ def main_restrained(inputs):
             h_list[i] = round(h_list[i], delta_h_decimal)
 
         # surcharge
-        main_surcharge = surcharge(unit_system, h, delta_h)
+        main_surcharge = surcharge(unit_system, surcharge_depth, delta_h)
         surcharge_force, surcharge_arm, surcharge_pressure, error_surcharge_list = result_surcharge(
             main_surcharge,
             surcharge_type, q, l1, l2,
@@ -207,10 +209,16 @@ def main_restrained(inputs):
             raker_force(unit_system, [T])
 
         sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
+        if len(list(sigma_a_array_detail_copy)) != len(list(surcharge_pressure)):
+            for i in range(len(sigma_a_array_detail_copy) - len(surcharge_pressure)):
+                surcharge_pressure = list(surcharge_pressure)
+                surcharge_pressure.append(0)
+            surcharge_pressure = np.array(surcharge_pressure)
         if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
             for i in range(len(sigma_a_array_detail_copy)):
                 if list(surcharge_pressure) == [0]:
                     surcharge_pressure = np.zeros_like(sigma_a_array_detail_copy)
+
                 sigma_a_array_detail_copy[i] += surcharge_pressure[i]
         else:
             surcharge_pressure = copy.deepcopy(sigma_a_array_detail)
@@ -320,18 +328,17 @@ def main_restrained(inputs):
                 deflection_output(max_deflections[i], unit_system, i + 1)
                 lagging_output(unit_system, tieback_spacing, d_concrete_list[i], lc_list[i], ph_max, R_list[i],
                                M_max_lagging[i], s_req_list[i], timber_size, s_sup_list[i], status_lagging[i], i + 1)
-                
-                report_values["DCR_file"] = f"template/DCRs{i + 1}.html" 
-                report_values["def_max_file"] = f"template/deflection_max{i + 1}.html" 
-                report_values["section_file"] = f"template/section_deflection{i + 1}.html" 
-                report_values["lagging_file"] = f"template/lagging_output{i + 1}.html" 
+
+                report_values["DCR_file"] = f"template/DCRs{i + 1}.html"
+                report_values["def_max_file"] = f"template/deflection_max{i + 1}.html"
+                report_values["section_file"] = f"template/section_deflection{i + 1}.html"
+                report_values["lagging_file"] = f"template/lagging_output{i + 1}.html"
 
                 create_pdf_report("reports/template/Rep_Restrained_Shoring.html", report_values)
 
-
                 shutil.copyfile("reports/template/Rep_Restrained_Filled.html",
-                                f"reports/Rep_Restrained_Shoring{i+1}.html")
-                
+                                f"reports/Rep_Restrained_Shoring{i + 1}.html")
+
         else:
             section_error = ["No Section is Matched!"]
             project_error.append(section_error)
