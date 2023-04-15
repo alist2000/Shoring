@@ -236,6 +236,14 @@ blockquote {
         });
     </script>
     <script>
+            $(function () {
+            var load_distribution = $("#picture_distribution").attr("load_distribution_pic");
+            $("#picture_distribution").load(
+                load_distribution
+            );
+        });
+    </script>
+    <script>
         $(function () {
             $("#SoilPressure").load("template/table.html");
         });
@@ -648,10 +656,10 @@ blockquote {
         </tbody>
     </table>
     <table id="load_distribution"></table>
-    <table>
-    <tr >
-      <td colspan="2" style="text-align:center"><img align="middle" src="template/soil_pressure.png" alt="SOIL PRESSURE PICTURE" style="height: 230px;width:auto;"></td>
-    </tr>
+    <table id="picture_distribution" load_distribution={{load_distribution_pic}}> </table>
+
+            <table>
+
     <tr>
       <td><table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
         <tbody>
