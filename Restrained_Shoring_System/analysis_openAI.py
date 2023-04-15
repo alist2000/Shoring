@@ -744,8 +744,11 @@ class analysis:
             if section and Ix:
                 # E: Ksi , M: lb.ft , Ix: in^4 / E: Mpa , M: N.m , Ix: mm^4
                 EI = E * (1000 * float(Ix) / 12 ** 3 if unit_system == "us" else float(Ix) * 10 ** 9)
+                if unit_system == "us":
+                    deflection_copy = [d * 12 / EI for d in deflection_values]
+                else:
+                    deflection_copy = [d * 1000 / EI for d in deflection_values]
 
-                deflection_copy = [d / EI for d in deflection_values]
                 max_deflection = max(max(deflection_copy), abs(min(deflection_copy)))
                 max_deflection_list.append(max_deflection)
                 final_deflections.append(deflection_copy)
