@@ -155,9 +155,11 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
          water_passive_arm] = arms
 
         # EQUATIONS
-        Mr = equations[0]
-        Md = equations[1]
-        d_equation = equations[2]
+        Mr = str(equations[0])
+        Md = str(equations[1])
+        d_equation = str(equations[2])
+        [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)
+
 
         # # LAGGING
         # [d_concrete, lc, R_lagging, M_max_lagging, Sx_req_lagging, Sx_sup_lagging, lagging_status] = lagging_prop
@@ -208,3 +210,20 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
         }
         return report_values
+
+
+def edit_equation(*equations):
+    return_list = []
+    for equation in equations:
+        equation = equation.replace("**","<sup>")
+        equation = equation.replace("*","×")
+        equation = edit_power(equation)
+        return_list.append(equation)
+
+    return return_list
+
+def edit_power(equation):
+    for i in range(len(equation)):
+        if equation[i] == ">":
+            equation = equation[: i + 2] + "</sup>" + equation[i + 2:]
+    return equation
