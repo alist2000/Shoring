@@ -12,6 +12,9 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
         q_strip = "N/m<sup>2</sup>"
 
     number_of_surcharge = 0
+    for i in range(len(surcharge_type)):
+        if surcharge_type[i] != "No Load":
+            number_of_surcharge += 1
 
     table = f"""<tr>
             <td style="width: 25%;">
@@ -30,13 +33,20 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
         """
     for i in range(len(surcharge_type)):
         if surcharge_type[i] != "No Load":
-            number_of_surcharge += 1
             if "Point" in surcharge_type[i]:
                 q_unit = q_point
             elif "Line" in surcharge_type[i]:
                 q_unit = q_line
             else:
                 q_unit = q_strip
+            if l1[i] == "" or l1[i] is None:
+                l1[i] = "-"
+
+            if l2[i] == "" or l2[i] is None:
+                l2[i] = "-"
+
+            if teta[i] == "" or teta[i] is None:
+                teta[i] = "-"
             table += f"""<tr>
                 <td style="width: 25%;">
                     <t1>Load Type:</t1>
@@ -274,6 +284,9 @@ def Formula(formula, soil_prop, retaining_height, unit_system):
         </tbody>"""
     else:
         [ka, kp, gama, phi, beta_active, beta_passive, delta, c] = soil_prop
+        for i in soil_prop:
+            if i is None or i == "":
+                i = 0
         table_properties = f"""<tbody>
         <tr>
             <td style="width: 25%;">
@@ -427,6 +440,39 @@ def Formula(formula, soil_prop, retaining_height, unit_system):
 
 # Formula("Rankine", [0.56, 1.23, 135, 30, 0, 0, 0, 0], 10, "us")
 # Formula("User Defined", [70, 190, 0.56, 0], 10, "us")
+
+def racker_input(unit_system, racker_number, h_list):
+    if unit_system == "us":
+        length_unit = "ft"
+    else:
+        length_unit = "m"
+
+    table = f"""<tbody>
+            <tr>
+                <td style="width: 25%;">
+                    <t1>Number of Racker/Tieback:</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t2> {racker_number} </t2>
+                </td>
+                <td style="width: 25%;">
+                </td>
+                <td style="width: 25%;">
+                </td>"""
+    for i in range(racker_number):
+        if i % 2 == 0:
+            table += "</tr><tr>"
+        table += f"""<td style="width: 25%;">
+                    <t1>h{i + 1}:</t1>
+                </td>
+                <td style="width: 25%;">
+                    <t2> {h_list[i]} {length_unit} </t2>
+                </td>"""
+
+    table += """</tr></tbody>"""
+    file = open("reports/template/racker_prop.html", "w")
+    file.write(table)
+    file.close()
 
 
 def raker_force(unit_system, forces):
