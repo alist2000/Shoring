@@ -743,11 +743,13 @@ class analysis:
             section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
             if section and Ix:
                 # E: Ksi , M: lb.ft , Ix: in^4 / E: Mpa , M: N.m , Ix: mm^4
-                EI = E * (1000 * float(Ix) / 12 ** 3 if unit_system == "us" else float(Ix) * 10 ** 9)
-                if unit_system == "us":
-                    deflection_copy = [d * 12 / EI for d in deflection_values]
-                else:
-                    deflection_copy = [d * 1000 / EI for d in deflection_values]
+                EI = E * (1000 * float(Ix) / 12 ** 3 if unit_system == "us" else float(Ix) * 10 ** 9)  # consider final conversion for deflection here
+                # EI = E * (1000 * float(Ix) / (12 ** 2) if unit_system == "us" else float(Ix) / (10 ** 6))
+                deflection_copy = [d / EI for d in deflection_values]
+                # if unit_system == "us":
+                #     deflection_copy = [d * 12 / EI for d in deflection_values]
+                # else:
+                #     deflection_copy = [d * 1000 / EI for d in deflection_values]
 
                 max_deflection = max(max(deflection_copy), abs(min(deflection_copy)))
                 max_deflection_list.append(max_deflection)
