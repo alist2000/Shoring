@@ -269,8 +269,10 @@ def main_restrained(inputs):
 
         # shear and moment values and diagrams
         if anchor_number == 1:
-            analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
+            analysis_instance = analysis(Th, h1, list(depth), list(final_pressure * tieback_spacing), delta_h,
                                          unit_system, project + 1)
+            # analysis_instance = analysis(Th / tieback_spacing, h1, list(depth), list(final_pressure), delta_h,
+            #                              unit_system, project + 1)
             shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear()
             moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
             deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
