@@ -7,7 +7,7 @@ from jinja2 import Environment, FileSystemLoader
 import datetime
 import math
 
-from front.report import surcharge_inputs, Formula
+from front.report import surcharge_inputs, Formula, racker_input
 
 
 # creating excel
@@ -158,8 +158,15 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         Mr = str(equations[0])
         Md = str(equations[1])
         d_equation = str(equations[2])
-        [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)
+        [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)\
 
+        # RACKER
+        racker_input(unit_system, anchor_number, h_list_first)
+
+
+        # WATER
+        if there_is_water == "No":
+            water_started = "-"
 
         # # LAGGING
         # [d_concrete, lc, R_lagging, M_max_lagging, Sx_req_lagging, Sx_sup_lagging, lagging_status] = lagging_prop
@@ -174,6 +181,9 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             "E": E, "FS": FS, "Fb": Fb, "Fy": Fy,
             "tieback_spacing": tieback_spacing, "allowable_deflection": allowable_deflection,
             "retaining_height ": h, "Sections": sections,
+
+            # WATER PROPERTIES
+            "there_is_water": there_is_water, "water_started": water_started,
 
             # LAGGING INPUTS AND OUTPUTS
             "Ph_max": ph_max, "timber_size": timber_size,
@@ -215,12 +225,13 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 def edit_equation(*equations):
     return_list = []
     for equation in equations:
-        equation = equation.replace("**","<sup>")
-        equation = equation.replace("*","×")
+        equation = equation.replace("**", "<sup>")
+        equation = equation.replace("*", "×")
         equation = edit_power(equation)
         return_list.append(equation)
 
     return return_list
+
 
 def edit_power(equation):
     for i in range(len(equation)):
