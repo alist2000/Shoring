@@ -219,10 +219,17 @@ blockquote {
   text-align: center;
 }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         $(function () {
             $("#soil_prop").load("template/soil_properties.html");
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#racker_prop").load("template/racker_prop.html");
         });
     </script>
     <script>
@@ -475,7 +482,15 @@ blockquote {
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
-            <td style="width: 100%;"><h3>2.2 Soil Properties</h3></td>
+            <td style="width: 100%;"><h3>2.2 Racker/tieback Properties</h3></td>
+        </tr>
+        </tbody>
+    </table>
+    <table id="racker_prop" border="0" style="border-collapse: collapse; width: 100%;" ></table>
+    <table border="0" style="border-collapse: collapse; width: 100%;">
+        <tbody>
+        <tr>
+            <td style="width: 100%;"><h3>2.3 Soil Properties</h3></td>
         </tr>
         </tbody>
     </table>
@@ -483,7 +498,31 @@ blockquote {
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
-            <td style="width: 100%;"><h3>2.3 Surcharge</h3></td>
+            <td style="width: 100%;"><h3>2.4 Water Properties</h3></td>
+        </tr>
+        </tbody>
+    </table>
+    <table border="0" style="border-collapse: collapse; width: 100%;">
+        <tbody>
+        <tr>
+            <td style="width: 25%;">
+                <t1>There is water?</t1>
+            </td>
+            <td style="width: 25%;">
+                <t2>{{there_is_water}}</t2>
+            </td>
+            <td style="width: 25%;">
+                <t1>Water Level from top:</t1>
+            </td>
+            <td style="width: 25%;">
+                <t2>{{water_started}} {{length_unit}}</t2>
+            </td>
+        </tr>
+        </tbody>
+    <table border="0" style="border-collapse: collapse; width: 100%;">
+        <tbody>
+        <tr>
+            <td style="width: 100%;"><h3>2.5 Surcharge</h3></td>
         </tr>
         </tbody>
     </table>
@@ -495,7 +534,7 @@ blockquote {
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
-            <td style="width: 100%;"><h3>2.4 :Lagging</h3></td>
+            <td style="width: 100%;"><h3>2.6 :Lagging</h3></td>
         </tr>
         </tbody>
     </table>
@@ -1005,5 +1044,22 @@ blockquote {
     </table>
     <div id="lagging" file_name={{lagging_file}}></div>
 </div>
+
+<button onclick="generatePDF()">Generate PDF</button>
+
+    <script>
+
+      function generatePDF() {
+        const element = document.body;
+        const options = {
+          filename: 'example.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(element).save();
+      }
+    </script>
 </body>
 </html>
