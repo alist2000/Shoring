@@ -6,6 +6,7 @@ import pyarrow.feather as feather
 from jinja2 import Environment, FileSystemLoader
 import datetime
 import math
+import numpy as np
 
 from front.report import surcharge_inputs, Formula, racker_input
 
@@ -140,7 +141,8 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             s_unit = "mm<sup>3</sup>"
 
         # PRESSURES
-        [soil_top_active, soil_end_active, soil_end_passive, water_pre_e_a, water_pre_e_p] = pressures
+         # better appearance
+        [soil_top_active, soil_end_active, soil_end_passive, water_pre_e_a, water_pre_e_p] = edit_equation(*pressures)
         if pressure_distribution == "Trapezoidal" and c == 0:
             distribution_pic = "template/picture_pressure1.html"
         elif pressure_distribution == "Trapezoidal" and c != 0:
@@ -149,15 +151,18 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             distribution_pic = "template/picture_pressure3.html"
 
         # LOADS
+         # better appearance
         [trapezoidal_force, force_soil1, force_soil2, surcharge_force, water_active_force, soil_passive_force,
-         water_passive_force] = loads
+         water_passive_force] = edit_equation(*loads)
         [trapezoidal_arm, arm_soil1, arm_soil2, surcharge_arm, water_active_arm, soil_passive_arm,
-         water_passive_arm] = arms
+         water_passive_arm] = edit_equation(*arms)
+
+        
 
         # EQUATIONS
-        Mr = str(equations[0])
-        Md = str(equations[1])
-        d_equation = str(equations[2])
+        Mr = equations[0]
+        Md = equations[1]
+        d_equation = equations[2]
         [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)\
 
         # RACKER
@@ -225,11 +230,14 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 def edit_equation(*equations):
     return_list = []
     for equation in equations:
-        equation = equation.replace("**", "<sup>")
-        equation = equation.replace("*", "×")
-        equation = edit_power(equation)
-        return_list.append(equation)
-
+        if type(equation) not in [float, int, str, np.float64, np.int64]:
+            equation = str(equation)
+            equation = equation.replace("**", "<sup>")
+            equation = equation.replace("*", "×")
+            equation = edit_power(equation)
+            return_list.append(equation)
+        else:
+            return_list.append(equation)
     return return_list
 
 
