@@ -620,12 +620,14 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             <tr>
                 <td style="width: 100%; text-align: center;">
                     <img style="width: 100%; height: auto;  margin-top:0px;"
-                         src="https://civision.balafan.com/restrained_shoring/plot/deflection_output{str(number)}"
+                         src="../plot/deflection_output{str(number)}.png"
                          alt="shear diagram">
 
             </tr>
             </tbody>
         </table>"""
+        # image in server should be received with below source:
+        # src="https://civision.balafan.com/restrained_shoring/plot/deflection_output{str(number)}"
     file = open(f"reports/template/section_deflection{number}.html", "w")
     file.write(table)
     file.close()
