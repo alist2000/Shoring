@@ -250,11 +250,6 @@ blockquote {
             );
         });
     </script>
-    <script>
-        $(function () {
-            $("#SoilPressure").load("template/table.html");
-        });
-    </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script type="text/javascript" id="MathJax-script" async
             src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
@@ -787,6 +782,23 @@ blockquote {
     </tr>
     </table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
+            <tbody>
+                <tr><table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr align="center">
+            <th style="width: 100%;text-align: center">
+                Load Diagram
+            </th>
+        </tr>
+      </tbody></table></tr>
+            <tr>
+                <td style="width: 100%; text-align: center;">
+                    <img style="width: 100%; height: auto;  margin-top:0px;"
+                         src="../plot/general_output1.png"
+                         alt="shear diagram">
+
+            </tr>
+    <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
             <td style="width: 100%;"><h3>4.3 Surcharge Loads</h3></td>
@@ -1012,13 +1024,14 @@ blockquote {
         <tbody>
         <tr>
             <td style="width: 50%;">
-                <t1> M<sub>max</sub> = {{M_max}} {{moment_unit}}
-                </t1>
-            </td>
-            <td style="width: 50%;">
                 <t1> V<sub>max</sub> = {{shear_max}} {{shear_unit}}
                 </t1>
             </td>
+            <td style="width: 50%;">
+                <t1> M<sub>max</sub> = {{M_max}} {{moment_unit}}
+                </t1>
+            </td>
+            
         </tr>
         <tr>
             <td style="width: 50%;">
