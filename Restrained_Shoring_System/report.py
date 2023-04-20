@@ -163,7 +163,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         Mr = equations[0]
         Md = equations[1]
         d_equation = equations[2]
-        [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)\
+        [Mr, Md, d_equation] = edit_equation(Mr, Md, d_equation)
 
         # RACKER
         racker_input(unit_system, anchor_number, h_list_first)
