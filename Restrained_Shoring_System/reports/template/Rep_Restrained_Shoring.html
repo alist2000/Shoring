@@ -302,10 +302,20 @@ blockquote {
     </script>
     <script>
         $(function () {
-            $("#surcharge_formula").load(
+            $("#surcharge_formula_server").load(
                 "https://civision.balafan.com/restrained_shoring/include/surcharge_formula"
             );
         });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#surcharge_formula").load(
+                "template/surcharge_formula.html", function() {
+        MathJax.startup.document.clear();
+        MathJax.startup.document.updateDocument();
+    });
+});
     </script>
     <script>
         $(function () {
@@ -813,7 +823,8 @@ blockquote {
         </tr>
         </tbody>
     </table>
-    <table id="surcharge_formula"></table>
+    <table id="surcharge_formula_server"></table>
+    <div id="surcharge_formula"></div>
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>

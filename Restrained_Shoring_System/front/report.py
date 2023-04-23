@@ -97,8 +97,138 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
                 </td>
                 
             </tr>"""
+
+    # SURCHARGE FORMULA
+    surcharge_type = [ "Point Load", "Line Load", "Strip Load"]
+    surcharge_type_set = set(surcharge_type)
+    surcharge_type_set.discard("No Load")
+    table2 = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+    </script>
+    <title>Document</title>
+</head>
+<body>"""
+    for load in surcharge_type_set:
+        if load == "Uniform":
+            table2 += f"""<table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Surcharge Type:{ load }</th>
+            </td>
+        </tr>
+        </tbody> </table>
+        <table><tbody>
+        <tr>
+            <td>&#963;<sub>h</sub> = K<sub>a</sub> &#x274C; Q </td>
+          </tr>
+        <tr>
+            <td style="text-align:center;"><img src="images/uniform_load.jpg" alt="UNIFORM LOAD"></td></tr>
+        </tbody>
+    </table>"""
+
+        elif load == "Point Load":
+            table2 += f"""<table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Surcharge Type:{ load }</th>
+            </td>
+        </tr> </tbody></table>""" + """<table><tbody><tr>
+            <td style="text-align: left;">
+                For m &#8804; 0.4:
+                </td>
+            </tr>
+          <tr>
+            <td>
+                $$\sigma_h = 0.28{ {Q_p} \over {H^2}}{n^2 \over {(0.16 + n^2)^3} }.$$
+                </td>
+          </tr>
+          <tr>
+            <td style="text-align: left;">
+                For m > 0.4:
+                </td>
+            </tr>
+          <tr>
+            <td >
+                $$\sigma_h = 1.77{{Q_p} \over {H^2}}{n^2 m^2 \over {(m^2 + n^2)^3} }.$$
+                </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><img src="images/point_load.jpg" alt="POINT LOAD"></td></tr>
+        </tbody>
+    </table>"""
+        elif load == "Line Load":
+                table2 += f"""<table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Surcharge Type:{ load } </th>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                For m &#8804; 0.4:
+                </td>
+            </tr>
+          <tr> """ + """<td>
+                $$\sigma_h = { {Q_l} \over {H}}{0.2 n \over {(0.16 + n^2)^2} }.$$
+                </td>
+          </tr>
+          <tr>
+            <td style="text-align: left;">
+                For m > 0.4:
+                </td>
+            </tr>
+          <tr>
+            <td >
+                $$\sigma_h = 1.28{{Q_l} \over {H}}{m^2 n \over {(m^2 + n^2)^2} }.$$
+                </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><img src="images/line_load.jpg" alt="LINE LOAD"></td></tr>
+        </tbody>
+    </table>"""
+        elif load == "Strip Load":
+            table2 += f"""
+            <table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+        <tbody>
+        <tr>
+            <td style="text-align: left;">
+                <th>Surcharge Type:{ load }</th>
+            </td>
+        </tr>
+        </tbody>
+    </table> """ + """<table>
+        <tbody>
+          <tr>
+            <td>
+                $$\sigma_h = { {2Q} \over {\pi}}{[\beta_R - \sin\beta\cos(2\alpha)]}.$$
+                </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><img src="images/strip_load.jpg" alt="STRIP LOAD"></td></tr>
+        </tbody>
+    </table>"""
+    table2 += """</body>
+</html>"""
+
     file = open("reports/template/surcharge_input.html", "w")
     file.write(table)
+    file.close()
+    file = open("reports/template/surcharge_formula.html", "w")
+    file.write(table2)
     file.close()
 
 
