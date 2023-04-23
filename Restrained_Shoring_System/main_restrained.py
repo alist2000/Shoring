@@ -209,11 +209,14 @@ def main_restrained(inputs):
             raker_force(unit_system, [T])
 
         sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
-        if len(list(sigma_a_array_detail_copy)) != len(list(surcharge_pressure)):
-            for i in range(len(sigma_a_array_detail_copy) - len(surcharge_pressure)):
-                surcharge_pressure = list(surcharge_pressure)
-                surcharge_pressure.append(0)
-            surcharge_pressure = np.array(surcharge_pressure)
+        try: # if there is surcharge pressure
+            if len(list(sigma_a_array_detail_copy)) != len(list(surcharge_pressure)):
+                for i in range(len(sigma_a_array_detail_copy) - len(surcharge_pressure)):
+                    surcharge_pressure = list(surcharge_pressure)
+                    surcharge_pressure.append(0)
+                surcharge_pressure = np.array(surcharge_pressure)
+        except:
+            pass 
         if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
             for i in range(len(sigma_a_array_detail_copy)):
                 if list(surcharge_pressure) == [0]:
