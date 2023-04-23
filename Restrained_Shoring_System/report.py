@@ -143,6 +143,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         # PRESSURES
          # better appearance
         [soil_top_active, soil_end_active, soil_end_passive, water_pre_e_a, water_pre_e_p] = edit_equation(*pressures)
+        # pressure picture
         if pressure_distribution == "Trapezoidal" and c == 0:
             distribution_pic = "template/picture_pressure1.html"
         elif pressure_distribution == "Trapezoidal" and c != 0:
@@ -156,6 +157,13 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
          water_passive_force] = edit_equation(*loads)
         [trapezoidal_arm, arm_soil1, arm_soil2, surcharge_arm, water_active_arm, soil_passive_arm,
          water_passive_arm] = edit_equation(*arms)
+        # force & arm picture
+        if pressure_distribution == "Trapezoidal" and c == 0:
+            force_pic = "template/picture_force1.html"
+        elif pressure_distribution == "Trapezoidal" and c != 0:
+            force_pic = "template/picture_force2.html"
+        else:
+            force_pic = "template/picture_force3.html"
 
         
 
@@ -212,6 +220,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             "arm_dr4": round(surcharge_arm, 2),
             "arm_dr5": water_active_arm,
             "arm_rs1": soil_passive_arm, "arm_rs2": water_passive_arm,
+            "force_pic": force_pic,
 
             # STATUSES --> IT'S ALWAYS Pass BECAUSE WE CHOOSE SECTION TO Pass IN MOMENT SHEAR AND DEFLECTION.
             "moment_status": "Pass",

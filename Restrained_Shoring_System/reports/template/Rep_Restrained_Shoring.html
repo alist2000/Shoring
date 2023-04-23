@@ -250,6 +250,14 @@ blockquote {
             );
         });
     </script>
+    <script>
+            $(function () {
+            var force_picture = $("#force_picture").attr("force_pic");
+            $("#force_picture").load(
+                force_picture
+            );
+        });
+    </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script type="text/javascript" id="MathJax-script" async
             src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
@@ -813,10 +821,9 @@ blockquote {
         </tr>
         </tbody>
     </table>
+    <table id="force_picture" force_pic={{force_pic}}> </table>
+
     <table>
-    <tr >
-      <td  style="text-align:center"><img align="middle" src="Force_pressure.png" alt="Force PRESSURE PICTURE" style="height: 230px;width:auto;"></td>
-    </tr>
     <tr>
       <td style="width: 100%;">
           <t2>DR<sub>4</sub>= Force Result of Surcharge Loads</t2>
