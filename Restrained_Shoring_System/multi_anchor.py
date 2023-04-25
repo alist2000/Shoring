@@ -68,7 +68,7 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     if force_cantilever_w == 0:
         arm_cantilever_w = 0
     M1 = force_cantilever * arm_cantilever + force_cantilever_su * arm_cantilever_su + force_cantilever_w * arm_cantilever_w
-    T1_u = force_cantilever
+    T1_u = force_cantilever + force_cantilever_su + force_cantilever_w
     T_list = [[0, T1_u]]
 
     # interior span
