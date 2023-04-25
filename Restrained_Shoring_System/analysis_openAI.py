@@ -482,6 +482,11 @@ class analysis:
             else:
                 delta_xb = abs(spi.simpson(moment[x_point_moment_last:C_index] * AC[:x_point],
                                            depth[x_point_moment_last:C_index]))
+            if x > BC_length:
+                delta_xb = +(-delta_xb + delta_bc * AC_list[x_point] / BC_length)
+            else:
+                delta_xb = -(-delta_xb + delta_bc * AC_list[x_point] / BC_length)
+
             deflection1_2.append(delta_xb)  # start B end C --> should be reversed --> convert to: start C end B
             x_point_moment_last -= 1
 
@@ -520,8 +525,8 @@ class analysis:
         #     deflection1[i] = -(deflection1[i] + delta_cb * AB_list[i] / BC_length)
 
         del BC_list[0]
-        for i in range(len(deflection1_2)):
-            deflection1_2[i] = -(-deflection1_2[i] + delta_bc * AC_list[i] / BC_length)
+        # for i in range(len(deflection1_2)):
+        #     deflection1_2[i] = -(-deflection1_2[i] + delta_bc * AC_list[i] / BC_length)
 
         for i in range(len(deflection3)):
             deflection3[i] = -(deflection3[i] - delta_bc * (CD_list[i]) / BC_length)
@@ -608,7 +613,10 @@ class analysis:
             else:
                 delta_xb_first = abs(spi.simpson(moment[x_point_moment_last:C_index_first] * AC_first[:x_point],
                                                  depth[x_point_moment_last:C_index_first]))
-            delta_xb_first = -(-delta_xb_first + delta_bc_first * AC_list_first[x_point] / BC_length_first)
+            if x > BC_length_first:  # cantilever part.
+                delta_xb_first = +(-delta_xb_first + delta_bc_first * AC_list_first[x_point] / BC_length_first)
+            else:
+                delta_xb_first = -(-delta_xb_first + delta_bc_first * AC_list_first[x_point] / BC_length_first)
             deflection_first.append(
                 delta_xb_first)  # start B end C --> should be reversed --> convert to: start C end B
             x_point_moment_last -= 1
@@ -743,7 +751,8 @@ class analysis:
             section, Ix, section_area, Sx, wc, h, bf, tw, tf = item.values()
             if section and Ix:
                 # E: Ksi , M: lb.ft , Ix: in^4 / E: Mpa , M: N.m , Ix: mm^4
-                EI = E * (1000 * float(Ix) / 12 ** 3 if unit_system == "us" else float(Ix) * 10 ** 9)  # consider final conversion for deflection here
+                EI = E * (1000 * float(Ix) / 12 ** 3 if unit_system == "us" else float(
+                    Ix) * 10 ** 9)  # consider final conversion for deflection here
                 # EI = E * (1000 * float(Ix) / (12 ** 2) if unit_system == "us" else float(Ix) / (10 ** 6))
                 deflection_copy = [d / EI for d in deflection_values]
                 # if unit_system == "us":
