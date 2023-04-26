@@ -99,7 +99,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
             </tr>"""
 
     # SURCHARGE FORMULA
-    surcharge_type = [ "Point Load", "Line Load", "Strip Load"]
+    surcharge_type = [ "Uniform", "Point Load", "Line Load", "Strip Load"]
     surcharge_type_set = set(surcharge_type)
     surcharge_type_set.discard("No Load")
     table2 = """<!DOCTYPE html>
@@ -127,7 +127,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         </tbody> </table>
         <table><tbody>
         <tr>
-            <td>&#963;<sub>h</sub> = K<sub>a</sub> &#x274C; Q </td>
+            <td>&#963;<sub>h</sub> = K<sub>a</sub> &#215; Q </td>
           </tr>
         <tr>
             <td style="text-align:center;"><img src="images/uniform_load.jpg" alt="UNIFORM LOAD"></td></tr>
@@ -214,7 +214,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tbody>
           <tr>
             <td>
-                $$\sigma_h = { {2Q} \over {\pi}}{[\beta_R - \sin\beta\cos(2\alpha)]}.$$
+                $$\sigma_h = { {2Q} \over {\pi}}{( \beta_R - \sin\beta\cos(2\alpha) )}.$$
                 </td>
           </tr>
           <tr>
