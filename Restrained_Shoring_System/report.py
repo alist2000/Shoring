@@ -63,7 +63,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         surcharge_depth = surcharge_depth_list[project]
         [q, l1, l2, teta] = surcharge_inputs_list[project]
 
-        surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height=h, unit_system=unit_system)
+        surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_system=unit_system)
 
         tieback_spacing = tieback_spacing_list[project]
         anchor_angle = anchor_angle_list[project]

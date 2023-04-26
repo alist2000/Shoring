@@ -1,5 +1,5 @@
-def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_system):
-    retaining_height = round(retaining_height, 2)
+def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_system):
+    surcharge_depth = round(surcharge_depth, 2)
     if unit_system == "us":
         length_unit = "ft"
         q_point = "lb"
@@ -27,7 +27,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, retaining_height, unit_sys
                 <t1>Surcharge Depth:</t1>
             </td>
             <td style="width: 25%;">
-                <t2>{retaining_height} {length_unit}</t2>
+                <t2>{surcharge_depth} {length_unit}</t2>
             </td>
         </tr>
         """
