@@ -209,14 +209,14 @@ def main_restrained(inputs):
             raker_force(unit_system, [T])
 
         sigma_a_array_detail_copy = copy.deepcopy(sigma_a_array_detail)
-        try: # if there is surcharge pressure
+        try:  # if there is surcharge pressure
             if len(list(sigma_a_array_detail_copy)) != len(list(surcharge_pressure)):
                 for i in range(len(sigma_a_array_detail_copy) - len(surcharge_pressure)):
                     surcharge_pressure = list(surcharge_pressure)
                     surcharge_pressure.append(0)
                 surcharge_pressure = np.array(surcharge_pressure)
         except:
-            pass 
+            pass
         if type(surcharge_pressure) == list or type(surcharge_pressure) == np.ndarray:
             for i in range(len(sigma_a_array_detail_copy)):
                 if list(surcharge_pressure) == [0]:
@@ -281,7 +281,7 @@ def main_restrained(inputs):
             deflection_values, z_max, max_deflection = analysis_instance.deflection_single3(
                 moment_values, d_0, h1)
         else:
-            analysis_instance = analysis(Th / tieback_spacing, h_list_first, list(depth), list(final_pressure), delta_h,
+            analysis_instance = analysis(Th, h_list_first, list(depth), list(final_pressure * tieback_spacing), delta_h,
                                          unit_system, project + 1)
             shear_diagram, shear_values, V_max, Y_zero_load = analysis_instance.shear_multi()
             moment_diagram, moment_values, M_max, Y_zero_shear = analysis_instance.moment(shear_values)
