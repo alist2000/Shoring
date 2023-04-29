@@ -416,6 +416,7 @@ class analysis:
         h_total = round(depth[-1], delta_h_decimal)
         # calculate PoF
         PoF = 0.25 * d  # started from excavation line
+        # PoF = 3  # started from excavation line
         PoF_form_top = h_total - d + PoF  # started from top
         PoF = round(PoF, delta_h_decimal)
         PoF_form_top = round(PoF_form_top, delta_h_decimal)
