@@ -5,22 +5,15 @@
         body {
             font: 14px Arial, Helvetica, sans-serif;
             line-height: 1.0;
-            height: 842px;
-            width: 595px;
             /* to centre page on screen*/
             margin-left: auto;
             margin-right: auto;
         }
 
-        @media print {
-            .pagebreak {
-                page-break-before: always;
-            }
-        }
+        @media print { margin: 0; width: 600px; height: 800px }
+
 
         @page {
-            size: letter;
-            margin: 1.5cm;
             @bottom-right {
                 content: "Page " counter(page) " of " counter(pages);
             }
@@ -37,8 +30,8 @@
         }
 
         .custom-page-start {
-            margin-top: 0px;
-            margin-bottom: 0px;
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         h1 {
@@ -138,14 +131,16 @@ table * {
 }
 table td, table th {
   padding-left: 8px;
+  padding-right: 8px;
+
 }
 table thead tr {
-  height: 60px;
+  height: 40px;
   background: #D1D1D1;
   font-size: 16px;
 }
 table tbody tr {
-  height: 48px;
+  height: 28px;
   border-bottom: 1px solid #E3F1D5;
 }
 table tbody tr:last-child {
@@ -179,8 +174,9 @@ table td.r, table th.r {
     padding: 8px 0;
   }
   table tbody tr td {
-    padding-left: 45%;
-    margin-bottom: 12px;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-bottom: 8px;
   }
   table tbody tr td:last-child {
     margin-bottom: 0;
@@ -211,7 +207,7 @@ table td.r, table th.r {
 body {
   background: #DAF5FF;
   font: 400 14px "Calibri", "Arial";
-  padding: 20px;
+  padding: 10px;
 }
 
 blockquote {
@@ -349,6 +345,17 @@ blockquote {
     </script>
 </head>
 <body>
+<table style="background-color: #DAF5FF">
+            <tr>
+                <td style="text-align:left"> <img style="width: auto; height: 70%;  margin-top:0px;"
+                         src="images/CIV_Logo_Header.svg"
+                         alt="LOGO"> </td>
+
+                <td style="text-align: right">
+                    CiVision Version 0.0.1
+                </td>
+            </tr>
+    </table>
 <div class="custom-page-start">
     <h1>Restrained Shoring Design/Analysis - Detailed Report</h1>
     <table border="0" style="border-collapse: collapse; width: 100%;">
@@ -519,7 +526,7 @@ blockquote {
         <tbody>
         <tr>
             <td style="width: 25%;">
-                <t1>There is water?</t1>
+                <t1>Does water exist?</t1>
             </td>
             <td style="width: 25%;">
                 <t2>{{there_is_water}}</t2>
@@ -653,7 +660,7 @@ blockquote {
             </td>
             <td style="width: 80%;">
                 <t2>
-                    {{ M_max }} {{moment_unit}}
+                    {{ M_max }} {{k_moment_unit}}
                 </t2>
             </td>
         </tr>
@@ -663,7 +670,7 @@ blockquote {
             </td>
             <td style="width: 80%;">
                 <t2>
-                    {{ shear_max }} {{ force_unit}}
+                    {{ shear_max }} {{ k_force_unit}}
                 </t2>
             </td>
         </tr>
@@ -695,7 +702,7 @@ blockquote {
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
-            <td style="width: 100%;"><h3>4.1 Formula</h3></td>
+            <td style="width: 100%;"><h3>4.1 Lateral Pressure Coefficients</h3></td>
         </tr>
         </tbody>
     </table>
@@ -808,14 +815,14 @@ blockquote {
                 Load Diagram
             </th>
         </tr>
-      </tbody></table></tr>
+      </tr>
             <tr>
                 <td style="width: 100%; text-align: center;">
                     <img style="width: 100%; height: auto;  margin-top:0px;"
                          src="../plot/general_output1.png"
                          alt="shear diagram">
 
-            </tr>
+            </tr></tbody></table>
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
@@ -1005,7 +1012,7 @@ blockquote {
     <table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>
         <tr>
-            <td style="width: 100%;"><h3>4.6 Raker/Braced Forces Calculation</h3></td>
+            <td style="width: 100%;"><h3>4.6 Raker/Brace Forces Calculation</h3></td>
         </tr>
         </tbody>
     </table>
@@ -1042,11 +1049,11 @@ blockquote {
         <tbody>
         <tr>
             <td style="width: 50%;">
-                <t1> V<sub>max</sub> = {{shear_max}} {{shear_unit}}
+                <t1> V<sub>max</sub> = {{shear_max}} {{k_force_unit}}
                 </t1>
             </td>
             <td style="width: 50%;">
-                <t1> M<sub>max</sub> = {{M_max}} {{moment_unit}}
+                <t1> M<sub>max</sub> = {{M_max}} {{k_moment_unit}}
                 </t1>
             </td>
             
@@ -1075,22 +1082,5 @@ blockquote {
     </table>
     <div id="lagging" file_name={{lagging_file}}></div>
 </div>
-
-<button onclick="generatePDF()">Generate PDF</button>
-
-    <script>
-
-      function generatePDF() {
-        const element = document.body;
-        const options = {
-          filename: 'example.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(options).from(element).save();
-      }
-    </script>
 </body>
 </html>
