@@ -539,6 +539,9 @@ class analysis:
         deflection_list.reverse()
         deflection_array = np.array(deflection_list)
         # deflection = plotter_deflection(depth, deflection_array, 'Deflection', 'z', deflection_unit, length_unit)
+        depth, deflection_array = control_index_for_plot(depth, deflection_array)
+
+
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
 
@@ -547,7 +550,6 @@ class analysis:
         max_deflection, z_max = find_max([x1, x2], [max1, max2])
         z_max = depth[z_max]
 
-        depth, deflection_array = control_index_for_plot(depth, deflection_array)
 
         return deflection_array, z_max, abs(max_deflection)
 
@@ -712,15 +714,17 @@ class analysis:
         deflection_array = np.array(deflection_list)
         # deflection = plotter_deflection(depth, deflection_array, 'Deflection', "z", deflection_unit, length_unit)
 
+        # control index
+        depth, deflection_array = control_index_for_plot(depth, deflection_array)
+
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
 
         max2 = min(deflection_array)
         x2 = deflection_list.index(max1)
         max_deflection, z_max = find_max([x1, x2], [max1, max2])
-        z_max = depth[z_max]
 
-        depth, deflection_array = control_index_for_plot(depth, deflection_array)
+        z_max = depth[z_max]
 
         return deflection_array, z_max, abs(max_deflection)
 
