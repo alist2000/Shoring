@@ -99,7 +99,6 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
             </tr>"""
 
     # SURCHARGE FORMULA
-    surcharge_type = [ "Uniform", "Point Load", "Line Load", "Strip Load"]
     surcharge_type_set = set(surcharge_type)
     surcharge_type_set.discard("No Load")
     table2 = """<!DOCTYPE html>
@@ -129,8 +128,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tr>
             <td>&#963;<sub>h</sub> = K<sub>a</sub> &#215; Q </td>
           </tr>
-        <tr>
-            <td style="text-align:center;"><img src="images/uniform_load.jpg" alt="UNIFORM LOAD"></td></tr>
+
         </tbody>
     </table>"""
 
@@ -161,8 +159,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
                 $$\sigma_h = 1.77{{Q_p} \over {H^2}}{n^2 m^2 \over {(m^2 + n^2)^3} }.$$
                 </td>
           </tr>
-          <tr>
-            <td style="text-align:center;"><img src="images/point_load.jpg" alt="POINT LOAD"></td></tr>
+          
         </tbody>
     </table>"""
         elif load == "Line Load":
@@ -196,8 +193,6 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
                 $$\sigma_h = 1.28{{Q_l} \over {H}}{m^2 n \over {(m^2 + n^2)^2} }.$$
                 </td>
           </tr>
-          <tr>
-            <td style="text-align:center;"><img src="images/line_load.jpg" alt="LINE LOAD"></td></tr>
         </tbody>
     </table>"""
         elif load == "Strip Load":
@@ -217,8 +212,6 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
                 $$\sigma_h = { {2Q} \over {\pi}}{( \beta_R - \sin\beta\cos(2\alpha) )}.$$
                 </td>
           </tr>
-          <tr>
-            <td style="text-align:center;"><img src="images/strip_load.jpg" alt="STRIP LOAD"></td></tr>
         </tbody>
     </table>"""
     table2 += """</body>
@@ -609,7 +602,7 @@ def raker_force(unit_system, forces):
     if unit_system == "us":
         force_unit = """Kips"""
     else:
-        force_unit = """Kips"""
+        force_unit = """KN"""
     table = """<tbody><tr>"""
     for i in range(len(forces)):
         if i % 2 == 0 and i != 0:
@@ -620,7 +613,7 @@ def raker_force(unit_system, forces):
                 <t1>R<sub>{i + 1}</sub>:</t1>
             </td>
             <td style="width: 25%;">
-                <t2> {round(forces[i], 2)} {force_unit}</t2>
+                <t2> {round(forces[i]/1000, 1)} {force_unit}</t2>
             </td>
     """
     table += """</tr></tbody>"""
@@ -631,7 +624,7 @@ def raker_force(unit_system, forces):
 
 # raker_force("us", [125,4523,458,123])
 def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflection_max, allowable_deflection, number):
-    deflection_max = round(deflection_max, 3)
+    deflection_max = round(deflection_max, 2)
     
     cross = section.find("X")
     part1 = section[:cross]
@@ -727,8 +720,8 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             <tbody>
             <tr>
                 <td style="text-align: justify;text-justify: inter-word;">The deflection of the restrained soldier pile
-                    is calculated using moment areas method, and the
-                    corresponding deflection diagram is shown below.Considering the maximum allowable deflection
+                    is calculated using moment area method, and the
+                    deflection diagram is shown below.Considering the maximum allowable deflection
                     is <b>{allowable_deflection} {deflection_unit}</b>, section <b>{section}</b> satisfies the deflection criterion.
                     It should be noted that the point of fixity is assumed to be at <b>0.25D<sub>0</sub></b> below the
                     excavation line.
@@ -849,7 +842,7 @@ def DCRs(DCR_moment, DCR_shear, DCR_deflection, DCR_lagging, lagging_status, num
 
 
 def deflection_output(deflection_max, unit_system, number):
-    deflection_max = round(deflection_max, 3)
+    deflection_max = round(deflection_max, 2)
     if unit_system == "us":
         deflection_unit = "in"
     else:
@@ -876,23 +869,23 @@ def deflection_output(deflection_max, unit_system, number):
 
 
 def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber_size, S_sup, lagging_status, number):
-    M_max = round(M_max, 0)
-    S_req = round(S_req, 3)
-    S_sup = round(S_sup, 3)
+    M_max = round(M_max/1000, 1)
+    S_req = round(S_req, 1)
+    S_sup = round(S_sup, 1)
         
     if unit_system == "us":
         length_unit = "ft"
         density_unit = "pcf"
         force_unit = "lb"
         Sx_unit = "in<sup>3</sup>"
-        moment_unit = "lb-ft"
+        moment_unit = "kip-ft"
 
     else:
         length_unit = "m"
         density_unit = "N/m<sup>3</sup>"
         force_unit = "N"
         Sx_unit = "mm<sup>3</sup>"
-        moment_unit = "N-m"
+        moment_unit = "KN-m"
 
     table = f"""<table border="0" style="border-collapse: collapse; width: 100%;">
         <tbody>

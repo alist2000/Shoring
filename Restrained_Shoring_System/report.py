@@ -124,16 +124,20 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         if unit_system == "us":
             length_unit = "ft"
             force_unit = "lb"
+            k_force_unit = "kips"
             moment_unit = "lb-ft"
+            k_moment_unit = "kip-ft"
             pressure_unit = "ksi"
             deflection_unit = "in"
             density_unit = "pcf"
             A_unit = "in<sup>2</sup>"
             s_unit = "in<sup>3</sup>"
         else:
-            length_unit = "N"
-            force_unit = "m"
+            length_unit = "m"
+            force_unit = "N"
+            k_force_unit = "KN"
             moment_unit = "N-m"
+            k_moment_unit = "KN-m"
             pressure_unit = "MPa"
             deflection_unit = "mm"
             density_unit = "N/m<sup>2</sup>"
@@ -141,7 +145,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             s_unit = "mm<sup>3</sup>"
 
         # PRESSURES
-         # better appearance
+        # better appearance
         [soil_top_active, soil_end_active, soil_end_passive, water_pre_e_a, water_pre_e_p] = edit_equation(*pressures)
         # pressure picture
         if pressure_distribution == "Trapezoidal" and c == 0:
@@ -152,7 +156,7 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
             distribution_pic = "template/picture_pressure3.html"
 
         # LOADS
-         # better appearance
+        # better appearance
         [trapezoidal_force, force_soil1, force_soil2, surcharge_force, water_active_force, soil_passive_force,
          water_passive_force] = edit_equation(*loads)
         [trapezoidal_arm, arm_soil1, arm_soil2, surcharge_arm, water_active_arm, soil_passive_arm,
@@ -165,8 +169,6 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
         else:
             force_pic = "template/picture_force3.html"
 
-        
-
         # EQUATIONS
         Mr = equations[0]
         Md = equations[1]
@@ -175,7 +177,6 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
         # RACKER
         racker_input(unit_system, anchor_number, h_list_first)
-
 
         # WATER
         if there_is_water == "No":
@@ -203,8 +204,8 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
             # IMPORTANT VALUES FROM ANALYSIS
             "D": math.ceil(D),
-            "Sx_required": round(Sx, 3), "Ax_required": round(Ax, 3), "M_max": round(M_max, 0),
-            "shear_max": round(V_max, 0),
+            "Sx_required": round(Sx, 1), "Ax_required": math.ceil(Ax), "M_max": round(M_max / 1000, 1),
+            "shear_max": round(V_max / 1000, 1),
             "y_zero_shear": y_zero, "d0": round(D_0, 2), "d_equation": d_equation, "Md": Md, "Mr": Mr,
 
             # PRESSURES
@@ -228,7 +229,8 @@ def report_final(input_values, Sx, Ax, M_max, V_max,
 
             # UNITS
             "length_unit": length_unit, "density_unit": density_unit, "force_unit": force_unit,
-            "moment_unit": moment_unit,
+            "k_force_unit": k_force_unit,
+            "moment_unit": moment_unit, "k_moment_unit": k_moment_unit,
             "deflection_unit": deflection_unit, "Ax_unit": A_unit, "Sx_unit": s_unit, "pressure_unit": pressure_unit,
             "ull": " &deg;"
 
