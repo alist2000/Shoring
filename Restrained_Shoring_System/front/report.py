@@ -180,7 +180,48 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
                 </td>
             </tr>
           <tr> """ + """<td>
-                $$\sigma_h = { {Q_l} \over {H}}{0.2 n \over {(0.16 + n^2)^2} }.$$
+               <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msub>
+    <mi>&#x3C3;</mi>
+    <mi>h</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow data-mjx-texclass="ORD">
+    <mfrac>
+      <mrow data-mjx-texclass="ORD">
+        <msub>
+          <mi>Q</mi>
+          <mi>l</mi>
+        </msub>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mi>H</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow data-mjx-texclass="ORD">
+    <mfrac>
+      <mrow>
+        <mn>0.2</mn>
+        <mi>n</mi>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mo stretchy="false">(</mo>
+        <mn>0.16</mn>
+        <mo>+</mo>
+        <msup>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msup>
+        <msup>
+          <mo stretchy="false">)</mo>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mo>.</mo>
+</math>
                 </td>
           </tr>
           <tr>
@@ -190,7 +231,55 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
             </tr>
           <tr>
             <td >
-                $$\sigma_h = 1.28{{Q_l} \over {H}}{m^2 n \over {(m^2 + n^2)^2} }.$$
+                <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msub>
+    <mi>&#x3C3;</mi>
+    <mi>h</mi>
+  </msub>
+  <mo>=</mo>
+  <mn>1.28</mn>
+  <mrow data-mjx-texclass="ORD">
+    <mfrac>
+      <mrow data-mjx-texclass="ORD">
+        <msub>
+          <mi>Q</mi>
+          <mi>l</mi>
+        </msub>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mi>H</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mrow data-mjx-texclass="ORD">
+    <mfrac>
+      <mrow>
+        <msup>
+          <mi>m</mi>
+          <mn>2</mn>
+        </msup>
+        <mi>n</mi>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>m</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msup>
+        <msup>
+          <mo stretchy="false">)</mo>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mo>.</mo>
+</math>
                 </td>
           </tr>
         </tbody>
@@ -742,13 +831,14 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             </tr>
             <tr>
                 <td style="width: 100%; text-align: center;">
-                    <img style="width: 100%; height: auto;  margin-top:0px;"
+                    <img style="width: auto; height: 350;  margin-top:0px;"
                          src="../plot/deflection_output{str(number)}.png"
                          alt="shear diagram">
 
             </tr>
             </tbody>
         </table>"""
+    #0.25D<sub>0</sub>
         # image in server should be received with below source:
         # src="https://civision.balafan.com/restrained_shoring/plot/deflection_output{str(number)}"
     file = open(f"reports/template/section_deflection{number}.html", "w")
