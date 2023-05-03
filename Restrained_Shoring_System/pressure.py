@@ -181,7 +181,10 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main):
         h_array_detail[i] = round(h_array_detail[i], delta_h_decimal)
     h_list_detail = list(h_array_detail)
     h_list_detail[-1] = h_list_edited[-1]
-    h_array_detail = np.array(h_list_detail)
+
+    # delete extra values
+    h_list_detail = delete_same_values(h_list_detail)
+
     sigma_edited = []
     h_edited = []
     equation_list = []
@@ -220,6 +223,7 @@ def edit_sigma_and_height_general(sigma, h, delta_h, h_main):
 
 
 def force_calculator(h, sigma):
+    h = np.array(h)
     force = spi.simpson(sigma, h)
     centroid = spi.simpson(sigma * h, h) / force
     # note: centroid started from top
@@ -368,6 +372,24 @@ def water_pressure_detail_D(water_started, depth, unit_system):
         pressure_index += 1
 
     return waterPressure_edited
+
+
+def delete_same_values(value):
+    """this function used for depth or any value that no item in that should be equal to another one.
+     like depth"""
+    type_value = type(value)
+    if type_value == np.ndarray or type_value == np.array:
+        value_list = list(value)
+        convert_type_function = np.array
+    else:
+        value_list = list(value)
+        convert_type_function = list
+
+    for item in value_list[:-1]:
+        index_item = value_list.index(item)
+        if item == value_list[index_item + 1]:
+            del value_list[index_item]
+    return convert_type_function(value_list)
 # test = anchor_pressure(25, 115, 0, 1 / 3, 4.7)
 # sigma_active, sigma_passive = test.soil_pressure()
 # sigma_a, h_list = test.pressure_cohesion_less_single(10)
