@@ -13,7 +13,7 @@ import numpy as np
 from inputs import input_single
 from site_input import site_input
 from pressure import anchor_pressure, edit_sigma_and_height_general, force_calculator, \
-    force_calculator_x, find_D, water_pressure, water_pressure_detail_D
+    force_calculator_x, find_D, water_pressure, water_pressure_detail_D, delete_same_values
 from multi_anchor import multi_anchor
 from Single_anchor import single_anchor
 from plot import plotter_load, plotter_load_result
@@ -156,6 +156,7 @@ def main_restrained(inputs):
             surcharge_type, q, l1, l2,
             teta, ka_surcharge)
 
+        h_array_detail, sigma_a_array_detail = control_index_for_plot(h_array_detail, sigma_a_array_detail)
         trapezoidal_force, trapezoidal_force_arm = force_calculator(h_array_detail, sigma_a_array_detail)
 
         # water
