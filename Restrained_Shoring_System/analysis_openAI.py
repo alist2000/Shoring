@@ -417,8 +417,8 @@ class analysis:
         # calculate PoF
         PoF = 0.25 * d  # started from excavation line
         # PoF = 3  # started from excavation line
-        PoF_form_top = h_total - d + PoF  # started from top
         PoF = round(PoF, delta_h_decimal)
+        PoF_form_top = h_total - d + PoF  # started from top
         PoF_form_top = round(PoF_form_top, delta_h_decimal)
 
         # range 1: A-B --> anchor to top of pile
@@ -446,16 +446,17 @@ class analysis:
         B_index = depth.index(h1)
         C_index = depth.index(PoF_form_top)
         D_index = 0  # tip of pile
+        last_we_need = C_index - B_index
 
         # calculate delta c/b
         area_cb = abs(spi.simpson(moment[C_index:B_index:-1], depth[C_index:B_index:-1]))
-        X_cb = abs(spi.simpson(moment[C_index:B_index:-1] * BC[:],
+        X_cb = abs(spi.simpson(moment[C_index:B_index:-1] * BC[:last_we_need],
                                depth[C_index:B_index:-1])) / area_cb
         delta_cb = area_cb * X_cb  # unit : if us --> lb - ft^3. if metric --> N - m^3
 
         # calculate delta b/c
         area_bc = abs(spi.simpson(moment[B_index: C_index], depth[B_index:C_index]))
-        X_bc = abs(spi.simpson(moment[B_index: C_index] * BC[:],
+        X_bc = abs(spi.simpson(moment[B_index: C_index] * BC[:last_we_need],
                                depth[B_index:C_index])) / area_bc
         delta_bc = area_bc * X_bc  # unit : if us --> lb - ft^3. if metric --> N - m^3
 
@@ -542,7 +543,6 @@ class analysis:
         # deflection = plotter_deflection(depth, deflection_array, 'Deflection', 'z', deflection_unit, length_unit)
         depth, deflection_array = control_index_for_plot(depth, deflection_array)
 
-
         max1 = max(deflection_array)
         x1 = deflection_list.index(max1)
 
@@ -550,7 +550,6 @@ class analysis:
         x2 = deflection_list.index(max1)
         max_deflection, z_max = find_max([x1, x2], [max1, max2])
         z_max = depth[z_max]
-
 
         return deflection_array, z_max, abs(max_deflection)
 
@@ -571,8 +570,8 @@ class analysis:
         h_total = round(depth[-1], delta_h_decimal)
         # calculate PoF
         PoF = 0.25 * d  # started from excavation line
-        PoF_form_top = h_total - d + PoF  # started from top
         PoF = round(PoF, delta_h_decimal)
+        PoF_form_top = h_total - d + PoF  # started from top
         PoF_form_top = round(PoF_form_top, delta_h_decimal)
 
         anchor_number = len(h) - 1
@@ -600,8 +599,9 @@ class analysis:
         D_index_first = 0  # tip of pile
 
         # calculate delta b/c
+        last_we_need = C_index_first - B_index_first
         area_bc_first = abs(spi.simpson(moment[B_index_first: C_index_first], depth[B_index_first:C_index_first]))
-        X_bc_first = abs(spi.simpson(moment[B_index_first: C_index_first] * BC_first[:],
+        X_bc_first = abs(spi.simpson(moment[B_index_first: C_index_first] * BC_first[:last_we_need],
                                      depth[B_index_first:C_index_first])) / area_bc_first
         delta_bc_first = area_bc_first * X_bc_first  # unit : if us --> lb - ft^3. if metric --> N - m^3
 
@@ -807,6 +807,10 @@ def DCR_calculator(max_deflection, allowable_deflection, Sx, S_required, A, A_re
 
 
 def control_index_for_plot(depth, pressure):
+    if type(depth) == np.ndarray:
+        control_type = np.array
+    else:
+        control_type = list
     pressure = list(pressure)
     len_depth = len(depth)
     len_pressure = len(pressure)
@@ -817,4 +821,4 @@ def control_index_for_plot(depth, pressure):
             del pressure[-1]
         len_pressure = len(pressure)
 
-    return depth, pressure
+    return control_type(depth), pressure
