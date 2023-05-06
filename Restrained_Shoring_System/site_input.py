@@ -564,18 +564,18 @@ site_input18 = {
 # comment = "Soldier Beam Number #28 to #36"
 
 # 37 to 44
-h1 = 5.6
-spacing = 9.2
-retaining_height = 20.6
-comment = "Soldier Beam Number #37 to #44"
+# h1 = 5.6
+# spacing = 9.2
+# retaining_height = 20.6
+# comment = "Soldier Beam Number #37 to #44"
 
 # # 45 to 46
-# h1 = 5.6
-# spacing = 8.5
-# retaining_height = 20.6
-# comment = "Soldier Beam Number #45 to #46"
+h1 = 5.6
+spacing = 8.5
+retaining_height = 20.6
+comment = "Soldier Beam Number #45 to #46"
 site_input = {
-    'information': {'title': '2811 San Marino St., LA, CA 90006', 'jobNo': '-', 'designer': 'AMIA ENGINEERING',
+    'information': {'title': '2811 San Marino St., LA, CA 90006', 'jobNo': 'San Marino', 'designer': 'AMIA ENGINEERING',
                     'checker': '-', 'company': 'AMIA ENGINEERING', 'client': '2811 San Marino', 'unit': 'us',
                     'date': None, 'comment': comment, 'other': None}, 'product_id': 27, 'user_id': 44, 'data': {
         'General Properties': {'FS': {'value': '1.3', 'unit': None}, 'E': {'value': '29000', 'unit': 'ksi'},
@@ -586,7 +586,7 @@ site_input = {
 
                                'Fy': {'value': '36', 'unit': 'ksi'},
                                'Allowable Deflection': {'value': '0.5', 'unit': 'in'}, 'Sections': {
-                'value': '{"id":1371,"item":"W18,W21,W24","section_product_item":"44_86"}', 'unit': None}},
+                'value': '{"id":1371,"item":"W21","section_product_item":"44_86"}', 'unit': None}},
 
 
         'Geometrical Properties': {'Retaining Height': {'value': str(retaining_height), 'unit': 'ft'},
@@ -618,6 +618,6 @@ site_input = {
             'Load Type   ': {'value': '{"id":1384,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
             'L1': {'value': '2', 'unit': 'ft'}, 'q ': {'value': '90', 'unit': None},
             'q': {'value': '2000', 'unit': None}, 'Surcharge Effective Depth': {'value': '', 'unit': 'ft'}},
-        'Lagging': {'Ph max': {'value': '400', 'unit': 'psf'}, 'Fb': {'value': '20', 'unit': 'ksi'},
-                    'Timber Size': {'value': '{"id":1403,"item":"3 x 12","section_product_item":"49_93"}',
+        'Lagging': {'Ph max': {'value': '400', 'unit': 'psf'}, 'Fb': {'value': '0.87', 'unit': 'ksi'},
+                    'Timber Size': {'value': '{"id":1403,"item":"4 x 12","section_product_item":"49_93"}',
                                     'unit': None}}}, 'type': 1, 'number_of_projects': 1}
