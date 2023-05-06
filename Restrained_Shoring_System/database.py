@@ -68,6 +68,7 @@ def SQL_reader(w, A_min, S_min, Ix_min, design_base, unit_system):
     tf_list = []
     for item in parameters:
         if float(item[index_value]) >= control_value:
+        # if 0.86*float(item[index_value]) >= control_value:
             section_list.append(item[0])
             Ix_list.append(item[1])
             area_list.append(item[2])
