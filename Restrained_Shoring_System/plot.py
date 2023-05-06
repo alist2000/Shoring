@@ -1,4 +1,5 @@
 import copy
+import math
 import sys
 import json
 
@@ -107,15 +108,15 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                name="Trapezoidal Pressure",
                                fillcolor="rgba(242, 87, 87, 0.4)", marker=dict(color="rgba(242, 87, 87,0.9)")
                                ))
-
-    plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
-                               line_color="#969696"))
-    plot.add_traces(go.Scatter(x=surcharge_pressure, y=depth_final,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
-                               name="Surcharge Pressure",
-                               fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
-                               ))
+    if all(surcharge_pressure)!= 0:
+        plot.add_traces(go.Scatter(x=zero_list, y=depth_final,
+                                   mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                                   line_color="#969696"))
+        plot.add_traces(go.Scatter(x=surcharge_pressure, y=depth_final,
+                                   mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                                   name="Surcharge Pressure",
+                                   fillcolor="rgba(255, 212, 212, 0.5)", marker=dict(color="rgba(255, 212, 212, 0.5)")
+                                   ))
 
     zero_list = []
     for i in range(len(active_pressure)):
@@ -140,29 +141,29 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                name="Soil Pressure - passive",
                                fillcolor="rgba(255, 178, 107, 0.4)", line_color='rgba(255, 178, 107,1)'
                                ))
-
-    zero_list = []
-    for i in range(len(water_active)):
-        zero_list.append(0)
-    plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
-                               line_color="#969696"))
-    plot.add_traces(go.Scatter(x=water_active, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
-                               name="Water pressure - active",
-                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
-                               ))
-    zero_list = []
-    for i in range(len(water_passive)):
-        zero_list.append(0)
-    plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
-                               line_color="#969696"))
-    plot.add_traces(go.Scatter(x=-water_passive, y=total_depth,
-                               mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
-                               name="Water pressure - passive",
-                               fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
-                               ))
+    if all(water_passive) != 0:
+        zero_list = []
+        for i in range(len(water_active)):
+            zero_list.append(0)
+        plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
+                                   mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                                   line_color="#969696"))
+        plot.add_traces(go.Scatter(x=water_active, y=total_depth,
+                                   mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                                   name="Water pressure - active",
+                                   fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
+                                   ))
+        zero_list = []
+        for i in range(len(water_passive)):
+            zero_list.append(0)
+        plot.add_traces(go.Scatter(x=zero_list, y=total_depth,
+                                   mode="lines", hoverinfo="skip", fill=None, connectgaps=True, showlegend=False,
+                                   line_color="#969696"))
+        plot.add_traces(go.Scatter(x=-water_passive, y=total_depth,
+                                   mode="lines", hoverinfo="skip", fill="tonexty", connectgaps=True, showlegend=True,
+                                   name="Water pressure - passive",
+                                   fillcolor="rgba(70, 194, 203, 0.2)", line_color="#969696"
+                                   ))
 
     j = int((len(embedment_depth) - 1) / 3)
     arrow6 = go.layout.Annotation(dict(
@@ -270,7 +271,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                  x=-active_pressure[2 * j] * 18 / 20,
                                  y=12 * h1[0] / 13,
                                  showarrow=False,
-                                 text=f'<b>{round(Th, 1)} {point_load}</b>',
+                                 text=f'<b>{math.ceil(Th)} {point_load}</b>',
                                  textangle=0
                                  # xref="x",
                                  # yref="paper"
@@ -288,7 +289,7 @@ def plotter_load(depth_final, sigma_final, embedment_depth, active_pressure, pas
                                      y=12 * sum(h1[:i + 1]) / 13,
                                      # this value can define better to look good in output.
                                      showarrow=False,
-                                     text=f'<b>{round(Th[i], 1)} {point_load}</b>',
+                                     text=f'<b>{math.ceil(Th[i])} {point_load}</b>',
                                      textangle=0
                                      # xref="x",
                                      # yref="paper"
