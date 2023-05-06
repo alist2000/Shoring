@@ -120,7 +120,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tbody>
         <tr>
             <td style="text-align: left;">
-                <th>Surcharge Type:{ load }</th>
+                <th>Surcharge Type:{load}</th>
             </td>
         </tr>
         </tbody> </table>
@@ -137,7 +137,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tbody>
         <tr>
             <td style="text-align: left;">
-                <th>Surcharge Type:{ load }</th>
+                <th>Surcharge Type:{load}</th>
             </td>
         </tr> </tbody></table>""" + """<table><tbody><tr>
             <td style="text-align: left;">
@@ -146,7 +146,57 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
             </tr>
           <tr>
             <td>
-                $$\sigma_h = 0.28{ {Q_p} \over {H^2}}{n^2 \over {(0.16 + n^2)^3} }.$$
+               <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <semantics>
+    <mrow>
+      <msub>
+        <mi>&#x3C3;</mi>
+        <mi>h</mi>
+      </msub>
+      <mo>=</mo>
+      <mn>0.28</mn>
+      <mrow data-mjx-texclass="ORD">
+        <mfrac>
+          <mrow data-mjx-texclass="ORD">
+            <msub>
+              <mi>Q</mi>
+              <mi>p</mi>
+            </msub>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <msup>
+              <mi>H</mi>
+              <mn>2</mn>
+            </msup>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mfrac>
+          <msup>
+            <mi>n</mi>
+            <mn>2</mn>
+          </msup>
+          <mrow data-mjx-texclass="ORD">
+            <mo stretchy="false">(</mo>
+            <mn>0.16</mn>
+            <mo>+</mo>
+            <msup>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msup>
+            <msup>
+              <mo stretchy="false">)</mo>
+              <mn>3</mn>
+            </msup>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mo>.</mo>
+    </mrow>
+    <annotation encoding="application/x-tex">\sigma_h = 0.28{ {Q_p} \over {H^2}}{n^2 \over {(0.16 + n^2)^3} }.</annotation>
+  </semantics>
+</math>
                 </td>
           </tr>
           <tr>
@@ -156,18 +206,77 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
             </tr>
           <tr>
             <td >
-                $$\sigma_h = 1.77{{Q_p} \over {H^2}}{n^2 m^2 \over {(m^2 + n^2)^3} }.$$
+                <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <semantics>
+    <mrow>
+      <msub>
+        <mi>&#x3C3;</mi>
+        <mi>h</mi>
+      </msub>
+      <mo>=</mo>
+      <mn>1.77</mn>
+      <mrow data-mjx-texclass="ORD">
+        <mfrac>
+          <mrow data-mjx-texclass="ORD">
+            <msub>
+              <mi>Q</mi>
+              <mi>p</mi>
+            </msub>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <msup>
+              <mi>H</mi>
+              <mn>2</mn>
+            </msup>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mfrac>
+          <mrow>
+            <msup>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msup>
+            <msup>
+              <mi>m</mi>
+              <mn>2</mn>
+            </msup>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <mo stretchy="false">(</mo>
+            <msup>
+              <mi>m</mi>
+              <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <msup>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msup>
+            <msup>
+              <mo stretchy="false">)</mo>
+              <mn>3</mn>
+            </msup>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mo>.</mo>
+    </mrow>
+    <annotation encoding="application/x-tex">\sigma_h = 1.77{{Q_p} \over {H^2}}{n^2 m^2 \over {(m^2 + n^2)^3} }.</annotation>
+  </semantics>
+</math>
                 </td>
           </tr>
           
         </tbody>
     </table>"""
         elif load == "Line Load":
-                table2 += f"""<table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
+            table2 += f"""<table border="0" style="border-collapse: collapse; width: 100%; background: #dfe3e6">
         <tbody>
         <tr>
             <td style="text-align: left;">
-                <th>Surcharge Type:{ load } </th>
+                <th>Surcharge Type:{load} </th>
             </td>
         </tr>
         </tbody>
@@ -290,7 +399,7 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tbody>
         <tr>
             <td style="text-align: left;">
-                <th>Surcharge Type:{ load }</th>
+                <th>Surcharge Type:{load}</th>
             </td>
         </tr>
         </tbody>
@@ -298,7 +407,54 @@ def surcharge_inputs(surcharge_type, q, l1, l2, teta, surcharge_depth, unit_syst
         <tbody>
           <tr>
             <td>
-                $$\sigma_h = { {2Q} \over {\pi}}{( \beta_R - \sin\beta\cos(2\alpha) )}.$$
+                <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <semantics>
+    <mrow>
+      <msub>
+        <mi>&#x3C3;</mi>
+        <mi>h</mi>
+      </msub>
+      <mo>=</mo>
+      <mrow data-mjx-texclass="ORD">
+        <mfrac>
+          <mrow data-mjx-texclass="ORD">
+            <mn>2</mn>
+            <mi>Q</mi>
+          </mrow>
+          <mrow data-mjx-texclass="ORD">
+            <mi>&#x3C0;</mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mo stretchy="false">[</mo>
+        <msub>
+          <mrow data-mjx-texclass="ORD">
+            <mi data-mjx-variant="-tex-calligraphic" mathvariant="script">B</mi>
+          </mrow>
+          <mi>R</mi>
+        </msub>
+        <mo>&#x2212;</mo>
+        <mi>sin</mi>
+        <mo data-mjx-texclass="NONE">&#x2061;</mo>
+        <mrow data-mjx-texclass="ORD">
+          <mi data-mjx-variant="-tex-calligraphic" mathvariant="script">B</mi>
+        </mrow>
+        <mi>cos</mi>
+        <mo data-mjx-texclass="NONE">&#x2061;</mo>
+        <mo stretchy="false">(</mo>
+        <mn>2</mn>
+        <mrow data-mjx-texclass="ORD">
+          <mi data-mjx-variant="-tex-calligraphic" mathvariant="script">a</mi>
+        </mrow>
+        <mo stretchy="false">)</mo>
+        <mo stretchy="false">]</mo>
+      </mrow>
+      <mo>.</mo>
+    </mrow>
+    <annotation encoding="application/x-tex">\sigma_h = { {2Q} \over {\pi}}{[\mathcal{B}_R - \sin\mathcal{B}\cos(2\mathcal{a})]}.</annotation>
+  </semantics>
+</math>
                 </td>
           </tr>
         </tbody>
@@ -702,7 +858,7 @@ def raker_force(unit_system, forces):
                 <t1>R<sub>{i + 1}</sub>:</t1>
             </td>
             <td style="width: 25%;">
-                <t2> {round(forces[i]/1000, 1)} {force_unit}</t2>
+                <t2> {round(forces[i] / 1000, 1)} {force_unit}</t2>
             </td>
     """
     table += """</tr></tbody>"""
@@ -714,11 +870,14 @@ def raker_force(unit_system, forces):
 # raker_force("us", [125,4523,458,123])
 def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflection_max, allowable_deflection, number):
     deflection_max = round(deflection_max, 2)
-    
+
     cross = section.find("X")
     part1 = section[:cross]
     part2 = section[cross + 1:]
     section = part1 + "&#215;" + part2
+
+    # pof = """0.25D <sub> 0 </sub>"""  # in general
+    pof = """3 ft"""  # in San Marino Project
     if unit_system == "us":
         fb = round(M_max * 12 / (Sx * 1000), 2)
         fb_unit = "ksi"
@@ -812,7 +971,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
                     is calculated using moment area method, and the
                     deflection diagram is shown below.Considering the maximum allowable deflection
                     is <b>{allowable_deflection} {deflection_unit}</b>, section <b>{section}</b> satisfies the deflection criterion.
-                    It should be noted that the point of fixity is assumed to be at <b>0.25D<sub>0</sub></b> below the
+                    It should be noted that the point of fixity is assumed to be at <b>{pof}</b> below the
                     excavation line.
                 </td>
             </tr>
@@ -838,9 +997,9 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             </tr>
             </tbody>
         </table>"""
-    #0.25D<sub>0</sub>
-        # image in server should be received with below source:
-        # src="https://civision.balafan.com/restrained_shoring/plot/deflection_output{str(number)}"
+    # 0.25D<sub>0</sub>
+    # image in server should be received with below source:
+    # src="https://civision.balafan.com/restrained_shoring/plot/deflection_output{str(number)}"
     file = open(f"reports/template/section_deflection{number}.html", "w")
     file.write(table)
     file.close()
@@ -959,10 +1118,10 @@ def deflection_output(deflection_max, unit_system, number):
 
 
 def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber_size, S_sup, lagging_status, number):
-    M_max = round(M_max/1000, 1)
+    M_max = round(M_max / 1000, 1)
     S_req = round(S_req, 1)
     S_sup = round(S_sup, 1)
-        
+
     if unit_system == "us":
         length_unit = "ft"
         density_unit = "pcf"
