@@ -242,6 +242,7 @@ def edit_equation(*equations):
     return_list = []
     for equation in equations:
         if type(equation) not in [float, int, str, np.float64, np.int64]:
+            equation = round_number_equation(equation)
             equation = str(equation)
             equation = equation.replace("**", "<sup>")
             equation = equation.replace("*", "×")
@@ -250,6 +251,20 @@ def edit_equation(*equations):
         else:
             return_list.append(equation)
     return return_list
+
+
+import sympy
+
+
+def round_number_equation(equation):
+    new_args = ()
+    for i in equation.args:
+        if type(i) == sympy.core.Float:
+            i = round(i, 2)
+        new_args += (i,)
+
+    edited_equation = equation.func(*new_args)
+    return edited_equation
 
 
 def edit_power(equation):
