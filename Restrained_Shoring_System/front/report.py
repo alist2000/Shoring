@@ -818,7 +818,7 @@ def racker_input(unit_system, racker_number, h_list):
     table = f"""<tbody>
             <tr>
                 <td style="width: 25%;">
-                    <t1>Number of Racker/Tieback:</t1>
+                    <t1>Number of Raker/Brace:</t1>
                 </td>
                 <td style="width: 25%;">
                     <t2> {racker_number} </t2>
@@ -968,11 +968,10 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             <tbody>
             <tr>
                 <td style="text-align: justify;text-justify: inter-word;">The deflection of the restrained soldier pile
-                    is calculated using moment area method, and the
-                    deflection diagram is shown below.Considering the maximum allowable deflection
-                    is <b>{allowable_deflection} {deflection_unit}</b>, section <b>{section}</b> satisfies the deflection criterion.
-                    It should be noted that the point of fixity is assumed to be at <b>{pof}</b> below the
-                    excavation line.
+                    is calculated using the moment area method, and the
+                    deflection diagram is shown below. The maximum allowable deflection
+                    is <b>{allowable_deflection} {deflection_unit}</b>; thus, section <b>{section}</b> satisfies the deflection criterion. The point of fixity is at <b>{pof}</b> below the
+                    excavation line, per soil report.
                 </td>
             </tr>
             </tbody>
@@ -990,7 +989,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
             </tr>
             <tr>
                 <td style="width: 100%; text-align: center;">
-                    <img style="width: auto; height: 350;  margin-top:0px;"
+                    <img style="width: auto; height: 370;  margin-top:0px;"
                          src="../plot/deflection_output{str(number)}.png"
                          alt="shear diagram">
 
@@ -1121,6 +1120,8 @@ def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber
     M_max = round(M_max / 1000, 1)
     S_req = round(S_req, 1)
     S_sup = round(S_sup, 1)
+    lc = round(lc, 1)
+    R = round(R, 1)
 
     if unit_system == "us":
         length_unit = "ft"
@@ -1140,7 +1141,7 @@ def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber
         <tbody>
         <tr>
             <td style="width: 25%;">
-                <t1> Tieback/Racker Spacing:</t1>
+                <t1> Raker/Brace Spacing:</t1>
             </td>
             <td style="width: 25%;">
                 <t1> {spacing} {length_unit}</t1>
@@ -1160,7 +1161,7 @@ def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber
                 <t1> {lc} {length_unit}</t1>
             </td>
             <td style="width: 25%;">
-                <t1> PH<sub>Max</sub></t1>
+                <t1> PH<sub>max</sub></t1>
             </td>
             <td style="width: 25%;">
                 <t1> {ph} {density_unit}</t1>
@@ -1174,7 +1175,7 @@ def lagging_output(unit_system, spacing, d_pile, lc, ph, R, M_max, S_req, timber
                 <t1> {R} {force_unit}</t1>
             </td>
             <td style="width: 25%;">
-                <t1> M<sub>Max</sub></t1>
+                <t1> M<sub>max</sub></t1>
             </td>
             <td style="width: 25%;">
                 <t1> {M_max} {moment_unit}</t1>
