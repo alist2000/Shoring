@@ -903,7 +903,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
     table = f"""<table border="0" style="border-collapse: collapse; width: 100%;">
             <tbody>
             <tr>
-                <td style="width: 100%;"><h3>5.8 Section Design</h3></td>
+                <td style="width: 100%;"><h3>4.8 Section Design</h3></td>
             </tr>
             </tbody>
         </table>
@@ -960,7 +960,7 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
         <table border="0" style="border-collapse: collapse; width: 100%;">
             <tbody>
             <tr>
-                <td style="width: 100%;"><h3>5.9 Deflection Check</h3></td>
+                <td style="width: 100%;"><h3>4.9 Deflection Check</h3></td>
             </tr>
             </tbody>
         </table>
