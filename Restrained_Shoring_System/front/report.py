@@ -876,8 +876,8 @@ def section_deflection(unit_system, fy, section, A, Sx, Ix, V_max, M_max, deflec
     part2 = section[cross + 1:]
     section = part1 + "&#215;" + part2
 
-    # pof = """0.25D <sub> 0 </sub>"""  # in general
-    pof = """3 ft"""  # in San Marino Project
+    pof = """0.25D <sub> 0 </sub>"""  # in general
+    # pof = """3 ft"""  # in San Marino Project
     if unit_system == "us":
         fb = round(M_max * 12 / (Sx * 1000), 2)
         fb_unit = "ksi"
