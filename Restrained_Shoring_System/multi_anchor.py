@@ -81,8 +81,12 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
             last_index_last = copy.deepcopy(last_index)
             force, arm = force_calculator(ha[first_index:last_index], sigma_a[first_index:last_index])
             if list(surcharge_pressure) != [0]:
-                force_su, arm_su = force_calculator(ha[first_index:last_index],
-                                                    surcharge_pressure[first_index:last_index])
+                if last_index > len(surcharge_pressure) - 1:
+                    new_last_index = len(surcharge_pressure) - 1
+                else:
+                    new_last_index = last_index
+                force_su, arm_su = force_calculator(ha[first_index:new_last_index],
+                                                    surcharge_pressure[first_index:new_last_index])
             else:
                 force_su, arm_su = 0, 0
             force_w, arm_w = force_calculator(ha[first_index:last_index], water_pressure[first_index:last_index])
@@ -117,7 +121,7 @@ def multi_anchor(spacing, FS, h_list, ha, sigma_a, surcharge_pressure, force_act
     # step1: calculate D and D0 ( FS = user defined and FS = 1 )
     first_index = last_index_last
     force_embedment, arm_embedment = force_calculator(ha[first_index:], sigma_a[first_index:])
-    if list(surcharge_pressure) != [0]:
+    if list(surcharge_pressure) != [0] and first_index < len(surcharge_pressure):
         force_embedment_su, arm_embedment_su = force_calculator(ha[first_index:], surcharge_pressure[first_index:])
     else:
         force_embedment_su, arm_embedment_su = 0, 0
