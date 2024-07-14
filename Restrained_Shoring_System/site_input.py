@@ -555,10 +555,10 @@ site_input18 = {
 # comment = "Soldier Beam Number #37 to #44"
 
 # # 45 to 46
-h1 = 8
-spacing = 8
-retaining_height = 28
-comment = ""
+h1 = 6.5
+spacing = 9.4
+retaining_height = 20.5
+comment = "#1 To #4"
 site_input_old = {
     'information': {'title': '2811 San Marino St., LA, CA 90006', 'jobNo': 'San Marino', 'designer': 'AMIA ENGINEERING',
                     'checker': '-', 'company': 'AMIA ENGINEERING', 'client': '2811 San Marino', 'unit': 'us',
@@ -689,9 +689,9 @@ site_input_two_anchor = {
                                     'unit': None}}}, 'type': 1, 'number_of_projects': 1}
 
 site_input = {
-    'information': {'title': '11003 W MOORPARK ST,LOS ANGELES, CA 91602', 'jobNo': 'MOORPARK',
+    'information': {'title': '2811 SAN MARINO STREET', 'jobNo': 'SAN MARINO',
                     'designer': 'AMIA ENGINEERING',
-                    'checker': '-', 'company': 'AMIA ENGINEERING', 'client': 'MOORPARK', 'unit': 'us',
+                    'checker': '-', 'company': 'AMIA ENGINEERING', 'client': 'SAN MARINO', 'unit': 'us',
                     'date': None, 'comment': comment, 'other': None}, 'product_id': 27, 'user_id': 44, 'data': {
         'General Properties': {'FS': {'value': '1.3', 'unit': None}, 'E': {'value': '29000', 'unit': 'ksi'},
 
@@ -699,7 +699,7 @@ site_input = {
 
                                'Fy': {'value': '50', 'unit': 'ksi'},
                                'Allowable Deflection': {'value': '0.5', 'unit': 'in'}, 'Sections': {
-                'value': '{"id":1371,"item":"W24","section_product_item":"44_86"}', 'unit': None}},
+                'value': '{"id":1371,"item":"W21","section_product_item":"44_86"}', 'unit': None}},
 
         'Geometrical Properties': {'Retaining Height': {'value': str(retaining_height), 'unit': 'ft'},
 
@@ -708,28 +708,28 @@ site_input = {
                                    'Angle of Anchors': {'value': '30', 'unit': '°'},
 
                                    'h1': {'value': str(h1), 'unit': 'ft'},
-                                   'h2': {'value': str(12), 'unit': 'ft'}},
+                                   'h2': {'value': str(8), 'unit': 'ft'}},
 
         'Soil Properties': {
             'Formula': {'value': '{"id":1488,"item":"User Defined","section_product_item":"46_97"}', 'unit': None},
-            'Equivalent Fluid Pressure Active': {'value': '26', 'unit': 'pcf'},
-            'Equivalent Fluid Pressure Passive': {'value': '400', 'unit': 'pcf'},
+            'Equivalent Fluid Pressure Active': {'value': '32', 'unit': 'pcf'},
+            'Equivalent Fluid Pressure Passive': {'value': '600', 'unit': 'pcf'},
             'Pressure Distribution': {'value': '{"id":1533,"item":"Trapezoidal","section_product_item":"46_97"}',
-                                      'unit': None}, 'σa': {'value': str(26 * retaining_height), 'unit': 'psf'},
+                                      'unit': None}, 'σa': {'value': str(20 * retaining_height), 'unit': 'psf'},
             'Ka Surcharge': {'value': '1', 'unit': 'pcf'},
             'Soil Cohesion': {'value': '{"id":1538,"item":"Cohesionless","section_product_item":"46_97"}',
-                              'unit': None}, 'Ht1': {'value': '5.6', 'unit': 'ft'},
-            'Ht2': {'value': '5.6', 'unit': 'ft'}},
+                              'unit': None}, 'Ht1': {'value': str(0.2 * retaining_height), 'unit': 'ft'},
+            'Ht2': {'value':  str(0.2 * retaining_height), 'unit': 'ft'}},
         'Water Properties': {
             'There is water?': {'value': '{"id":1541,"item":"No","section_product_item":"47_99"}', 'unit': None}},
         'Surcharge': {
-            'Load Type': {'value': '{"id":1381,"item":"Uniform","section_product_item":"48_92"}', 'unit': None},
+            'Load Type': {'value': '{"id":1381,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
             'Load Type ': {'value': '{"id":1382,"item":"Line Load","section_product_item":"48_92"}', 'unit': None},
             'Load Type  ': {'value': '{"id":1383,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
             'Load Type   ': {'value': '{"id":1384,"item":"No Load","section_product_item":"48_92"}', 'unit': None},
-            'q': {'value': '250', 'unit': None}, 'L1 ': {'value': '6', 'unit': 'ft'},
-            'q ': {'value': '2000', 'unit': None},
-            'Surcharge Effective Depth': {'value': '10', 'unit': 'ft'}},
+            'q': {'value': '300', 'unit': None}, 'L1 ': {'value': '0.5', 'unit': 'ft'},
+            'q ': {'value': '3600', 'unit': None},
+            'Surcharge Effective Depth': {'value': retaining_height, 'unit': 'ft'}},
         'Lagging': {'Ph max': {'value': '475', 'unit': 'psf'}, 'Fb': {'value': '1.5', 'unit': 'ksi'},
-                    'Timber Size': {'value': '{"id":1403,"item":"3 x 12","section_product_item":"49_93"}',
+                    'Timber Size': {'value': '{"id":1403,"item":"4 x 12","section_product_item":"49_93"}',
                                     'unit': None}}}, 'type': 1, 'number_of_projects': 1}
