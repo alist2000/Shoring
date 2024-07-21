@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout,
                                QLineEdit, QPushButton, QComboBox, QFormLayout,
                                QGroupBox, QListWidget, QMessageBox, QDialog, QDialogButtonBox, QGraphicsView,
                                QGraphicsScene, QGraphicsRectItem, QGraphicsPolygonItem, QGraphicsLineItem, \
-                               QGraphicsTextItem)
+                               QGraphicsTextItem, QCheckBox, QLabel, QDoubleSpinBox)
 from PySide6.QtCore import Signal, QObject, Qt, QPointF
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor, QPolygonF
 
@@ -18,11 +18,15 @@ class SoilLayer:
 
 class SoilProfile(QObject):
     layer_changed = Signal()
+    theory_changed = Signal()
+    water_level_changed = Signal()
 
     def __init__(self):
         super().__init__()
         self.layers = []
         self.theory = UserDefinedTheory()
+        self.has_water = False
+        self.water_depth = 0
 
     def set_theory(self, theory_name):
         self.theory = SoilTheoryFactory.create_theory(theory_name)
@@ -48,27 +52,81 @@ class SoilProfile(QObject):
             del self.layers[index]
             self.layer_changed.emit()
 
+    def set_water_level(self, has_water, depth=0):
+        self.has_water = has_water
+        self.water_depth = depth if has_water else 0
+        self.water_level_changed.emit()
+
     def update_layer(self, index, height, properties):
         if 0 <= index < len(self.layers):
             self.layers[index] = SoilLayer(height, properties)
+            if isinstance(self.theory, UserDefinedTheory):
+                distribution_type = properties.get('Distribution Type', 'Triangle')
+                h1 = properties.get('H1', 0)
+                h2 = properties.get('H2', 0)
+                sigma_a = properties.get('Sigma a', 0)
+                self.theory.set_distribution(distribution_type, h1, h2, sigma_a)
+                self.theory_changed.emit()
             self.layer_changed.emit()
 
     def to_dict(self):
-        theory_dict = {
-            "name": self.theory.__class__.__name__,
-        }
-        if isinstance(self.theory, UserDefinedTheory):
-            theory_dict.update(self.theory.get_distribution_params())
-
-        return {
-            "theory": theory_dict,
+        data = {
+            "theory": {
+                "name": self.theory.__class__.__name__,
+            },
             "layers": [
                 {
                     "height": layer.height,
                     "properties": layer.properties
                 } for layer in self.layers
-            ]
+            ],
+            "water_level": {
+                "has_water": self.has_water,
+                "depth": self.water_depth
+            }
         }
+        if isinstance(self.theory, UserDefinedTheory):
+            data["theory"].update(self.theory.get_distribution_params())
+        return data
+
+
+class WaterLevelDialog(QDialog):
+    def __init__(self, has_water, water_depth, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Water Level")
+        layout = QVBoxLayout(self)
+
+        self.has_water_checkbox = QCheckBox("Water Present")
+        self.has_water_checkbox.setChecked(has_water)
+        layout.addWidget(self.has_water_checkbox)
+
+        depth_layout = QHBoxLayout()
+        depth_layout.addWidget(QLabel("Water Depth from Top (m):"))
+        self.depth_input = QDoubleSpinBox()
+        self.depth_input.setRange(0, 1000)  # Adjust range as needed
+        self.depth_input.setValue(water_depth)
+        self.depth_input.setDecimals(2)
+        self.depth_input.setSingleStep(0.1)
+        depth_layout.addWidget(self.depth_input)
+        layout.addLayout(depth_layout)
+
+        self.has_water_checkbox.stateChanged.connect(self.toggle_depth_input)
+        self.toggle_depth_input(Qt.Checked if has_water else Qt.Unchecked)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def toggle_depth_input(self, state):
+        if self.has_water_checkbox.isChecked():
+            self.depth_input.setEnabled(state == Qt.Checked)
+            self.depth_input.setEnabled(True)
+        else:
+            self.depth_input.setEnabled(False)
+
+    def get_values(self):
+        return self.has_water_checkbox.isChecked(), self.depth_input.value() if self.depth_input.isEnabled() else 0
 
 
 # View
@@ -104,6 +162,14 @@ class LayerPropertyDialog(QDialog):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
         self.layout.addWidget(self.button_box)
+        if isinstance(theory, UserDefinedTheory):
+            distribution_type = layer.properties.get('Distribution Type', 'Triangle')
+            self.distribution_combo.setCurrentText(distribution_type)
+            self.update_distribution_inputs(distribution_type)
+
+            if distribution_type == "Trapezoidal":
+                for param in ["H1", "H2", "Sigma a"]:
+                    self.distribution_inputs[param].setText(str(layer.properties.get(param, '')))
 
     def update_distribution_inputs(self, distribution_type):
         for i in reversed(range(self.distribution_form.rowCount())):
@@ -153,7 +219,17 @@ class SoilLayerWidget(QGroupBox):
         self.add_button.clicked.connect(self.add_layer)
         self.remove_button.clicked.connect(self.remove_layer)
 
+        self.water_level_button = QPushButton("Set Water Level")
+        self.water_level_button.clicked.connect(self.set_water_level)
+        button_layout.addWidget(self.water_level_button)
+
         self.update_view()
+
+    def set_water_level(self):
+        dialog = WaterLevelDialog(self.soil_profile.has_water, self.soil_profile.water_depth, self)
+        if dialog.exec():
+            has_water, depth = dialog.get_values()
+            self.soil_profile.set_water_level(has_water, depth)
 
     def update_view(self):
         self.layer_list.clear()
@@ -181,7 +257,7 @@ class SoilLayerWidget(QGroupBox):
             self.soil_profile.remove_layer(current_row)
 
     def edit_layer(self, item):
-        index = self.layer_list.row(item)
+        index = self.layer_list.currentRow()
         layer = self.soil_profile.layers[index]
         dialog = LayerPropertyDialog(layer, self.soil_profile.theory, self)
         if dialog.exec():
@@ -197,15 +273,22 @@ class SoilVisualization(QGraphicsView):
         super().__init__()
         self.soil_profile = soil_profile
         self.soil_profile.layer_changed.connect(self.update_view)
+        self.soil_profile.theory_changed.connect(self.update_view)
+        self.soil_profile.water_level_changed.connect(self.update_view)
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
         self.setRenderHint(QPainter.Antialiasing)
+        self.setDragMode(QGraphicsView.ScrollHandDrag)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.setMinimumSize(400, 300)
 
     def update_view(self):
         self.scene.clear()
 
         if not self.soil_profile.layers:
-            # No layers to display, you might want to show a message or return early
             return
 
         scale = 20  # pixels per meter
@@ -262,6 +345,31 @@ class SoilVisualization(QGraphicsView):
 
         self.setSceneRect(self.scene.itemsBoundingRect())
         self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+
+        # Draw water level if present
+        if self.soil_profile.has_water:
+            water_y = margin + self.soil_profile.water_depth * scale
+            water_line = self.scene.addLine(margin, water_y, width - margin, water_y, QPen(Qt.blue, 2, Qt.DashLine))
+            water_label = self.scene.addText(f"Water Level: {self.soil_profile.water_depth} m")
+            water_label.setPos(width - margin + 5, water_y)
+            water_label.setDefaultTextColor(Qt.blue)
+
+        # Set the scene rect to fit all items
+        self.scene.setSceneRect(self.scene.itemsBoundingRect().adjusted(-margin, -margin, margin, margin))
+
+        # Fit the view to the scene
+        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+
+    def wheelEvent(self, event):
+        if event.modifiers() == Qt.ControlModifier:
+            # Zoom
+            factor = 1.2
+            if event.angleDelta().y() < 0:
+                factor = 1.0 / factor
+            self.scale(factor, factor)
+        else:
+            # Normal scroll
+            super().wheelEvent(event)
 
     def draw_user_defined_pressure(self, width, margin, scale, retaining_height, embedment_depth):
         theory = self.soil_profile.theory
@@ -398,4 +506,5 @@ class SoilVisualization(QGraphicsView):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+        if self.scene is not None:  # Check if scene exists
+            self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
