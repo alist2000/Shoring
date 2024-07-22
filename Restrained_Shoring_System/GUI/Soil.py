@@ -2,9 +2,10 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout,
                                QLineEdit, QPushButton, QComboBox, QFormLayout,
                                QGroupBox, QListWidget, QMessageBox, QDialog, QDialogButtonBox, QGraphicsView,
                                QGraphicsScene, QGraphicsRectItem, QGraphicsPolygonItem, QGraphicsLineItem, \
-                               QGraphicsTextItem, QCheckBox, QLabel, QDoubleSpinBox)
+                               QGraphicsTextItem, QCheckBox, QLabel, QDoubleSpinBox, QGraphicsEllipseItem)
 from PySide6.QtCore import Signal, QObject, Qt, QPointF
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor, QPolygonF
+import math
 
 from Theory import SoilTheoryFactory, UserDefinedTheory
 
@@ -27,6 +28,21 @@ class SoilProfile(QObject):
         self.theory = UserDefinedTheory()
         self.has_water = False
         self.water_depth = 0
+        self.shoring_type = "Cantilever"
+        self.angle = 45
+        self.supports = []
+
+    def set_shoring_type(self, shoring_type):
+        self.shoring_type = shoring_type
+        self.layer_changed.emit()
+
+    def set_angle(self, angle):
+        self.angle = angle
+        self.layer_changed.emit()
+
+    def set_supports(self, supports):
+        self.supports = supports
+        self.layer_changed.emit()
 
     def set_theory(self, theory_name):
         self.theory = SoilTheoryFactory.create_theory(theory_name)
@@ -83,7 +99,10 @@ class SoilProfile(QObject):
             "water_level": {
                 "has_water": self.has_water,
                 "depth": self.water_depth
-            }
+            },
+            "shoring_type": self.shoring_type,
+            "angle": self.angle,
+            "supports": self.supports
         }
         if isinstance(self.theory, UserDefinedTheory):
             data["theory"].update(self.theory.get_distribution_params())
@@ -343,9 +362,6 @@ class SoilVisualization(QGraphicsView):
         self.add_label(f"Embedment Depth: {embedment_depth} m", width - margin + 25,
                        margin + retaining_height * scale + embedment_depth * scale / 2)
 
-        self.setSceneRect(self.scene.itemsBoundingRect())
-        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
-
         # Draw water level if present
         if self.soil_profile.has_water:
             water_y = margin + self.soil_profile.water_depth * scale
@@ -354,11 +370,46 @@ class SoilVisualization(QGraphicsView):
             water_label.setPos(width - margin + 5, water_y)
             water_label.setDefaultTextColor(Qt.blue)
 
+        # Draw supports (rakers or anchors)
+        self.draw_supports(width, margin, scale, retaining_height)
+
         # Set the scene rect to fit all items
         self.scene.setSceneRect(self.scene.itemsBoundingRect().adjusted(-margin, -margin, margin, margin))
 
         # Fit the view to the scene
         self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
+
+    def draw_supports(self, width, margin, scale, retaining_height):
+        if not hasattr(self.soil_profile, 'supports') or not self.soil_profile.supports:
+            return
+
+        support_type = self.soil_profile.shoring_type
+        if support_type not in ['Raker', 'Anchor']:
+            return
+
+        angle = self.soil_profile.angle
+        for support in self.soil_profile.supports:
+            distance_from_top = support['distance_from_top']
+            y = margin + distance_from_top * scale
+
+            if support_type == 'Anchor':
+                start_x = width / 2 - 5
+                end_x = start_x - math.cos(math.radians(angle)) * (retaining_height * scale / 2)  # Arbitrary length
+                end_y = y + math.sin(math.radians(angle)) * (retaining_height * scale / 2)
+            else:  # Raker
+                start_x = width / 2 + 5
+                end_x = start_x + (retaining_height * scale + margin - y) / math.tan(
+                    math.radians(angle))  # Mirrored arbitrary length
+                end_y = retaining_height * scale + margin  # Keep the same vertical direction
+
+            support_line = QGraphicsLineItem(start_x, y, end_x, end_y)
+            support_line.setPen(QPen(Qt.black, 2))
+            self.scene.addItem(support_line)
+
+            # Add a circle at the connection point
+            connection_point = QGraphicsEllipseItem(start_x - 3, y - 3, 6, 6)
+            connection_point.setBrush(QBrush(Qt.black))
+            self.scene.addItem(connection_point)
 
     def wheelEvent(self, event):
         if event.modifiers() == Qt.ControlModifier:
