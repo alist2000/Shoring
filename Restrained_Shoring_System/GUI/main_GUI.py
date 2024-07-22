@@ -7,7 +7,7 @@ from PySide6.QtGui import QPainter
 from PySide6.QtGui import QPen, QBrush, QColor, QPolygonF
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QTabWidget, QLineEdit, QLabel, QPushButton, QComboBox, QFormLayout,
-                               QGroupBox, QListWidget, QMessageBox, QDialog, QDialogButtonBox)
+                               QGroupBox, QListWidget, QMessageBox, QDialog, QDialogButtonBox, QDoubleSpinBox)
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 
 from Soil import SoilProfile, SoilLayerWidget, SoilVisualization
@@ -80,20 +80,149 @@ class GeometricalSoilPropertiesTab(QWidget):
 
         layout = QHBoxLayout(self)
 
-        control_layout = QVBoxLayout()
-        layout.addLayout(control_layout)
+        # Left side - Shoring properties and Soil Layers
+        left_layout = QVBoxLayout()
+        layout.addLayout(left_layout, 2)
 
+        # Shoring Type selection
+        self.shoring_type_combo = QComboBox()
+        self.shoring_type_combo.addItems(["Cantilever", "Raker", "Anchor"])
+        self.shoring_type_combo.currentIndexChanged.connect(self.update_form)
+        left_layout.addWidget(QLabel("Shoring Type:"))
+        left_layout.addWidget(self.shoring_type_combo)
+
+        # Theory selection
         theory_combo = QComboBox()
         theory_combo.addItems(["User Defined", "Rankine", "Coulomb"])
         theory_combo.currentTextChanged.connect(self.soil_profile.set_theory)
-        control_layout.addWidget(QLabel("Theory:"))
-        control_layout.addWidget(theory_combo)
+        left_layout.addWidget(QLabel("Theory:"))
+        left_layout.addWidget(theory_combo)
 
+        # Dynamic form for shoring properties
+        self.shoring_form = QFormLayout()
+        left_layout.addLayout(self.shoring_form)
+
+        # Initialize with Cantilever form
+        self.update_form(0)
+
+        # Soil Layers
+        soil_group = QGroupBox("Soil Layers")
+        soil_layout = QVBoxLayout()
         self.layer_widget = SoilLayerWidget(self.soil_profile)
-        control_layout.addWidget(self.layer_widget)
+        soil_layout.addWidget(self.layer_widget)
+        soil_group.setLayout(soil_layout)
+        left_layout.addWidget(soil_group)
+
+        # Right side - Visualization
+        right_layout = QVBoxLayout()
+        layout.addLayout(right_layout, 3)
 
         self.visualization = SoilVisualization(self.soil_profile)
-        layout.addWidget(self.visualization)
+        right_layout.addWidget(self.visualization)
+
+    def update_form(self, index):
+        # Clear existing form
+        for i in reversed(range(self.shoring_form.rowCount())):
+            self.shoring_form.removeRow(i)
+
+        if index in [1, 2]:  # Raker or Anchor
+            support_type = "Raker" if index == 1 else "Anchor"
+            self.add_support_form(support_type)
+
+    def add_support_form(self, support_type):
+        self.supports = []
+
+        self.angle_input = QDoubleSpinBox()
+        self.angle_input.setRange(0, 90)
+        self.angle_input.setValue(45)
+        self.shoring_form.addRow(f"{support_type} Angle (degrees):", self.angle_input)
+
+        # Connect this method to the angle input's valueChanged signal
+        self.angle_input.valueChanged.connect(self.update_angle)
+
+        add_button = QPushButton(f"Add {support_type}")
+        add_button.clicked.connect(lambda: self.add_support(support_type))
+        self.shoring_form.addRow(add_button)
+
+    def add_support(self, support_type):
+        support_index = len(self.supports)
+        group_box = QGroupBox(f"{support_type} {support_index + 1}")
+        form_layout = QFormLayout(group_box)
+
+        distance_input = QDoubleSpinBox()
+        distance_input.setRange(0, 100)
+        distance_input.setSingleStep(0.1)
+
+        form_layout.addRow(f"{support_type} Distance from Top (m):", distance_input)
+
+        remove_button = QPushButton(f"Remove {support_type}")
+        remove_button.clicked.connect(lambda: self.remove_support(support_index))
+        form_layout.addRow(remove_button)
+
+        self.supports.append((group_box, distance_input))
+        self.shoring_form.addRow(group_box)
+
+        # Update SoilProfile
+        self.soil_profile.set_shoring_type(support_type)
+        self.soil_profile.set_angle(self.angle_input.value())
+        self.soil_profile.set_supports([
+            {"distance_from_top": input.value()} for _, input in self.supports
+        ])
+
+    def remove_support(self, index):
+        if 0 <= index < len(self.supports):
+            group_box, _ = self.supports.pop(index)
+            self.shoring_form.removeRow(group_box)
+
+            # Update the remaining support labels
+            for i, (remaining_group, _) in enumerate(self.supports[index:], start=index + 1):
+                remaining_group.setTitle(f"{remaining_group.title().split()[0]} {i}")
+
+            # Update SoilProfile
+            self.soil_profile.set_supports([
+                {"distance_from_top": input.value()} for _, input in self.supports
+            ])
+
+    def update_angle(self):
+        self.soil_profile.set_angle(self.angle_input.value())
+
+    def to_dict(self):
+        data = {
+            "shoring_type": self.shoring_type_combo.currentText(),
+            "soil_profile": self.soil_profile.to_dict(),
+            "supports": []
+        }
+
+        if self.shoring_type_combo.currentIndex() in [1, 2]:
+            data["angle"] = self.angle_input.value()
+            for _, distance_input in self.supports:
+                support_data = {
+                    "type": self.shoring_type_combo.currentText(),
+                    "distance_from_top": distance_input.value()
+                }
+                data["supports"].append(support_data)
+
+        return data
+
+    def populate_from_dict(self, data):
+        self.shoring_type_combo.setCurrentText(data["shoring_type"])
+        self.update_form(self.shoring_type_combo.currentIndex())
+
+        if "angle" in data:
+            self.angle_input.setValue(data["angle"])
+
+        for support in data.get("supports", []):
+            self.add_support(support["type"])
+            index = len(self.supports) - 1
+            _, distance_input = self.supports[index]
+            distance_input.setValue(support["distance_from_top"])
+
+        self.soil_profile.set_theory(data["soil_profile"]["theory"]["name"])
+        for layer in data["soil_profile"]["layers"]:
+            self.soil_profile.add_layer(layer["height"], layer["properties"])
+
+        self.layer_widget.update_view()
+        self.visualization.update_view()
 
 
 class SurchargeLoad:
@@ -377,7 +506,7 @@ class MainWindow(QMainWindow):
             "general_info": {field: input.text() for field, input in self.general_info_inputs.items()},
             "general_properties": {field: input.text() for field, input in self.general_properties_inputs.items()},
             "sections": self.sections_combo.currentText(),
-            "soil_profile": self.geo_soil_tab.soil_profile.to_dict(),
+            "geometrical_soil_properties": self.geo_soil_tab.to_dict(),
             "surcharge": self.surcharge_profile.to_dict(),
             "lagging": self.lagging_tab.to_dict()
         }
@@ -406,6 +535,9 @@ class MainWindow(QMainWindow):
         for field, value in data['general_properties'].items():
             if field in self.general_properties_inputs:
                 self.general_properties_inputs[field].setText(value)
+
+        # Populate Geometrical and Soil Properties
+        self.geo_soil_tab.populate_from_dict(data['geometrical_soil_properties'])
 
         # Set Sections
         index = self.sections_combo.findText(data['sections'])
