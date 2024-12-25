@@ -1,6 +1,6 @@
 import json
 import sys
-
+from functools import partial
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtCore import Signal, QObject
 from PySide6.QtGui import QPainter
@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 
 from Soil import SoilProfile, SoilLayerWidget, SoilVisualization
+from input import *
 
 
 class ShoringPreview(QGraphicsView):
@@ -145,18 +146,20 @@ class GeometricalSoilPropertiesTab(QWidget):
         self.shoring_form.addRow(add_button)
 
     def add_support(self, support_type):
-        support_index = len(self.supports)
-        group_box = QGroupBox(f"{support_type} {support_index + 1}")
+        support_index = len(self.supports) + 1  # Updated to reflect 1-based indexing
+        group_box = QGroupBox(f"{support_type} {support_index}")
         form_layout = QFormLayout(group_box)
 
         distance_input = QDoubleSpinBox()
         distance_input.setRange(0, 100)
         distance_input.setSingleStep(0.1)
+        distance_input.valueChanged.connect(self.on_support_distance_changed)
 
         form_layout.addRow(f"{support_type} Distance from Top (m):", distance_input)
 
         remove_button = QPushButton(f"Remove {support_type}")
-        remove_button.clicked.connect(lambda: self.remove_support(support_index))
+        # Connect using a reference to the group_box
+        remove_button.clicked.connect(partial(self.remove_support_by_group, group_box))
         form_layout.addRow(remove_button)
 
         self.supports.append((group_box, distance_input))
@@ -168,6 +171,27 @@ class GeometricalSoilPropertiesTab(QWidget):
         self.soil_profile.set_supports([
             {"distance_from_top": input.value()} for _, input in self.supports
         ])
+
+        # Emit a custom signal or directly update the preview if available
+        self.emit_soil_profile_changed()
+
+    def remove_support_by_group(self, group_box):
+        for index, (gb, _) in enumerate(self.supports):
+            if gb == group_box:
+                self.remove_support(index)
+                break
+
+    def on_support_distance_changed(self):
+        # Update the SoilProfile's supports whenever a distance is changed
+        self.soil_profile.set_supports([
+            {"distance_from_top": input.value()} for _, input in self.supports
+        ])
+        self.emit_soil_profile_changed()
+
+    def emit_soil_profile_changed(self):
+        # Emit a signal or call a method to update the preview
+        # Assuming SoilProfile has a signal named 'changed'
+        self.soil_profile.layer_changed.emit()  # Replace with the appropriate signal
 
     def remove_support(self, index):
         if 0 <= index < len(self.supports):
@@ -183,6 +207,9 @@ class GeometricalSoilPropertiesTab(QWidget):
                 {"distance_from_top": input.value()} for _, input in self.supports
             ])
 
+            # Emit a custom signal or directly update the preview if available
+            self.emit_soil_profile_changed()
+
     def update_angle(self):
         self.soil_profile.set_angle(self.angle_input.value())
 
@@ -190,12 +217,12 @@ class GeometricalSoilPropertiesTab(QWidget):
         data = {
             "shoring_type": self.shoring_type_combo.currentText(),
             "soil_profile": self.soil_profile.to_dict(),
-            "supports": []
         }
 
-        if self.shoring_type_combo.currentIndex() in [1, 2]:
+        if self.shoring_type_combo.currentIndex() in [1, 2]:  # Raker or Anchor
             data["angle"] = self.angle_input.value()
-            for _, distance_input in self.supports:
+            data["supports"] = []  # Initialize the supports list
+            for group_box, distance_input in self.supports:
                 support_data = {
                     "type": self.shoring_type_combo.currentText(),
                     "distance_from_top": distance_input.value()
@@ -204,17 +231,32 @@ class GeometricalSoilPropertiesTab(QWidget):
 
         return data
 
+        # if self.shoring_type_combo.currentIndex() in [1, 2]:
+        #     data["angle"] = self.angle_input.value()
+        #     for _, distance_input in self.supports:
+        #         support_data = {
+        #             "type": self.shoring_type_combo.currentText(),
+        #             "distance_from_top": distance_input.value()
+        #         }
+        #         data["supports"].append(support_data)
+
+        return data
+
     def populate_from_dict(self, data):
         self.shoring_type_combo.setCurrentText(data["shoring_type"])
         self.update_form(self.shoring_type_combo.currentIndex())
 
-        if "angle" in data:
-            self.angle_input.setValue(data["angle"])
+        if "angle" in data["soil_profile"]:
+            self.angle_input.setValue(data["soil_profile"]["angle"])
+
+        # Remove existing supports before adding new ones
+        for _ in range(len(self.supports)):
+            self.remove_support(0)
 
         for support in data.get("supports", []):
             self.add_support(support["type"])
-            index = len(self.supports) - 1
-            _, distance_input = self.supports[index]
+            # After adding, set the distance
+            group_box, distance_input = self.supports[-1]
             distance_input.setValue(support["distance_from_top"])
 
         self.soil_profile.set_theory(data["soil_profile"]["theory"]["name"])
@@ -247,6 +289,10 @@ class SurchargeProfile(QObject):
         if 0 <= index < len(self.loads):
             del self.loads[index]
             self.load_changed.emit()
+
+    def remove_loads(self):
+        self.loads = []
+        self.load_changed.emit()
 
     def update_load(self, index, load_type, properties):
         if 0 <= index < len(self.loads):
@@ -427,11 +473,15 @@ class MainWindow(QMainWindow):
         self.general_info_tab = self.create_general_info_tab()
         self.general_properties_tab = self.create_general_properties_tab()
         self.geo_soil_tab = GeometricalSoilPropertiesTab()
+        # main_layout.addWidget(self.geo_soil_tab)  # Ensure it's added
+
+        # Instantiate ShoringPreview
         # self.shoring_preview = ShoringPreview(self.geo_soil_tab.soil_profile)
         # main_layout.addWidget(self.shoring_preview)
 
         # Connect the layer_changed signal to update the preview
         # self.geo_soil_tab.soil_profile.layer_changed.connect(self.shoring_preview.update_preview)
+
         self.surcharge_tab = self.create_surcharge_tab()
         self.lagging_tab = LaggingTab()
 
@@ -500,6 +550,72 @@ class MainWindow(QMainWindow):
         data = self.get_all_data()
         json_data = json.dumps(data, indent=2)
         print(json_data)
+        # Step A: Imagine we have read everything from GUI into these DTOs:
+        gen_info = GeneralInfoData(
+            title=data["general_info"]["Title"],
+            job_no=data["general_info"]["Job No"],
+            designer=data["general_info"]["Designer"],
+            checker=data["general_info"]["Checker"],
+            company=data["general_info"]["Company"],
+            client=data["general_info"]["Client"],
+            unit=data["general_info"]["Unit"],
+            date=data["general_info"]["Date"],
+            comment=data["general_info"]["Comment"]
+        )
+
+        gen_props = GeneralPropertiesData(
+            fs=float(data["general_properties"]["FS"]),
+            E=float(data["general_properties"]["E"]),
+            pile_spacing=float(data["general_properties"]["Pile Spacing"]),
+            fy=float(data["general_properties"]["Fy"]),
+            allowable_deflection=float(data["general_properties"]["Allowable Deflection"]),
+            section_name=data["sections"]
+        )
+
+        # 1 Soil layer with height=10 ft:
+        layers = []
+        theory_name = data["geometrical_soil_properties"]["soil_profile"]["theory"]["name"]
+        for layer in data["geometrical_soil_properties"]["soil_profile"]["layers"]:
+            layer_ = SoilLayerData(height=layer["height"], properties=layer["properties"])
+            layers.append(layer_)
+        soil_profile = SoilProfileData(
+            theory_name=theory_name,
+            layers=layers,
+            has_water=data["geometrical_soil_properties"]["soil_profile"]["water_level"]["has_water"],
+            water_depth=data["geometrical_soil_properties"]["soil_profile"]["water_level"]["depth"]
+        )
+
+        # No supports for Cantilever
+        geo_soil = GeometricalSoilData(
+            shoring_type=data["geometrical_soil_properties"]["shoring_type"],
+            angle=data["geometrical_soil_properties"]["soil_profile"]["angle"],
+            supports=data["geometrical_soil_properties"]["soil_profile"]["supports"],
+            soil_profile=soil_profile
+        )
+
+        # Example Surcharge: 1 uniform load
+        from math import inf
+        surch_loads = []
+        for surcharge in data["surcharge"]["loads"]:
+            surch_load = SurchargeLoadData(surcharge["load_type"], surcharge["properties"])
+            surch_loads.append(surch_load)
+
+        surcharge_data = SurchargeData(
+            ka_surcharge=data["surcharge"]["ka_surcharge"],
+            loads=surch_loads
+        )
+
+        lagging = LaggingData(ph_max=float(data["lagging"]["ph_max"]), fb=float(data["lagging"]["fb"]),
+                              timber_size=data["lagging"]["timber_size"])
+
+        # Consolidate
+        gui_data = GUIData(
+            general_info=gen_info,
+            general_props=gen_props,
+            geo_soil=geo_soil,
+            surcharge=surcharge_data,
+            lagging=lagging
+        )
 
     def get_all_data(self):
         return {
@@ -545,7 +661,7 @@ class MainWindow(QMainWindow):
             self.sections_combo.setCurrentIndex(index)
 
         # Populate Soil Profile
-        theory_name = data['soil_profile']['theory']
+        theory_name = data["geometrical_soil_properties"]['soil_profile']['theory']["name"]
         try:
             self.geo_soil_tab.soil_profile.set_theory(theory_name)
         except ValueError:
@@ -553,11 +669,12 @@ class MainWindow(QMainWindow):
                                 f"Unknown soil theory: {theory_name}. Using User Defined theory instead.")
             self.geo_soil_tab.soil_profile.set_theory("User Defined")
 
-        for layer in data['soil_profile']['layers']:
+        for layer in data["geometrical_soil_properties"]['soil_profile']['layers']:
             self.geo_soil_tab.soil_profile.add_layer(layer['height'], layer['properties'])
 
         # Populate Surcharge
         self.surcharge_profile.set_ka_surcharge(data['surcharge']['ka_surcharge'])
+        self.surcharge_profile.remove_loads()
         for load in data['surcharge']['loads']:
             self.surcharge_profile.add_load(load['load_type'], load['properties'])
 
@@ -579,3 +696,71 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+DATA = {
+    "general_info": {
+        "Title": "Ventura",
+        "Job No": "",
+        "Designer": "AMIA",
+        "Checker": "",
+        "Company": "AMIA ",
+        "Client": "",
+        "Unit": "",
+        "Date": "",
+        "Comment": ""
+    },
+    "general_properties": {
+        "FS": "1.3",
+        "E": "29000",
+        "Pile Spacing": "8",
+        "Fy": "50",
+        "Allowable Deflection": "5"
+    },
+    "sections": "",
+    "geometrical_soil_properties": {
+        "shoring_type": "Cantilever",
+        "soil_profile": {
+            "theory": {
+                "name": "UserDefinedTheory",
+                "type": "Triangle",
+                "h1": 0,
+                "h2": 0,
+                "sigma_a": 0
+            },
+            "layers": [
+                {
+                    "height": 15.0,
+                    "properties": {
+                        "EFP Active": 31.0,
+                        "EFP Passive": 600.0,
+                        "Distribution Type": "Triangle"
+                    }
+                }
+            ],
+            "water_level": {
+                "has_water": False,
+                "depth": 0
+            },
+            "shoring_type": "Cantilever",
+            "angle": 45,
+            "supports": []
+        },
+        "supports": []
+    },
+    "surcharge": {
+        "ka_surcharge": 1.0,
+        "loads": [
+            {
+                "load_type": "Uniform",
+                "properties": {
+                    "q": 300.0,
+                    "Surcharge Effect Depth": 10.0
+                }
+            }
+        ]
+    },
+    "lagging": {
+        "ph_max": "400",
+        "fb": "0.9",
+        "timber_size": "2 x 12"
+    }
+}
